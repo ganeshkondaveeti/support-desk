@@ -82,19 +82,22 @@ def edit_ticket(
     actor: str,
     *,
     known_pii_types: Iterable[str] = (),
-) -> models.DraftVersion:
+) -> tuple[models.DraftVersion, bool]:
     """
     Redact → new draft_versions row → reviewer.
 
     Pass: supersede + re-propose reply_send (creates first send on blocked / G9).
     Fail: failing version becomes current, supersede pending reply_send, status=blocked.
-    Identical edit: no-op (returns current version).
+    Identical edit: no-op (returns current version, unchanged=True).
+    Returns ``(draft_version, unchanged)``.
     """
     if not isinstance(new_text, str):
         raise TypeError("edit expects str")
     ticket = session.get(models.Ticket, ticket_id)
     if ticket is None:
         raise HumanActionError("NOT_FOUND", f"ticket {ticket_id} not found")
+    if ticket.status == "rejected":
+        raise HumanActionError("REJECTED", f"ticket {ticket_id} is rejected")
 
     redacted = redact(new_text)
     del new_text
@@ -102,7 +105,7 @@ def edit_ticket(
     pii_type_names = sorted(set(redacted.types) | set(known_pii_types))
     current = _current_draft(session, ticket_id)
     if current is not None and current.reply_text == redacted.text:
-        return current  # identical → no-op
+        return current, True  # identical → no-op
 
     # Build a draft dict for the reviewer (facts from latest agent output if any).
     facts = _latest_facts(session, ticket_id)
@@ -123,6 +126,7 @@ def edit_ticket(
     reviewer = review_draft(draft_payload, facts=facts)
     was_blocked = ticket.status == "blocked"
     prior_flags = list((current.reviewer_result or {}).get("flags") or []) if current else []
+    prior_row = draft_payload.get("row")
 
     version = _next_version(session, ticket_id)
     for old in session.scalars(
@@ -133,6 +137,14 @@ def edit_ticket(
     ).all():
         old.is_current = False
 
+    reviewer_payload: dict[str, Any] = {
+        **reviewer,
+        "replaces_blocked": was_blocked,
+        "prior_flags": prior_flags if was_blocked else [],
+    }
+    if prior_row is not None:
+        reviewer_payload["row"] = prior_row
+
     dv = models.DraftVersion(
         id=f"dv_{ticket_id}_v{version}",
         ticket_id=ticket_id,
@@ -142,11 +154,7 @@ def edit_ticket(
         last_checked=draft_payload.get("last_checked"),
         routing_note=dict(draft_payload.get("routing_note") or {}),
         disagreement=draft_payload.get("disagreement"),
-        reviewer_result={
-            **reviewer,
-            "replaces_blocked": was_blocked,
-            "prior_flags": prior_flags if was_blocked else [],
-        },
+        reviewer_result=reviewer_payload,
         origin="human_edit",
         is_current=True,
     )
@@ -203,7 +211,7 @@ def edit_ticket(
         },
     )
     session.flush()
-    return dv
+    return dv, False
 
 
 def _pending_reply_send(session: Session, ticket_id: str) -> models.ProposedAction | None:

@@ -1,0 +1,12 @@
+{
+  "id": "EDIT-15",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t5}/refine",
+  "expect_status": 409,
+  "request": {
+    "mode": "shorter"
+  },
+  "empty_diff": true,
+  "response_error": "refinement_cap_reached",
+  "precondition": "refinements_n_equals_5"
+}

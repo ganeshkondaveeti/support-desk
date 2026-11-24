@@ -390,12 +390,37 @@ def test_pipeline_cp1_and_idempotent(db_url: str) -> None:
         assert len(actions) == 4
         assert all(a.status == "pending" for a in actions)
 
+    # Cron with unchanged input is a no-op (arch §7.1).
     second = run_weekly(
         as_of=date(2026, 7, 4),
-        trigger="cli",
+        trigger="cron",
         db_url=db_url,
         action_ideas_fn=_ok_ideas,
         now=datetime(2026, 11, 25, 12, 0, tzinfo=IST),
     )
     assert second.noop is True
     assert second.run_id == result.run_id
+
+    # A manual re-run with the same input creates a new run and supersedes only the
+    # previous run's pending actions.
+    with session_scope(db_url) as session:
+        first_actions = session.scalars(select(models.ProposedAction)).all()
+        executed_id = first_actions[0].id
+        first_actions[0].status = "executed"
+    third = run_weekly(
+        as_of=date(2026, 7, 4),
+        trigger="manual",
+        db_url=db_url,
+        action_ideas_fn=_ok_ideas,
+        now=datetime(2026, 11, 25, 12, 0, tzinfo=IST),
+    )
+    assert third.noop is False
+    assert third.run_id != result.run_id
+    with session_scope(db_url) as session:
+        old = session.scalars(
+            select(models.ProposedAction).where(models.ProposedAction.id != executed_id)
+        ).all()
+        by_status = {a.id: a.status for a in old}
+        assert session.get(models.ProposedAction, executed_id).status == "executed"
+        assert sum(1 for s in by_status.values() if s == "superseded") == 3
+        assert sum(1 for s in by_status.values() if s == "pending") == 4

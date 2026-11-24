@@ -1,0 +1,9 @@
+{
+  "id": "EDIT-09",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/actions/{superseded_action}/approve",
+  "expect_status": 409,
+  "empty_diff": true,
+  "response_error": "superseded",
+  "precondition": "action_superseded_in_EDIT-01"
+}

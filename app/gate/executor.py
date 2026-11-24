@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime
+from pathlib import PurePath
 from typing import Any, Protocol
 
 from sqlalchemy import update
@@ -112,6 +113,20 @@ def execute(
     return action
 
 
+def _audit_safe(mcp_result: dict[str, Any]) -> dict[str, Any]:
+    """
+    Keep only the file *name* of a local-backend output path in stored results and
+    audit rows. A full path adds nothing to the audit trail, and directory names
+    (e.g. random temp dirs) can trip the PII guard and fail an approval.
+    """
+    out = dict(mcp_result)
+    for key in ("path", "file", "file_path"):
+        value = out.get(key)
+        if isinstance(value, str) and value:
+            out[key] = PurePath(value).name
+    return out
+
+
 def _dispatch(session: Session, action: models.ProposedAction, mcp: _McpPort) -> dict[str, Any]:
     if action.kind == "doc_append":
         return _doc_append(session, action, mcp)
@@ -134,7 +149,7 @@ def _doc_append(
         content=action.payload,
         idempotency_key=action.id,
     )
-    result: dict[str, Any] = {"mcp": mcp_result}
+    result: dict[str, Any] = {"mcp": _audit_safe(mcp_result)}
     if mcp_result.get("deduplicated"):
         result["deduplicated"] = True
 
@@ -179,7 +194,7 @@ def _email_draft(action: models.ProposedAction, mcp: _McpPort) -> dict[str, Any]
         body=action.payload,
         idempotency_key=action.id,
     )
-    result: dict[str, Any] = {"mcp": mcp_result}
+    result: dict[str, Any] = {"mcp": _audit_safe(mcp_result)}
     if mcp_result.get("deduplicated"):
         result["deduplicated"] = True
     return result

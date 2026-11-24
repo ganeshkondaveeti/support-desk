@@ -1,0 +1,10 @@
+{"id": "DQ3-01", "text": "What is the expense ratio of HDFC Large Cap?", "expect": {"row": 4, "gold": {"scheme_id": "large_cap", "section": "Key fund facts", "theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-02", "text": "Why is brokerage so high on Groww?", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-03", "text": "Stamp duty on my mutual fund purchase?", "expect": {"row": 4, "gold": {"section": "Stamp duty and tax", "theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-04", "text": "Hidden charges deducted from my redemption proceeds", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-05", "text": "How much GST on brokerage for equity delivery?", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-06", "text": "DP charges on selling stocks from demat", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-07", "text": "Why was commission deducted from my SIP?", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-08", "text": "Is there a platform fee on Groww mutual funds?", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-09", "text": "Account maintenance charges this month?", "expect": {"row": 5, "gold": {"theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ3-10", "text": "Exit load on HDFC ELSS Tax Saver — is it Nil?", "expect": {"row": 4, "gold": {"scheme_id": "elss_tax_saver", "section": "Exit load", "theme_id": "fees_brokerage"}}, "wave": "early", "edge_cases": []}

@@ -102,8 +102,10 @@ def run_weekly(
     """
     Run the weekly loop end to end.
 
-    Idempotency: a finished run with the same ``input_hash`` + ``as_of`` is a no-op.
-    Run lock: at most one ``status=running`` row at a time.
+    Idempotency (arch §7.1): for a **cron** trigger, a finished run with the same
+    ``input_hash`` + ``as_of`` is a no-op. A manual or CLI trigger always creates a new
+    run; its proposals supersede the previous run's *pending* actions only.
+    Run lock: at most one ``status=running`` row at a time, for every trigger.
     """
     path = Path(reviews_path) if reviews_path else DEFAULT_REVIEWS_PATH
     init_db(db_url)
@@ -112,7 +114,11 @@ def run_weekly(
     input_hash = compute_input_hash(path, effective_as_of)
 
     with session_scope(db_url) as session:
-        existing = _find_finished(session, input_hash=input_hash, as_of=effective_as_of)
+        existing = (
+            _find_finished(session, input_hash=input_hash, as_of=effective_as_of)
+            if trigger == "cron"
+            else None
+        )
         if existing is not None:
             logger.info(
                 "weekly noop run_id=%s as_of=%s hash=%s",

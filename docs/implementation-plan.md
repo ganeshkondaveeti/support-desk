@@ -634,15 +634,15 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P10.0** Fixtures per eval §3: question JSONL files with `expect` blocks, `reviews_synthetic.json`, `planted_pii.json`, and the 18 expected-diff specs.
-- [ ] **P10.1** `evals/run_all.py`:
+- [x] **P10.0** Fixtures per eval §3: question JSONL files with `expect` blocks, `reviews_synthetic.json`, `planted_pii.json`, and the 18 expected-diff specs.
+- [x] **P10.1** `evals/run_all.py`:
   - Starts the app on a fresh temp DB with `APP_ENV=test`, `MCP_BACKEND=local` and `EVAL_FAULTS` enabled. Fault hooks are ignored unless `APP_ENV=test` (G11). The harness first checks that a production-mode instance ignores them.
   - Shares one session across the suites and submits the adversarial fixtures in **early / mid / late waves** (eval §6.1).
   - Runs the suites.
   - Writes `evals/results/{timestamp}.json` and `latest.md`.
-- [ ] **P10.2** `evals/feasibility.py`: every arch §15.1 check (draft or not-covered for every ticket, 3 structured agent outputs, themes with ids and window, caps, unattended weekly run, baseline regression).
-- [ ] **P10.3** `evals/edit_correctness.py`: the arch §15.2 cases. For each case, take a `snapshot` → perform one operation → take a `snapshot` → assert an exact expected diff.
-- [ ] **P10.4** `evals/grounding_compliance.py`: the arch §15.3 checks:
+- [x] **P10.2** `evals/feasibility.py`: every arch §15.1 check (draft or not-covered for every ticket, 3 structured agent outputs, themes with ids and window, caps, unattended weekly run, baseline regression).
+- [x] **P10.3** `evals/edit_correctness.py`: the arch §15.2 cases. For each case, take a `snapshot` → perform one operation → take a `snapshot` → assert an exact expected diff.
+- [x] **P10.4** `evals/grounding_compliance.py`: the arch §15.3 checks:
   - the 15-claim sample (fixed seed, 8 response + 7 weekly)
   - out-of-scope questions
   - snapshot resolution
@@ -650,9 +650,18 @@ These apply to every phase and are checked in code review and CI:
   - PII in tickets and in reviews
   - the final sweep of logs, DB, checkpoint blobs, `samples/` and MCP outputs for the literal planted values
   - the reviewer-rejection cases
-- [ ] **P10.4a** `evals/agent_quality.py` (informational): Facts and Pattern pick accuracy, compliance recall and false-refusal rate, fingerprint quality, latency (eval §7).
-- [ ] **P10.5** Optional Chroma cross-check (eval AQ-04): query `data/chroma_db` (`mf_facts`, Gemini embeddings) top-1 against the Facts picks and report the agreement rate. Skipped when no `GEMINI_API_KEY` is set.
-- [ ] **P10.6** `make evals`, plus a CI job running the suites with the CuesOnly backend. The Groq-backed run is executed manually and its results committed.
+- [x] **P10.4a** `evals/agent_quality.py` (informational): Facts and Pattern pick accuracy, compliance recall and false-refusal rate, fingerprint quality, latency (eval §7).
+- [x] **P10.5** Optional Chroma cross-check (eval AQ-04): query `data/chroma_db` (`mf_facts`, Gemini embeddings) top-1 against the Facts picks and report the agreement rate. Skipped when no `GEMINI_API_KEY` is set.
+- [x] **P10.6** `make evals`, plus a CI job running the suites with the CuesOnly backend (including the production-mode hook check).
+- [ ] **P10.7** Graded run: `python -m evals.run_all --backend groq --seed 42`, then commit `evals/results/{timestamp}.json` and `latest.md` (eval §9). Uses the Groq API key and quota.
+
+**Status (2026-11-25, CI mode).** All three gating suites pass with strict checks: FEAS 12/13 (FEAS-03 is graded-only), EDIT 18/18, GC 13/13, 15/15 claims traced plus the whole claim pool, 0 PII hits. Removing the earlier "soft pass" branches exposed real defects, now fixed:
+
+- The reviewer let any sentence through after a lead-in or family lead (*"Per the scheme page: <anything>"*). Lead-ins are now prefixes and the rest must be grounded.
+- 12 of 45 advice questions and 3 of 18 return questions were not refused ("is it time to redeem", "which is better", "is the expense ratio too high", "I should just dump this fund", "CAGR if I stay invested"). The question-side detectors now cover them, with a fixture-driven regression test.
+- A manual weekly re-run with unchanged input was a no-op (arch §7.1 says only cron is), and a new run never superseded the previous run's pending actions.
+- Review ids that look like a PAN failed weekly runs at the storage guard (11 of 1,650 real ids), and a temp-dir path in an MCP result failed approvals the same way.
+- Eval-side fixes: the client sent `status_filter` instead of `status` (so "all actions" meant "pending"), the tracer didn't handle family answers or trimmed quotes, and several cases (GC-05/06 skipped unflagged tickets and two waves, FEAS-06/09/11, EDIT-04/17) checked less than the spec.
 
 **Exit criteria**
 

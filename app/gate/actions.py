@@ -140,6 +140,12 @@ def approve(
     if action is None:
         raise GateError("NOT_FOUND", f"action {action_id} not found")
     if action.status != "pending":
+        if action.status in {"approved", "executed", "executing"}:
+            raise GateError("ALREADY_APPROVED", "already_approved")
+        if action.status == "superseded":
+            raise GateError("SUPERSEDED", "superseded")
+        if action.status == "rejected":
+            raise GateError("REJECTED", "rejected")
         raise GateError(
             "INVALID_STATUS",
             f"action {action_id} is {action.status!r}; only pending can be approved",
@@ -229,7 +235,28 @@ def propose_weekly_actions(
     explainer_id: str,
     explainer_body: str,
 ) -> list[models.ProposedAction]:
-    """Four independent weekly actions (arch §7.8 / §10.2)."""
+    """
+    Four independent weekly actions (arch §7.8 / §10.2).
+
+    A new run's proposals supersede every still-*pending* pulse/explainer action from
+    earlier runs (arch §7.1). Approved, executed and rejected actions are never touched.
+    """
+    session.flush()
+    stale = session.scalars(
+        select(models.ProposedAction).where(
+            models.ProposedAction.subject_type.in_(("pulse", "fee_explainer")),
+            models.ProposedAction.status == "pending",
+        )
+    ).all()
+    for row in stale:
+        row.status = "superseded"
+        write_audit(
+            session,
+            actor="system",
+            event="action_superseded",
+            entity_id=row.id,
+            details={"before": "pending", "after": "superseded", "reason": "new_weekly_run"},
+        )
     settings = get_settings()
     docs_id = settings.google_docs_id or "local"
     emails = [e.strip() for e in settings.product_team_emails.split(",") if e.strip()]

@@ -1,0 +1,20 @@
+{"id": "DQ9-01", "text": "What is the exit load on HDFC Large Cap?", "expect": {"row": 4, "gold": {"scheme_id": "large_cap", "section": "Exit load"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-02", "text": "What is the expense ratio of HDFC Large Cap Fund?", "expect": {"row": 4, "gold": {"scheme_id": "large_cap", "section": "Key fund facts"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-03", "text": "What stamp duty applies to HDFC Large Cap purchases?", "expect": {"row": 4, "gold": {"scheme_id": "large_cap", "section": "Stamp duty and tax"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-04", "text": "What is the benchmark for HDFC Large Cap?", "expect": {"row": 4, "gold": {"scheme_id": "large_cap", "section": "Benchmark"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-05", "text": "What is the investment objective of HDFC Mid Cap?", "expect": {"row": 4, "gold": {"scheme_id": "mid_cap", "section": "Investment objective"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-06", "text": "What is the minimum SIP for HDFC Mid Cap?", "expect": {"row": 4, "gold": {"scheme_id": "mid_cap", "section": "Minimum investments"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-07", "text": "Who manages HDFC Mid Cap Fund?", "expect": {"row": 4, "gold": {"scheme_id": "mid_cap", "section": "Fund management"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-08", "text": "What is the NAV of HDFC Small Cap?", "expect": {"row": 4, "gold": {"scheme_id": "small_cap", "section": "Key fund facts"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-09", "text": "What exit load applies to HDFC Small Cap?", "expect": {"row": 4, "gold": {"scheme_id": "small_cap", "section": "Exit load"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-10", "text": "Stamp duty on HDFC Small Cap SIP?", "expect": {"row": 4, "gold": {"scheme_id": "small_cap", "section": "Stamp duty and tax"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-11", "text": "What is the exit load on HDFC Gold ETF FoF?", "expect": {"row": 4, "gold": {"scheme_id": "gold_fof", "section": "Exit load"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-12", "text": "Minimum lumpsum for HDFC Gold FoF?", "expect": {"row": 4, "gold": {"scheme_id": "gold_fof", "section": "Minimum investments"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-13", "text": "What benchmark does HDFC Gold FoF track?", "expect": {"row": 4, "gold": {"scheme_id": "gold_fof", "section": "Benchmark"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-14", "text": "What is the benchmark for HDFC Silver ETF FoF?", "expect": {"row": 4, "gold": {"scheme_id": "silver_fof", "section": "Benchmark"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-15", "text": "What is HDFC Silver ETF FoF's investment objective?", "expect": {"row": 4, "gold": {"scheme_id": "silver_fof", "section": "Investment objective"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-16", "text": "Exit load on HDFC Silver ETF FoF?", "expect": {"row": 4, "gold": {"scheme_id": "silver_fof", "section": "Exit load"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-17", "text": "What is the exit load on HDFC ELSS Tax Saver?", "expect": {"row": 4, "gold": {"scheme_id": "elss_tax_saver", "section": "Exit load"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-18", "text": "What is the AUM of HDFC ELSS Tax Saver?", "expect": {"row": 4, "gold": {"scheme_id": "elss_tax_saver", "section": "Key fund facts"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-19", "text": "Minimum SIP amount for HDFC ELSS?", "expect": {"row": 4, "gold": {"scheme_id": "elss_tax_saver", "section": "Minimum investments"}}, "wave": "early", "edge_cases": []}
+{"id": "DQ9-20", "text": "Who is the fund manager of HDFC ELSS Tax Saver?", "expect": {"row": 4, "gold": {"scheme_id": "elss_tax_saver", "section": "Fund management"}}, "wave": "early", "edge_cases": []}

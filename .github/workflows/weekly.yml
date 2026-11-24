@@ -1,5 +1,6 @@
 # Backup weekly trigger for hosts that sleep (architecture §11 / P8.7).
-# Idempotent with the in-process APScheduler via the weekly run lock + input_hash.
+# Sends trigger=cron, so an unchanged-input run is a no-op (arch §7.1) and it can't
+# double-run with the in-process APScheduler. The run lock covers overlaps.
 name: Weekly loop backup
 
 on:
@@ -35,7 +36,7 @@ jobs:
             -X POST "${base}/api/weekly/run" \
             -H "Authorization: Bearer ${ADMIN_TOKEN}" \
             -H "Content-Type: application/json" \
-            -d '{}')
+            -d '{"trigger": "cron"}')
           echo "HTTP ${code}"
           cat /tmp/weekly_run.json || true
           # 200 = ran / noop; 409 = already running (acceptable overlap).

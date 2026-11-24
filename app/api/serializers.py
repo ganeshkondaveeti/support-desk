@@ -43,6 +43,9 @@ def ticket_list_item(t: models.Ticket) -> TicketListItem:
 
 
 def draft_out(d: models.DraftVersion) -> DraftVersionOut:
+    result = dict(d.reviewer_result or {})
+    row_raw = result.get("row")
+    row = int(row_raw) if isinstance(row_raw, int) else None
     return DraftVersionOut(
         id=d.id,
         version=d.version,
@@ -51,9 +54,10 @@ def draft_out(d: models.DraftVersion) -> DraftVersionOut:
         last_checked=d.last_checked,
         routing_note=dict(d.routing_note or {}),
         disagreement=d.disagreement,
-        reviewer_result=dict(d.reviewer_result or {}),
+        reviewer_result=result,
         origin=d.origin,
         is_current=d.is_current,
+        row=row,
     )
 
 
@@ -81,7 +85,12 @@ def refinement_out(r: models.Refinement) -> RefinementOut:
     )
 
 
-def ticket_detail(session: Session, ticket: models.Ticket) -> TicketDetailResponse:
+def ticket_detail(
+    session: Session,
+    ticket: models.Ticket,
+    *,
+    unchanged: bool = False,
+) -> TicketDetailResponse:
     drafts = list(
         session.scalars(
             select(models.DraftVersion)
@@ -129,6 +138,7 @@ def ticket_detail(session: Session, ticket: models.Ticket) -> TicketDetailRespon
         agent_outputs=[agent_out(a) for a in agents],
         refinements=[refinement_out(r) for r in refinements],
         pending_reply_send_id=pending.id if pending else None,
+        unchanged=unchanged,
     )
 
 

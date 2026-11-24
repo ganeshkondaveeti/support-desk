@@ -1,0 +1,14 @@
+{"id": "DQ8-01", "text": "Why was I charged exit load? My PAN is ABCDE1234F", "expect": {"pii_types": ["PAN"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-02", "text": "Update KYC for PAN abcde1234f on HDFC Large Cap", "expect": {"pii_types": ["PAN"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-03", "text": "PAN on file: ABCDE 1234 F — exit load?", "expect": {"pii_types": ["PAN"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-04", "text": "Exit load question, call me on 9876543210", "expect": {"pii_types": ["PHONE"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-05", "text": "Please check folio — a/c no 50100234567890 for HDFC Gold FoF exit load", "expect": {"pii_types": ["ACCOUNT"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-06", "text": "Aadhaar 2345 6789 0124 linked — what is ELSS exit load?", "expect": {"pii_types": ["AADHAAR"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-07", "text": "Email me at user.eval@example.com about stamp duty", "expect": {"pii_types": ["EMAIL"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-08", "text": "Groww login failed — code is 482913", "expect": {"pii_types": ["OTP"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-09", "text": "Refund to UPI evaluser@oksbi for exit load charges", "expect": {"pii_types": ["UPI"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-10", "text": "Folio account 50100234567890 — Mid Cap exit load?", "expect": {"pii_types": ["ACCOUNT"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-11", "text": "PAN A​B​C​D​E​1​2​3​4​F for exit load query", "expect": {"pii_types": ["PAN"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-12", "text": "Call ９８７６５４３２１０ about HDFC Small Cap fees", "expect": {"pii_types": ["PHONE"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-13", "text": "WhatsApp ९८७६५४३२१० par bhejo — exit load kitna hai?", "expect": {"pii_types": ["PHONE"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ8-14", "text": "My PAN ABCDE1234F and phone 9876543210 — exit load?", "expect": {"pii_types": ["PAN", "PHONE"]}, "wave": "early", "edge_cases": []}

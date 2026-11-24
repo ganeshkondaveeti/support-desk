@@ -471,6 +471,8 @@ export interface components {
             routing_note?: {
                 [key: string]: unknown;
             };
+            /** Row */
+            row?: number | null;
             /** Version */
             version: number;
         };
@@ -734,6 +736,11 @@ export interface components {
             route_team?: string | null;
             /** Status */
             status: string;
+            /**
+             * Unchanged
+             * @default false
+             */
+            unchanged: boolean;
         };
         /** TicketEditRequest */
         TicketEditRequest: {
@@ -870,6 +877,12 @@ export interface components {
             as_of?: string | null;
             /** Reviews Path */
             reviews_path?: string | null;
+            /**
+             * Trigger
+             * @default manual
+             * @enum {string}
+             */
+            trigger: "manual" | "cron";
         };
         /** WeeklyRunResponse */
         WeeklyRunResponse: {

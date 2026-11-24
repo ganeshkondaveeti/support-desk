@@ -1,0 +1,45 @@
+{
+  "id": "EDIT-12",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t5}/refine",
+  "expect_status": 200,
+  "request": {
+    "mode": "shorter"
+  },
+  "tables": {
+    "refinements": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t5}",
+        "n": 1
+      }
+    },
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t5}"
+      }
+    },
+    "proposed_actions": {
+      "changed": [
+        {
+          "subject_id": "{t5}",
+          "kind": "reply_send",
+          "status": [
+            "pending",
+            "superseded"
+          ]
+        }
+      ],
+      "added": {
+        "min_count": 1,
+        "kind": "reply_send",
+        "subject_id": "{t5}",
+        "status": "pending"
+      }
+    }
+  },
+  "tables_unchanged": [
+    "agent_outputs"
+  ]
+}

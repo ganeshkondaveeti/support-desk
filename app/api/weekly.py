@@ -48,7 +48,7 @@ def post_weekly_run(
     try:
         result = run_weekly(
             as_of=as_of,
-            trigger="manual",
+            trigger=payload.trigger,
             reviews_path=reviews_path,
         )
     except WeeklyRunLockError as exc:

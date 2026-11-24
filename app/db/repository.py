@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from collections.abc import Iterable
 from typing import Any
 
@@ -35,13 +36,26 @@ _TEXT_COLUMNS: dict[type[Any], tuple[str, ...]] = {
 }
 
 
+# Review ids are 16-char hex and fingerprints 40-char hex. Some look like a PAN or a
+# phone number to the scanner (11 of the 1,650 real review ids do), which would fail
+# a pulse or a draft that cites them. They are identifiers, not user text, so only
+# these exact positions are excluded: the pulse's "review <id>" citation and JSON
+# values under identifier keys. Everything else is scanned as before.
+_REVIEW_CITATION = re.compile(r"\breview [0-9a-f]{16}\b")
+_ID_KEYS = frozenset({"review_id", "review_ids", "review_ids_sample", "fingerprint"})
+
+
+def _mask_identifiers(text: str) -> str:
+    return _REVIEW_CITATION.sub("review <id>", text)
+
+
 def scan_text_fields(entity: object) -> None:
     """Run pii.scan on every free-text column; raise PIILeakError on a hit."""
     columns = _TEXT_COLUMNS.get(type(entity), ())
     for name in columns:
         value = getattr(entity, name, None)
         if isinstance(value, str) and value:
-            found = scan(value)
+            found = scan(_mask_identifiers(value))
             if found:
                 raise PIILeakError(found, f"{type(entity).__name__}.{name}")
     # JSON blobs that may embed free text
@@ -73,12 +87,14 @@ def _scan_json_strings(value: object, column: str) -> None:
     if value is None:
         return
     if isinstance(value, str):
-        found = scan(value)
+        found = scan(_mask_identifiers(value))
         if found:
             raise PIILeakError(found, column)
         return
     if isinstance(value, dict):
-        for item in value.values():
+        for key, item in value.items():
+            if key in _ID_KEYS:
+                continue
             _scan_json_strings(item, column)
         return
     if isinstance(value, list):

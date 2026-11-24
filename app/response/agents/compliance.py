@@ -28,7 +28,7 @@ class ComplianceFlag(StrEnum):
 # Ported / tightened cues from M3 + scope validators (question side).
 _ACTION = (
     r"(?:redeem|buy|sell|hold|invest|exit|switch|stay\s+invested|stay|continue|keep|"
-    r"stop|pause|withdraw|top\s+up)"
+    r"stop|pause|withdraw|top\s+up|dump|liquidate|cash\s+out|book\s+profits?)"
 )
 _MODAL = r"(?:should|shall|do|can|could|would|must|may|ought\s+to)"
 _SUBJECT = r"(?:i|we|one|someone)"
@@ -51,7 +51,29 @@ _ADVICE_CUES: tuple[re.Pattern[str], ...] = (
     ),
     re.compile(rf"\b(?:a\s+)?good\s+(?:{_SCHEME_WORD}|idea|time|choice|bet)\b", re.I),
     re.compile(r"\bworth\s+(?:it|investing|buying|holding|keeping|continuing|staying)\b", re.I),
-    re.compile(r"\bstay(?:ing)?\s+invested\b", re.I),
+    # "Is it (the right) time to redeem?" (DQ6-02).
+    re.compile(
+        rf"\b(?:is|isn't)\s+(?:it|now|this)\s+(?:the\s+)?(?:right\s+|good\s+|best\s+)?"
+        rf"time\s+to\s+{_ACTION}\b",
+        re.I,
+    ),
+    # "Which is better / safer …?" comparisons (DQ6-07).
+    re.compile(
+        r"\bwhich\s+(?:one\s+|of\s+(?:these|them|the\s+two)\s+)?"
+        r"(?:is|are|would\s+be)\s+(?:better|best|safer|preferable)\b",
+        re.I,
+    ),
+    # A judgement on a figure: "Is the expense ratio too high?" (DQ6-10).
+    re.compile(
+        r"\b(?:is|are)\b[^.?!]{0,40}?\b(?:too\s+(?:high|low|much|expensive|costly)|"
+        r"overpriced|worth\s+the\s+(?:cost|fee))\b",
+        re.I,
+    ),
+    # Subject before modal: "I should just dump this fund?" (DQ6-11).
+    re.compile(
+        rf"\b{_SUBJECT}\s+(?:should|ought\s+to|must)\s+(?:\w+\s+){{0,2}}?{_ACTION}\b",
+        re.I,
+    ),
     re.compile(
         r"\b(?:recommend|advi[cs]e|suggest)\w*\b[^.?!]{0,40}?"
         rf"\b(?:{_ACTION}|which\s+{_SCHEME_WORD}|what\s+(?:should|to)\s+{_SUBJECT}\s+do)\b"
@@ -163,8 +185,18 @@ def _cue_flags(text: str) -> tuple[bool, bool]:
     return advice, perf
 
 
+# A condition is not a request for advice: "Expected CAGR if I stay invested?" asks for
+# a return figure (row 2). The draft-side validator still flags "stay invested" in
+# replies; only the question side ignores it inside an if-clause.
+_CONDITIONAL = re.compile(
+    rf"\b(?:if|when|while|assuming)\s+{_SUBJECT}\s+(?:\w+\s+){{0,2}}?{_ACTION}\b[^.?!,]*",
+    re.I,
+)
+
+
 def _regex_advice(text: str) -> bool:
-    if check_advice(text) or check_buy_sell(text):
+    unconditional = _CONDITIONAL.sub(" ", text)
+    if check_advice(unconditional) or check_buy_sell(unconditional):
         return True
     return any(c.search(text) for c in _ADVICE_CUES)
 

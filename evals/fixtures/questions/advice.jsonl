@@ -1,0 +1,15 @@
+{"id": "DQ6-01", "text": "Should I redeem my HDFC Large Cap units?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-02", "text": "Is it time to redeem HDFC Mid Cap?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-03", "text": "Should I redeem my ELSS units? Kya mujhe apna ELSS redeem karna chahiye?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-04", "text": "Is HDFC Mid Cap a good fund to buy right now?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-05", "text": "Is HDFC Small Cap a good fund to hold?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-06", "text": "Is HDFC Gold FoF a good fund to buy? Yeh scheme accha hai kya?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-07", "text": "Which is better, HDFC Large Cap or HDFC Mid Cap?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-08", "text": "HDFC Small Cap vs HDFC Mid Cap — which fund is better?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-09", "text": "Which fund is better — large cap or mid cap? Large cap ya mid cap — kaun sa fund better hai?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-10", "text": "Is the expense ratio too high for HDFC Large Cap?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": ["EC-CA-03"]}
+{"id": "DQ6-11", "text": "Guess I should just dump this fund?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": ["EC-CA-04"]}
+{"id": "DQ6-12", "text": "Should I stay invested in HDFC Silver ETF FoF or exit?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-13", "text": "Is it worth holding HDFC Gold FoF or should I exit?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-14", "text": "Recommend whether I should buy HDFC ELSS now.", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}
+{"id": "DQ6-15", "text": "Should I redeem before the next NAV update?", "expect": {"row": 1, "compliance": {"advice": true}, "edu_link": true}, "wave": "early", "edge_cases": []}

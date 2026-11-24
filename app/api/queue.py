@@ -103,13 +103,20 @@ def post_ticket_edit(
 ) -> TicketDetailResponse:
     checked = redact_and_check(body.text, field="text")
     try:
-        edit_ticket(session, ticket_id, checked.text, actor, known_pii_types=checked.types)
+        _dv, unchanged = edit_ticket(
+            session, ticket_id, checked.text, actor, known_pii_types=checked.types
+        )
     except HumanActionError as exc:
-        code = 404 if exc.code == "NOT_FOUND" else 400
+        if exc.code == "NOT_FOUND":
+            code = 404
+        elif exc.code == "REJECTED":
+            code = 409
+        else:
+            code = 400
         raise HTTPException(status_code=code, detail=str(exc)) from exc
     ticket = session.get(models.Ticket, ticket_id)
     assert ticket is not None
-    return ticket_detail(session, ticket)
+    return ticket_detail(session, ticket, unchanged=unchanged)
 
 
 @router.post("/api/tickets/{ticket_id}/reject", response_model=TicketDetailResponse)

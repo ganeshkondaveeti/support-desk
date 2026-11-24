@@ -64,6 +64,10 @@ def persist_graph_result(
         old.is_current = False
 
     routing = dict(draft.get("routing_note") or {})
+    # Persist decision-table row for API/evals (FEAS-01); human edit also reads it.
+    reviewer_payload = dict(reviewer)
+    if draft.get("row") is not None:
+        reviewer_payload["row"] = draft.get("row")
     dv = models.DraftVersion(
         # Avoid bare hex ids — pii.scan can false-positive on 10-digit runs.
         id=f"dv_{ticket.id}_v{version}",
@@ -74,7 +78,7 @@ def persist_graph_result(
         last_checked=draft.get("last_checked"),
         routing_note=routing,
         disagreement=draft.get("disagreement"),
-        reviewer_result=dict(reviewer),
+        reviewer_result=reviewer_payload,
         origin=origin,
         is_current=True,
     )

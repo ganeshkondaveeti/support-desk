@@ -1,0 +1,30 @@
+{
+  "id": "EDIT-07",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/actions/{t3_reply_send}/approve",
+  "expect_status": 200,
+  "tables": {
+    "proposed_actions": {
+      "changed": [
+        {
+          "id": "{t3_reply_send}",
+          "status": [
+            "pending",
+            "executed"
+          ]
+        }
+      ]
+    },
+    "outbox_replies": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t3}"
+      }
+    },
+    "audit_events": {
+      "added": {
+        "min_count": 1
+      }
+    }
+  }
+}

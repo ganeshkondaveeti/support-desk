@@ -1,0 +1,46 @@
+{
+  "id": "EDIT-17",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/weekly/run",
+  "expect_status": 200,
+  "request": {
+    "trigger": "manual"
+  },
+  "tables": {
+    "weekly_runs": {
+      "added": {
+        "min_count": 1
+      }
+    },
+    "theme_snapshots": {
+      "added": {
+        "min_count": 1
+      }
+    },
+    "pulses": {
+      "added": {
+        "min_count": 1
+      }
+    },
+    "fee_explainers": {
+      "added": {
+        "min_count": 1
+      }
+    },
+    "proposed_actions": {
+      "changed": [
+        {
+          "status": [
+            "pending",
+            "superseded"
+          ],
+          "only_pending_weekly_actions": true
+        }
+      ]
+    }
+  },
+  "tables_unchanged": [
+    "canonical_explainers"
+  ],
+  "executed_and_rejected_actions_unchanged": true
+}

@@ -1,0 +1,36 @@
+{
+  "id": "EDIT-06",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/actions/{expl_doc}/approve",
+  "expect_status": 200,
+  "tables": {
+    "proposed_actions": {
+      "changed": [
+        {
+          "id": "{expl_doc}",
+          "status": [
+            "pending",
+            "executed"
+          ]
+        }
+      ]
+    },
+    "canonical_explainers": {
+      "added": {
+        "min_count": 1
+      }
+    },
+    "audit_events": {
+      "added": {
+        "min_count": 1,
+        "entity_id": "{expl_doc}"
+      }
+    }
+  },
+  "unchanged_action_ids": [
+    "{expl_email}"
+  ],
+  "action_status_unchanged": [
+    "{expl_email}"
+  ]
+}

@@ -1,0 +1,9 @@
+{"id": "DQ4-01", "text": "What is the exit load on SBI Bluechip Fund?", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-02", "text": "Axis ELSS expense ratio please?", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-03", "text": "What is the NAV of HDFC Flexi Cap Fund?", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-04", "text": "What are the top holdings in HDFC Large Cap?", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-05", "text": "What is the benchmark for HDFC ELSS Tax Saver?", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-06", "text": "What is the ELSS lock-in period?", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-07", "text": "why ₹20 brokerage on delivery", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-08", "text": "my KYC status", "expect": {"row": 5}, "wave": "early", "edge_cases": []}
+{"id": "DQ4-09", "text": "What is the 5-year CAGR of HDFC Mid Cap?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}

@@ -1,0 +1,32 @@
+{
+  "id": "EDIT-03",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t1}/edit",
+  "expect_status": 200,
+  "tables": {
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t1}",
+        "origin": "human_edit",
+        "reply_text_contains": "[PHONE]"
+      }
+    },
+    "proposed_actions": {
+      "added": {
+        "min_count": 1,
+        "kind": "reply_send",
+        "subject_id": "{t1}"
+      }
+    },
+    "audit_events": {
+      "added": {
+        "min_count": 1
+      }
+    }
+  },
+  "body_must_not_persist_literal": {
+    "type": "PHONE",
+    "value": "9876543210"
+  }
+}

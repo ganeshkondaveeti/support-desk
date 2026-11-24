@@ -32,7 +32,7 @@ function detailFor(id: string): TicketDetail | undefined {
   if (known) return known;
   const item = db.tickets.items.find((t) => t.id === id);
   if (!item) return undefined;
-  return { ...item, current_draft: null, drafts: [], agent_outputs: [], refinements: [], pending_reply_send_id: null } as TicketDetail;
+  return { ...item, current_draft: null, drafts: [], agent_outputs: [], refinements: [], pending_reply_send_id: null, unchanged: false } as TicketDetail;
 }
 
 export const handlers = [

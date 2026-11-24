@@ -1,0 +1,33 @@
+{
+  "id": "EDIT-16",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{blocked_ticket}/edit",
+  "expect_status": 200,
+  "precondition": "ticket_blocked_from_GC-11_advice_always",
+  "tables": {
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "origin": "human_edit"
+      }
+    },
+    "proposed_actions": {
+      "added": {
+        "min_count": 1,
+        "kind": "reply_send",
+        "status": "pending"
+      }
+    },
+    "tickets": {
+      "changed": [
+        {
+          "id": "{blocked_ticket}",
+          "status": [
+            "blocked",
+            "awaiting_human"
+          ]
+        }
+      ]
+    }
+  }
+}

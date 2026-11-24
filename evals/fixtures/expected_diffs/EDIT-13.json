@@ -1,0 +1,30 @@
+{
+  "id": "EDIT-13",
+  "operation": "POST /api/tickets/{t5}/refine",
+  "expect_status": 200,
+  "request": {
+    "mode": "different_scheme",
+    "hint": "HDFC Mid Cap"
+  },
+  "tables": {
+    "refinements": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t5}",
+        "n": 2
+      }
+    },
+    "agent_outputs": {
+      "added": {
+        "min_count": 1,
+        "agent": "facts"
+      }
+    },
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t5}"
+      }
+    }
+  }
+}

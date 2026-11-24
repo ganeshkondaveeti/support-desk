@@ -21,6 +21,8 @@ from app.guardrails.scope import (
 )
 from app.response.state import TicketState
 from app.response.templates import (
+    FACT_LEAD_INS,
+    SCHEME_DISPLAY,
     TEMPLATE_SENTENCES,
     all_template_sentences,
     is_not_covered_search_sentence,
@@ -201,56 +203,71 @@ def _check_uncited(
     return []
 
 
+_FAMILY_LEAD_RE = re.compile(
+    r"^For (?:the |HDFC's )(?:equity|fof) schemes(?: in this list)? "
+    r"\((?P<names>[^()]+)\):\s*(?P<rest>.*)$"
+)
+_NOT_COVERED_LEAD = "This isn't covered by the scheme information we hold."
+
+
+@lru_cache(maxsize=1)
+def _template_sentences() -> frozenset[str]:
+    """Every sentence of every fixed template, for exact matching only."""
+    out: set[str] = set()
+    for tmpl in all_template_sentences():
+        out.update(_sentences(tmpl))
+    return frozenset(out)
+
+
 def _is_allowed_sentence(
     sentence: str,
     corpus_texts: tuple[str, ...],
     answer_sentences: list[str],
     templates: frozenset[str],
 ) -> bool:
+    """
+    True when the sentence is grounded: an exact template sentence, row 5's fixed
+    sentences, or verbatim corpus text (optionally behind a fixed lead-in or family lead).
+
+    Lead-ins and family leads are prefixes, never a pass on their own: the text after
+    them must be grounded too. Otherwise "Per the scheme page: <anything>" would pass.
+    """
+    _ = templates  # kept for the call signature; exact sentences come from the cache
     stripped = sentence.strip()
     if not stripped:
         return True
-    # Exact template match or template stem.
-    for tmpl in templates:
-        if stripped == tmpl or tmpl in stripped or stripped.startswith(tmpl):
-            return True
-    # Verbatim corpus / answer sentence substring.
-    norm = _norm(stripped)
-    for ans in answer_sentences:
-        if ans and (_norm(ans) in norm or norm in _norm(ans)):
-            return True
-    for block in corpus_texts:
-        if norm and norm in _norm(block):
-            return True
-        # Sentence may be a prefix of a longer corpus sentence.
-        if stripped.rstrip(".") and stripped.rstrip(".") in block:
-            return True
-    # Not-covered / family lead stems.
-    if stripped.startswith("This isn't covered by the scheme information we hold"):
+    if stripped in _template_sentences() or stripped == _NOT_COVERED_LEAD:
         return True
     # Row 5's second sentence names what was searched and the snapshot dates (digits),
     # so it needs an exact structural match rather than the digit heuristic.
     if is_not_covered_search_sentence(stripped):
         return True
-    if stripped.startswith("For the ") and "schemes (" in stripped:
-        return True
-    if stripped.startswith("For HDFC's ") and "schemes in this list" in stripped:
-        # Peel the family lead; remainder must be corpus / template.
-        after = stripped.split(":", 1)
-        if len(after) == 2 and after[1].strip():
-            return _is_allowed_sentence(after[1].strip(), corpus_texts, answer_sentences, templates)
-        return True
-    if stripped.startswith("Per the scheme page:"):
-        # Remainder after lead-in must still be checked — peel and recurse.
-        rest = stripped[len("Per the scheme page:") :].strip()
-        if not rest:
+    for lead in FACT_LEAD_INS:
+        if stripped.startswith(lead):
+            rest = stripped[len(lead) :].strip()
+            return not rest or _is_allowed_sentence(rest, corpus_texts, answer_sentences, templates)
+    family = _FAMILY_LEAD_RE.match(stripped)
+    if family is not None:
+        names = [n.strip() for n in family.group("names").split(",")]
+        if not names or not set(names) <= set(SCHEME_DISPLAY.values()):
+            return False
+        rest = family.group("rest").strip()
+        return not rest or _is_allowed_sentence(rest, corpus_texts, answer_sentences, templates)
+    # Verbatim corpus / answer text: the sentence must be contained in it, not merely
+    # contain it (extra words around a quoted fact are not grounded).
+    norm = _norm(stripped)
+    if not norm:
+        return False
+    for ans in answer_sentences:
+        if ans and norm in _norm(ans):
             return True
-        return _is_allowed_sentence(rest, corpus_texts, answer_sentences, templates)
-    if stripped.startswith("From the scheme information:"):
-        rest = stripped[len("From the scheme information:") :].strip()
-        if not rest:
+    bare = stripped.rstrip(".")
+    for block in corpus_texts:
+        if norm in _norm(block):
             return True
-        return _is_allowed_sentence(rest, corpus_texts, answer_sentences, templates)
+        # Sentence may be a prefix of a longer corpus sentence (no trailing period).
+        if bare and bare in block:
+            return True
     return False
 
 

@@ -1,0 +1,8 @@
+{
+  "id": "EDIT-18",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t4}/edit",
+  "expect_status": 409,
+  "empty_diff": true,
+  "precondition": "ticket_rejected_in_EDIT-10"
+}

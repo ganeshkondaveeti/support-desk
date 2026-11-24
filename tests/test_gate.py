@@ -149,7 +149,7 @@ def test_approve_twice_executes_once(db_url: str) -> None:
     with session_scope(db_url) as session:
         with pytest.raises(GateError) as exc:
             _approve(session, action_id, fake)
-        assert exc.value.code == "INVALID_STATUS"
+        assert exc.value.code == "ALREADY_APPROVED"  # eval EDIT-08: 409 already_approved
 
     assert len(fake.docs) == 1
 
@@ -308,7 +308,7 @@ def test_approve_rejects_unknown_and_non_pending(db_url: str) -> None:
     with session_scope(db_url) as session:
         with pytest.raises(GateError) as exc:
             _approve(session, action_id, fake)
-        assert exc.value.code == "INVALID_STATUS"
+        assert exc.value.code == "REJECTED"
 
 
 def test_reject_unknown_and_retry_flow(db_url: str) -> None:
@@ -661,3 +661,25 @@ def test_real_local_mcp_pulse_doc_append(tmp_path: Path, db_url: str) -> None:
     finally:
         client.stop()
         reset_mcp_client()
+
+
+def test_approve_superseded_reports_superseded(db_url: str) -> None:
+    """eval EDIT-09: approving a superseded action → 409 superseded."""
+    fake = FakeMcp()
+    with session_scope(db_url) as session:
+        action = _propose_doc(session)
+        action_id = action.id
+        action.status = "superseded"
+    with session_scope(db_url) as session:
+        with pytest.raises(GateError) as exc:
+            _approve(session, action_id, fake)
+        assert exc.value.code == "SUPERSEDED"
+
+
+def test_executor_stores_only_file_name_of_local_output() -> None:
+    """A temp dir that looks like a PAN must not fail the approval's audit write."""
+    from app.gate.executor import _audit_safe
+
+    raw = {"path": "/tmp/eval-harness-abcde1234f/samples/doc.md", "deduplicated": False}
+    assert _audit_safe(raw) == {"path": "doc.md", "deduplicated": False}
+    assert _audit_safe({"documentId": "abc"}) == {"documentId": "abc"}
