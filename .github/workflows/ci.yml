@@ -23,13 +23,13 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           enable-cache: true
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: mcp-server/.nvmrc
           cache: npm
@@ -88,6 +88,25 @@ jobs:
           kill $pid || true
           exit 1
 
+      - name: Evals (CuesOnly)
+        # P10: three gating suites over HTTP; quality suite is informational.
+        timeout-minutes: 45
+        run: |
+          uv run python -m evals.run_all --backend cues --seed 42 --skip-prod-hook
+        env:
+          APP_ENV: test
+          LLM_PROVIDER: cues_only
+          MCP_BACKEND: local
+          ADMIN_TOKEN: ci-eval-token
+
+      - name: Upload eval results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: eval-results
+          path: evals/results/
+          retention-days: 14
+
   ui:
     # Plan P9: lint, types, unit tests, build + content check, then e2e (Playwright + axe)
     # against the real API with the cues_only backend.
@@ -97,13 +116,13 @@ jobs:
       run:
         working-directory: ui
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: astral-sh/setup-uv@v4
+      - uses: astral-sh/setup-uv@v10.4.0
         with:
           enable-cache: true
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           node-version-file: ui/.nvmrc
           cache: npm
@@ -130,7 +149,7 @@ jobs:
           npx playwright install --with-deps chromium
           npm run e2e
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         if: failure()
         with:
           name: playwright-report
