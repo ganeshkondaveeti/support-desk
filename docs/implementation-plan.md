@@ -201,21 +201,21 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P2.1** `corpus/loader.py`
+- [x] **P2.1** `corpus/loader.py`
   - Snapshot A from `data/parsed/` and snapshot B from `data/processed/`.
   - The B scheme-id mapping by filename.
   - Builds `Corpus.all_blocks` and `Corpus.blocks` (resolved: B first, then A).
-- [ ] **P2.2** B normalization, as pure functions with golden tests:
+- [x] **P2.2** B normalization, as pure functions with golden tests:
   - Split sections into the 7 canonical sections (arch §5.1 table).
   - Join `label\nvalue` pairs as `label: value.`.
   - Collapse whitespace and strip `;`.
-- [ ] **P2.3** `corpus/quarantine.py`: the 4 rules in arch §5.1 (1999 launch date, AMC-wide AUM sentence, `Rating`, `data_points`). Assert no quarantined text survives.
-- [ ] **P2.4** `corpus/drift.py`: compare A vs B for overlapping `(scheme, section)`. `python -m app.corpus.drift` prints the drift table.
-- [ ] **P2.5** `corpus/sentences.py`: deterministic sentence selection by question keywords (e.g. "expense ratio" → that field).
-- [ ] **P2.6** Startup validation (arch §5.1 list). The app refuses to boot if it fails.
-- [ ] **P2.7** `db/models.py`: all tables in arch §5.3, with an Alembic baseline migration. Repository helpers call `pii.scan()` on every text column write and raise `PIILeakError`.
-- [ ] **P2.8** `db/snapshots.py`: `snapshot(db) -> dict` (canonical JSON, volatile timestamps excluded) and `diff(a, b) -> Diff`. The P10 edit-correctness suite uses these.
-- [ ] **P2.9** `allowlists.register_corpus(corpus)`, so `SCHEME_IDS` (6), `SECTIONS` (7) and `CITATION_URLS` (6) are filled from the loaded corpus.
+- [x] **P2.3** `corpus/quarantine.py`: the 4 rules in arch §5.1 (1999 launch date, AMC-wide AUM sentence, `Rating`, `data_points`). Assert no quarantined text survives.
+- [x] **P2.4** `corpus/drift.py`: compare A vs B for overlapping `(scheme, section)`. `python -m app.corpus.drift` prints the drift table.
+- [x] **P2.5** `corpus/sentences.py`: deterministic sentence selection by question keywords (e.g. "expense ratio" → that field).
+- [x] **P2.6** Startup validation (arch §5.1 list). The app refuses to boot if it fails.
+- [x] **P2.7** `db/models.py`: all tables in arch §5.3, with an Alembic baseline migration. Repository helpers call `pii.scan()` on every text column write and raise `PIILeakError`.
+- [x] **P2.8** `db/snapshots.py`: `snapshot(db) -> dict` (canonical JSON, volatile timestamps excluded) and `diff(a, b) -> Diff`. The P10 edit-correctness suite uses these.
+- [x] **P2.9** `allowlists.register_corpus(corpus)`, so `SCHEME_IDS` (6), `SECTIONS` (7) and `CITATION_URLS` (6) are filled from the loaded corpus.
 
 **Tests**
 

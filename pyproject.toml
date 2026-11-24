@@ -4,6 +4,7 @@ version = "0.0.1"
 description = "The Support Desk — Groww weekly pulse + multi-agent reply drafts."
 requires-python = ">=3.11"
 dependencies = [
+  "alembic>=1.20.1",
   "apscheduler>=3.10",
   "fastapi>=0.115",
   "google-genai>=1.0",
