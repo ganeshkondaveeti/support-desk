@@ -17,9 +17,10 @@ htmlcov/
 dist/
 build/
 
-# SQLite outside data/ (corpus chroma sqlite is under data/ and is tracked)
+# Runtime SQLite (corpus chroma under data/chroma_db/ stays tracked)
 *.sqlite3
-!data/**/*.sqlite3
+!data/chroma_db/**/*.sqlite3
+data/state/*.sqlite3
 
 # Node / UI / MCP
 node_modules/

@@ -1,0 +1,74 @@
+# Lint, type-check, and test. No secrets; cues_only LLM backend.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, master]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APP_ENV: test
+  LLM_PROVIDER: cues_only
+  MCP_BACKEND: local
+
+jobs:
+  python:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: mcp-server/.nvmrc
+          cache: npm
+          cache-dependency-path: mcp-server/package-lock.json
+
+      - name: Install and build MCP server
+        working-directory: mcp-server
+        run: npm ci && npm test && npm run build
+
+      - name: Install Python deps
+        run: uv sync --frozen
+
+      - name: Lint
+        run: |
+          uv run ruff check app tests
+          uv run ruff format --check app tests
+
+      - name: Type check (strict on guardrails/gate when implemented)
+        run: |
+          if find app/guardrails -name '*.py' ! -name '__init__.py' | grep -q .; then
+            uv run mypy --strict app/guardrails
+          fi
+          if find app/gate -name '*.py' ! -name '__init__.py' | grep -q .; then
+            uv run mypy --strict app/gate
+          fi
+
+      - name: Test
+        run: uv run pytest -q
+
+      - name: Health smoke
+        run: |
+          uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 &
+          pid=$!
+          for i in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:8000/api/health | grep -q '"status":"ok"'; then
+              kill $pid
+              exit 0
+            fi
+            sleep 1
+          done
+          kill $pid || true
+          exit 1

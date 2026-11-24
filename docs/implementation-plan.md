@@ -136,15 +136,15 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P0.1** `git init` at the project root, `.gitignore`. The `.gitignore` covers `.env`, `*.sqlite3` outside `data/`, `node_modules`, `.venv`, `ui/dist` and `logs/`. Then make a first commit of `data/` + `docs/`. The empty nested `docs/.git` (no commits, no remote) was already removed on 2026-11-24, so `docs/` is tracked by the root repo.
-- [ ] **P0.2** `pyproject.toml` (uv): `fastapi`, `uvicorn`, `pydantic-settings`, `sqlalchemy`, `langgraph`, `langgraph-checkpoint-sqlite`, `apscheduler`, `groq`, `google-genai`, `mcp`, `httpx`, `simhash`. Dev dependencies: `pytest`, `pytest-asyncio`, `ruff`, `mypy`.
-- [ ] **P0.3** `app/config.py`: `BaseSettings` with every env key from arch §16, plus `EXPLAINER_SCHEMES`, `TREND_*` thresholds, `REPEAT_MIN=5` and `REPEAT_WINDOW_DAYS=7`.
-- [ ] **P0.4** `app/main.py`: app factory, `/api/health`, and the static mount placeholder.
-- [ ] **P0.5** Write the folder layout from arch §4 with empty `__init__.py` files.
-- [ ] **P0.6** `.env.example` with empty values. `Makefile` targets: `dev`, `test`, `lint`, `evals`, `docker`.
-- [ ] **P0.7** GitHub Actions `ci.yml` running lint, type check and tests.
+- [x] **P0.1** `git init` at the project root, `.gitignore`. The `.gitignore` covers `.env`, `*.sqlite3` outside `data/`, `node_modules`, `.venv`, `ui/dist` and `logs/`. Then make a first commit of `data/` + `docs/`. The empty nested `docs/.git` (no commits, no remote) was already removed on 2026-11-24, so `docs/` is tracked by the root repo.
+- [x] **P0.2** `pyproject.toml` (uv): `fastapi`, `uvicorn`, `pydantic-settings`, `sqlalchemy`, `langgraph`, `langgraph-checkpoint-sqlite`, `apscheduler`, `groq`, `google-genai`, `mcp`, `httpx`, `simhash`. Dev dependencies: `pytest`, `pytest-asyncio`, `ruff`, `mypy`.
+- [x] **P0.3** `app/config.py`: `BaseSettings` with every env key from arch §16, plus `EXPLAINER_SCHEMES`, `TREND_*` thresholds, `REPEAT_MIN=5` and `REPEAT_WINDOW_DAYS=7`.
+- [x] **P0.4** `app/main.py`: app factory, `/api/health`, and the static mount placeholder.
+- [x] **P0.5** Write the folder layout from arch §4 with empty `__init__.py` files.
+- [x] **P0.6** `.env.example` with empty values. `Makefile` targets: `dev`, `test`, `lint`, `evals`, `docker`.
+- [x] **P0.7** GitHub Actions `ci.yml` running lint, type check and tests.
 - [x] **P0.8** Apply decision D1 to architecture.md (§2, §3, §4, §10.2–10.4, §16: MCP server = TS reuse, tool names, schemas, Node 22). Done 2026-11-24.
-- [ ] **P0.9** Vendor `Multi-Agentic-System/mcp-server/` into `mcp-server/` (without `node_modules`/`dist`). Check `npm ci && npm test && npm run build` passes on Node 22.
+- [x] **P0.9** Vendor `Multi-Agentic-System/mcp-server/` into `mcp-server/` (without `node_modules`/`dist`). Check `npm ci && npm test && npm run build` passes on Node 22.
 
 **Exit criteria**
 
