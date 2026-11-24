@@ -1080,7 +1080,7 @@ Free-text fields (`text`, `hint`, `edit`) are typed as plain `str` with no lengt
 
 | Method | Path | Purpose |
 | --- | --- | --- |
-| `GET` | `/api/health` | Liveness, corpus loaded, DB reachable, last weekly run status |
+| `GET` | `/api/health` | Liveness, corpus loaded, DB reachable, last weekly run status, pending approvals, gate mode, corpus last-checked dates (A/B), and `public_domains` + `edu_urls` (the UI's link allow-list) |
 | `POST` | `/api/tickets` | Submit a question (redacted at ingress), returns ticket id |
 | `POST` | `/api/tickets/seed` | Load `seed_questions.json` through the normal path |
 | `GET` | `/api/tickets` | Queue list (filters: status, team, priority) |
@@ -1103,6 +1103,8 @@ Mutating endpoints require a session for the single demo reviewer role, using `A
 ---
 
 ## 13. User interface
+
+**Visual design** (decision D6, plan P9): the Google Stitch export in `docs/design/stitch/` (11 screens + `DESIGN.md`) is the visual source of truth. It is rebuilt as React components that render only API data, never the export's sample copy or links. Links render only for URLs on `PUBLIC_DOMAINS`, and no HTML from the API is injected.
 
 A persistent header on **every** screen shows the banner **"Facts-only. No investment advice."** (§6), the corpus "Last checked" date, and the pending-approvals count.
 
@@ -1252,7 +1254,7 @@ flowchart LR
    - a bare 6-digit OTP with no keyword nearby
 
    They can also over-redact long numbers such as order ids. The Aadhaar Verhoeff check and the context rules reduce, but don't remove, false positives and negatives.
-9. **Fingerprint collisions.** Simhash bucketing may merge or split rephrasings at the margin, which affects the 5× threshold.
+9. **Fingerprint collisions.** Simhash bucketing may merge or split rephrasings at the margin, which affects the 5× threshold. P7.5 tunes a synonym lemma map (`deduct`/`sell` → `charge`/`redeem`, `exit-load` → `exitload`) so the six seed exit-load rephrasings share one bucket; residual splits from divergent agent picks (section/compliance) remain a known limit (EC-BR-04).
 10. **Explainer covers two schemes' links.** Family-level reuse relies on identical corpus text across schemes. That's verified by code, but only for the current corpus.
 11. **Review fee confusion ≠ corpus coverage** (G4). The `fees_brokerage` reviews are about brokerage and hidden trading charges, which no scheme page answers. The fee explainer covers scheme-level charges only. Brokerage questions are routed, not answered.
 12. **Two clocks** (G1). Review trends describe the data window (ending 2026-07-04), while repeat questions describe the last 7 days of tickets. The pulse shows both, but readers must not compare them as if they covered the same period.

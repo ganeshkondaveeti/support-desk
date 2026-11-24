@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"on-tertiary-container":"#ffe6d5","on-error":"#ffffff","surface-variant":"#d3e4fe","on-secondary-fixed":"#00174b","outline-variant":"#bdc9c6","on-tertiary":"#ffffff","on-primary-fixed-variant":"#00504a","on-surface-variant":"#3e4947","tertiary":"#7d4200","on-secondary-container":"#fefcff","surface-tint":"#006a63","on-secondary":"#ffffff","surface-bright":"#f8f9ff","primary-fixed-dim":"#80d5cb","on-background":"#0b1c30","surface-container-lowest":"#ffffff","on-tertiary-fixed":"#2f1500","on-tertiary-fixed-variant":"#6e3900","on-secondary-fixed-variant":"#003ea8","error-container":"#ffdad6","surface-container":"#e5eeff","secondary-container":"#316bf3","on-primary-container":"#a3faef","background":"#f8f9ff","inverse-on-surface":"#eaf1ff","primary-container":"#0f766e","surface-dim":"#cbdbf5","secondary":"#0051d5","inverse-surface":"#213145","surface-container-high":"#dce9ff","error":"#ba1a1a","tertiary-container":"#a15600","surface-container-highest":"#d3e4fe","on-surface":"#0b1c30","surface-container-low":"#eff4ff","secondary-fixed":"#dbe1ff","on-error-container":"#93000a","inverse-primary":"#80d5cb","primary-fixed":"#9cf2e8","on-primary":"#ffffff","primary":"#005c55","secondary-fixed-dim":"#b4c5ff","on-primary-fixed":"#00201d","tertiary-fixed":"#ffdcc3","outline":"#6e7977","surface":"#f8f9ff","tertiary-fixed-dim":"#ffb77d"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"space-sm":"0.5rem","margin-sm":"1rem","space-lg":"1rem","space-xs":"0.25rem","space-md":"0.75rem",margin:"1.5rem",gutter:"1rem","gutter-compact":"0.5rem","space-xl":"1.5rem"},fontFamily:{"label-sm":["JetBrains Mono"],"body-sm":["Inter"],"headline-lg":["Inter"],"headline-md":["Inter"],"label-md":["JetBrains Mono"],"body-lg":["Inter"],"body-md":["Inter"],"headline-sm":["Inter"],"label-lg":["Inter"]},fontSize:{"label-sm":["0.6875rem",{lineHeight:"0.875rem",fontWeight:"400"}],"body-sm":["0.75rem",{lineHeight:"1.125rem",fontWeight:"400"}],"headline-lg":["1.5rem",{lineHeight:"2rem",letterSpacing:"-0.02em",fontWeight:"600"}],"headline-md":["1.25rem",{lineHeight:"1.75rem",letterSpacing:"-0.015em",fontWeight:"600"}],"label-md":["0.75rem",{lineHeight:"1rem",letterSpacing:"-0.01em",fontWeight:"500"}],"body-lg":["0.875rem",{lineHeight:"1.375rem",fontWeight:"500"}],"body-md":["0.8125rem",{lineHeight:"1.25rem",fontWeight:"400"}],"headline-sm":["1rem",{lineHeight:"1.5rem",letterSpacing:"-0.01em",fontWeight:"600"}],"label-lg":["0.75rem",{lineHeight:"1rem",letterSpacing:"0.02em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 h-14 z-50 bg-surface-container-lowest border-b border-outline-variant/30 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[20px]">verified_user</span><span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Support Desk</span></div><div class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#FDE68A] bg-[#FEF3C7] text-[#92400E] font-body-sm text-body-sm font-medium"><span class="material-symbols-outlined text-[15px] leading-none">info</span><span>Facts-only. No investment advice.</span></div></div><div class="flex items-center gap-space-lg"><span class="hidden xl:inline-block font-label-sm text-label-sm text-on-surface-variant font-mono">Corpus last checked: A 28-Jun-2026 · B 01-Sep-2026</span><a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary transition-colors" data-path="approvals" href="#"><span class="material-symbols-outlined text-[16px]">task_alt</span><span>Approvals</span><span class="px-1.5 py-0.2 rounded-full bg-surface-container-lowest/20 font-label-sm text-label-sm font-semibold">5</span></a><div class="flex items-center gap-space-sm pl-space-sm border-l border-outline-variant/30 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="hidden sm:inline font-body-sm text-body-sm text-on-surface font-medium">Reviewer</span><span class="material-symbols-outlined text-on-surface-variant text-[18px]">arrow_drop_down</span></div></div></header><aside class="fixed left-0 top-14 bottom-0 w-60 z-40 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col justify-between py-space-md"><div class="flex flex-col gap-space-sm px-space-sm"><nav class="flex flex-col gap-0.5" data-active-classes="bg-primary-container text-on-primary font-medium"><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="queue" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">inbox</span><span>Queue</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="weekly-pulse" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">query_stats</span><span>Weekly pulse</span></div></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="sources" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">dataset</span><span>Sources</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono">6 HDFC MF</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="approvals" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">verified</span><span>Approvals</span></div><span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-primary-container text-on-primary font-semibold">5</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="canonical-explainers" href="#"><div class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">menu_book</span><span>Canonical explainers</span></div></a></nav></div><div class="px-space-sm pt-space-sm border-t border-outline-variant/30"><button class="w-full flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-sm text-body-sm transition-colors" type="button"><span class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">keyboard_double_arrow_left</span><span>Collapse Sidebar</span></span><span class="font-label-sm text-label-sm text-on-surface-variant/70 font-mono">⌘[</span></button></div></aside><div class="pl-60"><main class="pt-14 min-h-screen bg-surface px-space-xl py-space-lg w-full"><div class="flex flex-col w-full gap-space-lg">
+<!-- Top Header Area -->
+<div class="flex flex-col lg:flex-row lg:items-center justify-between gap-space-md">
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center gap-space-md">
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Queue</h1>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-label-sm text-label-sm">6 active</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Incoming questions with AI drafts. Nothing is sent without your approval.</p>
+</div>
+<div class="flex flex-wrap items-center gap-space-md">
+<button class="inline-flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-lowest text-on-surface shadow-sm hover:bg-surface-container-low transition-colors font-body-md text-body-md font-medium" id="btn-seed" type="button">
+<span class="material-symbols-outlined text-[18px] text-on-surface-variant">playlist_add</span>
+<span>Load seed questions</span>
+</button>
+<div class="relative group">
+<button class="inline-flex items-center gap-space-sm px-space-lg py-space-sm rounded-lg bg-primary text-on-primary shadow-sm hover:bg-primary-container transition-colors font-body-md text-body-md font-medium" id="btn-submit-q" type="button">
+<span class="material-symbols-outlined text-[18px]">add_comment</span>
+<span>Submit question</span>
+</button>
+<div class="hidden group-hover:flex items-center gap-space-xs absolute right-0 top-full mt-space-xs w-72 p-space-sm rounded-lg bg-inverse-surface text-inverse-on-surface shadow-md z-30 font-body-sm text-body-sm">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed shrink-0">shield_lock</span>
+<span>Personal details like PAN, phone or email are redacted automatically</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Filter Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-md p-space-md rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex flex-wrap items-center gap-space-sm" id="status-filters">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase mr-space-xs">Status</span>
+<button class="filter-chip px-2.5 py-1 rounded-full bg-primary text-on-primary font-label-md text-label-md transition-colors" data-status="all" type="button">All</button>
+<button class="filter-chip px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors" data-status="Awaiting review" type="button">Awaiting review</button>
+<button class="filter-chip px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors" data-status="Blocked" type="button">Blocked</button>
+<button class="filter-chip px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors" data-status="Sent" type="button">Sent</button>
+<button class="filter-chip px-2.5 py-1 rounded-full bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-md text-label-md transition-colors" data-status="Rejected" type="button">Rejected</button>
+</div>
+<div class="flex flex-wrap items-center gap-space-md">
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Team</span>
+<select class="px-2.5 py-1 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none" id="team-filter">
+<option value="all">All teams</option>
+<option value="Compliance">Compliance</option>
+<option value="Support">Support</option>
+<option value="Payments Ops">Payments Ops</option>
+</select>
+</div>
+<div class="flex items-center gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Priority</span>
+<div class="flex items-center gap-space-xs" id="priority-filters">
+<button class="prio-chip px-2 py-0.5 rounded bg-surface-container text-on-surface font-label-sm text-label-sm" data-priority="all" type="button">All</button>
+<button class="prio-chip px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-sm text-label-sm" data-priority="P1" type="button">P1</button>
+<button class="prio-chip px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-sm text-label-sm" data-priority="P2" type="button">P2</button>
+<button class="prio-chip px-2 py-0.5 rounded bg-surface-container-low text-on-surface-variant hover:bg-surface-container font-label-sm text-label-sm" data-priority="P3" type="button">P3</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Main 60/40 Master-Detail Split -->
+<div class="grid grid-cols-1 xl:grid-cols-12 gap-space-lg items-start">
+<!-- Left Pane (60% -> 7 cols on xl) -->
+<div class="xl:col-span-7 rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low text-on-surface-variant">
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase whitespace-nowrap">Received</th>
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase">Question</th>
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase whitespace-nowrap">Status</th>
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase whitespace-nowrap">Priority</th>
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase whitespace-nowrap">Team</th>
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase whitespace-nowrap text-right">Repeats (7d)</th>
+<th class="px-space-md py-space-sm font-label-sm text-label-sm uppercase whitespace-nowrap text-right">Reviewer flags</th>
+</tr>
+</thead>
+<tbody id="queue-tbody">
+<!-- Row 1 (SELECTED) -->
+<tr class="queue-row cursor-pointer bg-primary-fixed/30 hover:bg-primary-fixed/40 transition-colors" data-priority="P1" data-status="Awaiting review" data-team="Compliance">
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">24-Nov 10:42</td>
+<td class="px-space-md py-space-md max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface truncate">
+                  Why was I charged an exit load? My PAN is <span class="px-1 py-0.2 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">[PAN]</span>, call me on <span class="px-1 py-0.2 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">[PHONE]</span>. Should I just redeem everything?
+                </div>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Awaiting review
+                </span>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">P1</span>
+</td>
+<td class="px-space-md py-space-md font-body-sm text-body-sm text-on-surface whitespace-nowrap">Compliance</td>
+<td class="px-space-md py-space-md font-label-md text-label-md text-on-surface text-right whitespace-nowrap">7</td>
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant text-right whitespace-nowrap">0 flags</td>
+</tr>
+<!-- Row 2 -->
+<tr class="queue-row cursor-pointer bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-priority="P3" data-status="Awaiting review" data-team="Support">
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">24-Nov 10:15</td>
+<td class="px-space-md py-space-md max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface truncate">What is the expense ratio of HDFC Mid Cap Fund?</div>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Awaiting review
+                </span>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">P3</span>
+</td>
+<td class="px-space-md py-space-md font-body-sm text-body-sm text-on-surface whitespace-nowrap">Support</td>
+<td class="px-space-md py-space-md font-label-md text-label-md text-on-surface text-right whitespace-nowrap">1</td>
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant text-right whitespace-nowrap">0</td>
+</tr>
+<!-- Row 3 -->
+<tr class="queue-row cursor-pointer bg-surface-container-low/50 hover:bg-surface-container-low transition-colors" data-priority="P2" data-status="Awaiting review" data-team="Compliance">
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">24-Nov 09:58</td>
+<td class="px-space-md py-space-md max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface truncate">Which fund will give the best returns next year?</div>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Awaiting review
+                </span>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">P2</span>
+</td>
+<td class="px-space-md py-space-md font-body-sm text-body-sm text-on-surface whitespace-nowrap">Compliance</td>
+<td class="px-space-md py-space-md font-label-md text-label-md text-on-surface text-right whitespace-nowrap">2</td>
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant text-right whitespace-nowrap">0</td>
+</tr>
+<!-- Row 4 -->
+<tr class="queue-row cursor-pointer bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-priority="P3" data-status="Sent" data-team="Support">
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">23-Nov 18:20</td>
+<td class="px-space-md py-space-md max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface truncate">Is there a lock-in for HDFC ELSS Tax Saver?</div>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary-fixed text-on-primary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary"></span>Sent
+                </span>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">P3</span>
+</td>
+<td class="px-space-md py-space-md font-body-sm text-body-sm text-on-surface whitespace-nowrap">Support</td>
+<td class="px-space-md py-space-md font-label-md text-label-md text-on-surface text-right whitespace-nowrap">1</td>
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant text-right whitespace-nowrap">0</td>
+</tr>
+<!-- Row 5 -->
+<tr class="queue-row cursor-pointer bg-surface-container-low/50 hover:bg-surface-container-low transition-colors" data-priority="P2" data-status="Awaiting review" data-team="Payments Ops">
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">23-Nov 17:02</td>
+<td class="px-space-md py-space-md max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface truncate">My withdrawal is stuck for 3 days</div>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Awaiting review
+                </span>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-secondary-fixed text-on-secondary-fixed font-label-sm text-label-sm">P2</span>
+</td>
+<td class="px-space-md py-space-md font-body-sm text-body-sm text-on-surface whitespace-nowrap">Payments Ops · knowledge gap</td>
+<td class="px-space-md py-space-md font-label-md text-label-md text-on-surface text-right whitespace-nowrap">3</td>
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant text-right whitespace-nowrap">0</td>
+</tr>
+<!-- Row 6 -->
+<tr class="queue-row cursor-pointer bg-surface-container-lowest hover:bg-surface-container-low transition-colors" data-priority="P1" data-status="Blocked" data-team="Compliance">
+<td class="px-space-md py-space-md font-label-sm text-label-sm text-on-surface-variant whitespace-nowrap">23-Nov 16:40</td>
+<td class="px-space-md py-space-md max-w-xs">
+<div class="font-body-sm text-body-sm text-on-surface truncate">Exit load on gold fund? guaranteed 12% right?</div>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-error-container text-on-error-container font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-error"></span>Blocked
+                </span>
+</td>
+<td class="px-space-md py-space-md whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">P1</span>
+</td>
+<td class="px-space-md py-space-md font-body-sm text-body-sm text-on-surface whitespace-nowrap">Compliance</td>
+<td class="px-space-md py-space-md font-label-md text-label-md text-on-surface text-right whitespace-nowrap">7</td>
+<td class="px-space-md py-space-md text-right whitespace-nowrap">
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">2 flags</span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Right Pane (40% -> 5 cols on xl) -->
+<div class="xl:col-span-5 sticky top-16 flex flex-col rounded-xl bg-surface-container-lowest shadow-md overflow-hidden">
+<div class="flex flex-col gap-space-md p-space-lg">
+<!-- 1. Header -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm">
+<div class="flex flex-wrap items-center gap-space-sm">
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">tkt_01JD8…</span>
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-sm text-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-tertiary"></span>Awaiting review
+            </span>
+<span class="px-2 py-0.5 rounded bg-error-container text-on-error-container font-label-sm text-label-sm font-semibold">P1</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Compliance + Support/Product (Pricing)</span>
+</div>
+<!-- 2. Disagreement Banner -->
+<div class="flex items-start gap-space-sm p-space-md rounded-lg bg-tertiary-fixed text-on-tertiary-fixed">
+<span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5">warning</span>
+<p class="font-body-sm text-body-sm">
+            Facts agent has a clean, cited answer, but Pattern shows 7 similar questions this week (rising). Ticket stays open after sending — escalated to Product (Pricing).
+          </p>
+</div>
+<!-- 3. Draft Reply Card -->
+<div class="flex flex-col gap-space-sm p-space-md rounded-lg bg-surface-container-low">
+<div class="flex items-center justify-between">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Draft reply</span>
+<span class="px-2 py-0.5 rounded-full bg-surface-container text-on-surface font-label-sm text-label-sm">2 / 3 sentences</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface leading-relaxed">
+            We can't offer investment advice or recommend whether to buy, hold or redeem. For general guidance on mutual funds, please see the AMFI investor education page. Exit load of 1% if redeemed within 1 year.
+          </p>
+<div class="flex flex-wrap items-center justify-between gap-space-sm pt-space-xs">
+<a class="inline-flex items-center gap-1 font-body-sm text-body-sm text-primary hover:underline" href="#">
+<span>groww.in · HDFC Large Cap Fund – Exit load</span>
+<span class="material-symbols-outlined text-[14px]">open_in_new</span>
+</a>
+<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">template + corpus</span>
+</div>
+<div class="font-label-sm text-label-sm text-on-surface-variant">Last checked 01-Sep-2026 · Snapshot B</div>
+</div>
+<!-- 4. Routing Note -->
+<div class="flex flex-col gap-space-sm p-space-md rounded-lg bg-surface-container">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span class="font-label-sm text-label-sm uppercase">Internal — never sent</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface">
+            fees_brokerage: 136 reviews 12-Apr→04-Jul-2026, recurring; 7 similar questions in last 7 days of tickets (18-Nov→24-Nov-2026).
+          </p>
+<div class="grid grid-cols-2 gap-space-sm pt-space-xs">
+<div class="p-space-sm rounded bg-surface-container-lowest">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Review window</div>
+<div class="font-label-md text-label-md text-on-surface">12-Apr→04-Jul-2026</div>
+</div>
+<div class="p-space-sm rounded bg-surface-container-lowest">
+<div class="font-label-sm text-label-sm text-on-surface-variant">Ticket window</div>
+<div class="font-label-md text-label-md text-on-surface">18-Nov→24-Nov-2026</div>
+</div>
+</div>
+</div>
+<!-- 5. Reviewer Checks -->
+<div class="flex flex-col gap-space-xs">
+<span class="font-label-sm text-label-sm text-on-surface-variant uppercase">Reviewer checks</span>
+<div class="grid grid-cols-2 gap-x-space-md gap-y-space-xs p-space-sm rounded-lg bg-surface-container-low">
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Uncited claim</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Advice / buy-sell</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Performance</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>PII</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Length ≤3</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>URL scope</span>
+</div>
+<div class="flex items-center gap-1.5 font-body-sm text-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-primary">check_circle</span>
+<span>Last checked</span>
+</div>
+</div>
+</div>
+<!-- 6. Agent Outputs (Collapsible) -->
+<div class="flex flex-col gap-space-xs">
+<button class="flex items-center justify-between w-full py-space-xs text-left font-label-sm text-label-sm text-on-surface-variant uppercase hover:text-on-surface transition-colors" id="toggle-agents" type="button">
+<span>Agent outputs</span>
+<span class="material-symbols-outlined text-[18px] transition-transform" id="agents-chevron">expand_less</span>
+</button>
+<div class="grid grid-cols-3 gap-space-sm" id="agents-panel">
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1">
+<div class="font-label-md text-label-md text-on-surface">Facts</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Scheme: —</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Section: Exit load</div>
+<div class="mt-1 pt-1 bg-surface-container rounded px-1.5 py-0.5 font-label-sm text-label-sm text-on-surface">Model picked: Exit load</div>
+<div class="bg-primary-fixed/40 rounded px-1.5 py-0.5 font-label-sm text-label-sm text-on-primary-fixed">Validated: Exit load</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1">
+<div class="font-label-md text-label-md text-on-surface">Pattern</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Theme: fees_brokerage</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Trend: recurring</div>
+<div class="mt-1 pt-1 bg-surface-container rounded px-1.5 py-0.5 font-label-sm text-label-sm text-on-surface">Model picked: recurring</div>
+<div class="bg-primary-fixed/40 rounded px-1.5 py-0.5 font-label-sm text-label-sm text-on-primary-fixed">Validated: recurring</div>
+</div>
+<div class="p-space-sm rounded-lg bg-surface-container-low flex flex-col gap-1">
+<div class="font-label-md text-label-md text-on-surface">Compliance</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Flag: advice</div>
+<div class="font-body-sm text-body-sm text-on-surface-variant">Status: clean</div>
+<div class="mt-1 pt-1 bg-surface-container rounded px-1.5 py-0.5 font-label-sm text-label-sm text-on-surface">Model picked: advice</div>
+<div class="bg-primary-fixed/40 rounded px-1.5 py-0.5 font-label-sm text-label-sm text-on-primary-fixed">Validated: advice</div>
+</div>
+</div>
+</div>
+<!-- 7. Version History -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-center justify-between font-label-sm text-label-sm text-on-surface-variant">
+<div class="flex items-center gap-space-sm">
+<span class="px-1.5 py-0.5 rounded bg-surface-container text-on-surface">v1 agent</span>
+<span class="px-1.5 py-0.5 rounded bg-primary-fixed text-on-primary-fixed">v2 human edit</span>
+</div>
+<span>Refinements 1 / 5</span>
+</div>
+<div class="w-full h-1.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full w-1/5 bg-primary rounded-full"></div>
+</div>
+</div>
+</div>
+<!-- 8. Sticky Action Bar -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm p-space-md bg-surface-container-low">
+<div class="flex items-center gap-space-sm">
+<button class="inline-flex items-center gap-1.5 px-space-md py-space-sm rounded-lg bg-primary text-on-primary hover:bg-primary-container transition-colors font-body-sm text-body-sm font-medium" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Approve &amp; send</span>
+</button>
+<button class="px-space-md py-space-sm rounded-lg bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors font-body-sm text-body-sm font-medium" type="button">
+            Edit
+          </button>
+<button class="px-space-md py-space-sm rounded-lg bg-error-container text-on-error-container hover:bg-error hover:text-on-error transition-colors font-body-sm text-body-sm font-medium" type="button">
+            Reject
+          </button>
+</div>
+<!-- Refine Split Button -->
+<div class="relative">
+<div class="inline-flex rounded-lg overflow-hidden shadow-sm">
+<button class="px-space-md py-space-sm bg-surface-container-lowest text-on-surface hover:bg-surface-container transition-colors font-body-sm text-body-sm font-medium" id="btn-refine" type="button">
+              Refine
+            </button>
+<button class="px-2 py-space-sm bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors flex items-center" id="btn-refine-toggle" type="button">
+<span class="material-symbols-outlined text-[16px]">arrow_drop_down</span>
+</button>
+</div>
+<div class="hidden absolute right-0 bottom-full mb-space-xs w-64 p-space-sm rounded-xl bg-surface-container-lowest shadow-xl z-30 flex flex-col gap-space-xs" id="refine-menu">
+<button class="refine-opt text-left px-space-sm py-1.5 rounded hover:bg-surface-container-low font-body-sm text-body-sm text-on-surface" type="button">Shorter</button>
+<button class="refine-opt text-left px-space-sm py-1.5 rounded hover:bg-surface-container-low font-body-sm text-body-sm text-on-surface" type="button">Different scheme</button>
+<button class="refine-opt text-left px-space-sm py-1.5 rounded hover:bg-surface-container-low font-body-sm text-body-sm text-on-surface" type="button">Check fee issue</button>
+<button class="refine-opt text-left px-space-sm py-1.5 rounded hover:bg-surface-container-low font-body-sm text-body-sm text-on-surface" type="button">Other…</button>
+<input class="mt-1 px-space-sm py-1.5 rounded-lg bg-surface-container-low text-on-surface font-body-sm text-body-sm focus:outline-none" placeholder="Optional hint…" type="text"/>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    const statusChips = document.querySelectorAll('.filter-chip');
+    const prioChips = document.querySelectorAll('.prio-chip');
+    const teamSelect = document.getElementById('team-filter');
+    const rows = document.querySelectorAll('.queue-row');
+
+    let currentStatus = 'all';
+    let currentPriority = 'all';
+    let currentTeam = 'all';
+
+    function applyFilters() {
+      rows.forEach((row) => {
+        const matchStatus = currentStatus === 'all' || row.dataset.status === currentStatus;
+        const matchPriority = currentPriority === 'all' || row.dataset.priority === currentPriority;
+        const matchTeam = currentTeam === 'all' || row.dataset.team === currentTeam;
+        row.style.display = matchStatus && matchPriority && matchTeam ? '' : 'none';
+      });
+    }
+
+    statusChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        currentStatus = chip.dataset.status;
+        statusChips.forEach((c) => {
+          c.classList.remove('bg-primary', 'text-on-primary');
+          c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+        chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        chip.classList.add('bg-primary', 'text-on-primary');
+        applyFilters();
+      });
+    });
+
+    prioChips.forEach((chip) => {
+      chip.addEventListener('click', () => {
+        currentPriority = chip.dataset.priority;
+        prioChips.forEach((c) => {
+          c.classList.remove('bg-surface-container', 'text-on-surface');
+          c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+        });
+        chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        chip.classList.add('bg-surface-container', 'text-on-surface');
+        applyFilters();
+      });
+    });
+
+    teamSelect.addEventListener('change', (e) => {
+      currentTeam = e.target.value;
+      applyFilters();
+    });
+
+    rows.forEach((row) => {
+      row.addEventListener('click', () => {
+        rows.forEach((r) => r.classList.remove('bg-primary-fixed/30'));
+        row.classList.add('bg-primary-fixed/30');
+      });
+    });
+
+    const toggleAgents = document.getElementById('toggle-agents');
+    const agentsPanel = document.getElementById('agents-panel');
+    const agentsChevron = document.getElementById('agents-chevron');
+    toggleAgents.addEventListener('click', () => {
+      agentsPanel.classList.toggle('hidden');
+      agentsChevron.classList.toggle('rotate-180');
+    });
+
+    const refineToggle = document.getElementById('btn-refine-toggle');
+    const refineMenu = document.getElementById('refine-menu');
+    refineToggle.addEventListener('click', (e) => {
+      e.stopPropagation();
+      refineMenu.classList.toggle('hidden');
+    });
+    document.addEventListener('click', (e) => {
+      if (!refineMenu.contains(e.target) && e.target !== refineToggle) {
+        refineMenu.classList.add('hidden');
+      }
+    });
+  })();
+</script></main></div></body></html>

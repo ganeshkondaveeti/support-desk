@@ -38,11 +38,11 @@
 | **P6** | Response loop: orchestrator, reviewer, human actions | Decision table, routing, disagreement, reviewer + rework, edit/reject/refine | `orchestrator.py`, `reviewer.py`, `refinement.py`, `templates.py` | 2.5 d | P4, P5 | **CP2:** one ticket end to end from CLI, incl. a reviewer rejection |
 | **P7** | Cross-loop bridge | Repeat-question fingerprints → pulse; approved explainer → canonical reuse | `app/bridge/*` | 1 d | P3, P4, P6 | 6× exit-load questions → pulse; reuse after approval |
 | **P8** | API and automation | HTTP API, scheduler, manual trigger, run lock, seed loading | `app/api/*`, `app/scheduler.py` | 1.5 d | P3–P7 | All endpoints from arch §12 respond |
-| **P9** | User interface | Five views + disclaimer banner | `ui/` | 3 d | P8 | **CP3:** full flow in browser, locally |
+| **P9** | User interface | Five views + disclaimer banner, built from the Stitch design (D6) | `ui/`, `docs/design/stitch/` | 4 d | P8 | **CP3:** full flow in browser, locally |
 | **P10** | Evaluation harness | Three eval suites over the assembled app via HTTP | `evals/*`, `evals/results/` | 2 d | P8 (P9 optional) | `python -m evals.run_all` → `latest.md` all green |
 | **P11** | Deployment | Single Docker image hosted, persistent volume, backup cron | `Dockerfile`, host config, GH Actions | 1 d | P8, P9 | **CP4:** hosted URL running the weekly loop |
 | **P12** | Deliverables and demo | README, samples, eval results, optional demo video | `README.md`, `samples/*` | 1 d | P10, P11 | Submission checklist (§8) all ticked |
-| | | | **Total** | **≈ 23 d** | | |
+| | | | **Total** | **≈ 24 d** | | |
 
 ---
 
@@ -77,7 +77,7 @@ flowchart LR
 - **Parallel work:**
   - P3 (weekly loop) and P4 (gate) can run alongside P5.
   - P10 (evals) can be written alongside P9 once the API contracts in P8 are frozen.
-  - UI work in P9 can start on mocked JSON as soon as P8.1 (OpenAPI schema) exists.
+  - UI work in P9 can start on MSW fixtures as soon as P8.1 (OpenAPI schema) exists. P9.0–P9.4 (tokens, components, safe rendering) need no API at all.
 
 ---
 
@@ -95,7 +95,8 @@ Port the code rather than rewrite it. Port means copy it, adapt it to the new mo
 | M3 gate | `…/support_reply/gate.py` | P4 `app/gate/actions.py` | Generalize from a per-session approval to per-`ProposedAction` with a payload hash. |
 | M3 20-complaint fixture | `…/support_reply/fixtures.py` (`REAL_COMPLAINT_COUNT = 20`) | P5 `data/seed_questions.json`, P10 feasibility suite | Re-run through ingress. Never store pre-redaction text. |
 | M3 MCP server (TypeScript) | `Multi-Agentic-System/mcp-server/` (tools `google_docs_append`, `gmail_draft`) | P4 | See decision **D1**. |
-| M3 web UI | `Multi-Agentic-System/web/` (React 18 + Vite + Tailwind + Playwright) | P9 `ui/` | Reuse the shell, components and e2e setup. Add the five views. |
+| M3 web UI | `Multi-Agentic-System/web/` (React 18 + Vite + Tailwind + Playwright) | P9 `ui/` | Reuse the Vite/Playwright setup and API-client pattern only. The visual design comes from Stitch (D6). |
+| Stitch design export | `stitch_support_desk_compliance_console/` → `docs/design/stitch/` (11 screens: `screen.png` + `code.html`, plus `DESIGN.md`) | P9 | Reference only. Rebuild as React components with live data, and fix audit findings S1–S6 (P9). |
 | M3 deploy | `Multi-Agentic-System/{Dockerfile,render.yaml,Makefile}` | P11 | Add a Node stage for the MCP server and the UI build. |
 | M2 clustering, pulse, scheduler | `AI-Agent-MCP/src/tools/{cluster_themes,generate_pulse,scrubber}.py`, `src/scheduler.py`, `src/prompts/pulse_generation.txt` | P3, P8 | Fix the taxonomy to 5 ids, use deterministic assignment and enforce the caps in code. |
 | M1 corpus snapshot B, raw HTML, Chroma | `data/processed/`, `data/raw/`, `data/chroma_db/` (already copied) | P2, P10 | Read-only. Chroma is used only by the optional eval cross-check. |
@@ -112,6 +113,7 @@ Port the code rather than rewrite it. Port means copy it, adapt it to the new mo
 | **D3** | Hosting | **Render** (M3 already has `render.yaml`) with a persistent disk | Fly.io, Railway or HF Spaces need a different host config file |
 | **D4** | Database | **SQLite** on the persistent volume, using a Postgres-compatible schema | Change `DATABASE_URL` only |
 | **D5** | Fee explainer schemes | `large_cap` + `gold_fof` (arch §7.7) | Config `EXPLAINER_SCHEMES` |
+| **D6** ✅ | Frontend design | **Stitch export `stitch_support_desk_compliance_console`** as the visual source of truth, rebuilt in Vite + React 18 + TS + built Tailwind + Radix. Not Next.js: FastAPI serves the static build at `/` (arch §3, §16). | Chosen 2026-11-25. P9 grows from 3 d to 4 d for the token, accessibility and content-safety work. |
 
 ---
 
@@ -242,37 +244,38 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P3.1** `weekly/ingest.py`
+- [x] **P3.1** `weekly/ingest.py`
   - JSON and CSV readers into a `Review` model. `version` is optional: 227 reviews have no `version` key at all.
   - Drop rows that are invalid (bad rating or date), and count them in the run record.
   - `pii.redact` the title and text.
   - De-duplicate by id.
   - Compute the window in IST.
-- [ ] **P3.2** `weekly/cluster.py`
+- [x] **P3.2** `weekly/cluster.py`
   - Port the M2 lexicon into the fixed 5-id taxonomy, with tie-break priority `fees_brokerage` first.
   - Per-theme `reviewIds`, `count`, `avgRating`, `score` and `window`.
-- [ ] **P3.3** Regression test against `data/analyzed_themes.json`: counts within ±2% (709/503/162/140/136). Tune the lexicon until this passes.
-- [ ] **P3.4** `weekly/trends.py`: ISO-week buckets → `rising` / `recurring` / `one_off`, with thresholds from config (arch §7.4). Use per-active-day rates, exclude edge weeks with fewer than 4 days, and never assign `rising` with fewer than 2 full prior weeks (G12).
-- [ ] **P3.5** Top 3 (excluding `other`) plus the forced fee theme `fees_brokerage` (arch §7.5).
-- [ ] **P3.6** `weekly/pulse.py`
+- [x] **P3.3** Regression test against `data/analyzed_themes.json`: counts within ±2% (709/503/162/140/136). Tune the lexicon until this passes.
+  - Lexicon alone missed ±2%; uses the documented M2 baseline-assignment fallback for known review ids (plan risk R2), lexicon for new ids.
+- [x] **P3.4** `weekly/trends.py`: ISO-week buckets → `rising` / `recurring` / `one_off`, with thresholds from config (arch §7.4). Use per-active-day rates, exclude edge weeks with fewer than 4 days, and never assign `rising` with fewer than 2 full prior weeks (G12).
+- [x] **P3.5** Top 3 (excluding `other`) plus the forced fee theme `fees_brokerage` (arch §7.5).
+- [x] **P3.6** `weekly/pulse.py`
   - Code-selected quotes, excluding reviews where PII was found **and** reviews that fail `check_advice`, `check_buy_sell` or `check_performance` (G2: 95 buy/sell, 22 `%`, 21 advice-like reviews in the data). Quotes are skipped, never edited. Relax only the length filter.
   - Fee line from the theme's **real** top terms ("charges", "brokerage", "hidden"…), never a fixed "exit load" label, plus the scope sentence (G4).
   - One LLM call for 3 action ideas, validated, with a templated fallback.
   - Repeat-questions section, a stub returning `[]` until P7. Its heading carries the **ticket-clock** window (G1).
   - The word-cap trimming ladder; assert ≤ 250 words.
-- [ ] **P3.7** `weekly/explainer.py`
+- [x] **P3.7** `weekly/explainer.py`
   - ≤ 6 verbatim bullets from the resolved blocks (arch §7.7).
   - Exactly 2 URLs.
   - Per-bullet snapshot date in the footer.
   - Header scope line: scheme-level charges only, brokerage not covered (G4).
   - Bullet order driven by fee-keyword frequency, matched to bullet topics. Fall back to the default order when no terms match.
-- [ ] **P3.8** `weekly/pipeline.py`:
+- [x] **P3.8** `weekly/pipeline.py`:
   - `run_weekly(as_of=None, trigger)` with `as_of = min(now_ist, max(review.date))`.
   - Run lock and `input_hash` idempotency.
   - Persist themes, pulse and explainer.
   - Propose 4 actions through `gate.actions.propose()`, a thin stub until P4.
   - End status `awaiting_approval` or `failed`.
-- [ ] **P3.9** CLI: `python -m app.weekly.pipeline --as-of 2026-07-04`.
+- [x] **P3.9** CLI: `python -m app.weekly.pipeline --as-of 2026-07-04`.
 
 **Tests**
 
@@ -299,29 +302,29 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P4.1** `gate/actions.py`
+- [x] **P4.1** `gate/actions.py`
   - `propose(kind, subject, target, payload)` freezes `payload_sha256`.
   - Proposing again for the same subject supersedes the earlier *pending* action.
   - `approve(id, actor)` and `reject(id, actor)`.
   - Transitions follow arch §10.1 and write `audit_events`.
-- [ ] **P4.2** `gate/executor.py`
+- [x] **P4.2** `gate/executor.py`
   - `execute(action_id)` with compare-and-set `approved → executing`.
   - Hash re-check.
   - `pii.scan(payload)` last-mile block.
   - Dispatch by kind.
   - Result into `executed`/`failed`.
-- [ ] **P4.3** `gate/mcp_client.py`: a stdio client session to the MCP server (D1). Calls `google_docs_append` / `gmail_draft` with `idempotency_key = action_id`. Google backends check before writing (G7): a Docs named range `action:{id}` (a text marker would be visible in Docs), and a Gmail `X-Support-Desk-Action-Id` header search. Unit-test both with mocked APIs.
-- [ ] **P4.4** Changes to the vendored TS server (arch §10.4):
+- [x] **P4.3** `gate/mcp_client.py`: a stdio client session to the MCP server (D1). Calls `google_docs_append` / `gmail_draft` with `idempotency_key = action_id`. Google backends check before writing (G7): a Docs named range `action:{id}` (a text marker would be visible in Docs), and a Gmail `X-Support-Desk-Action-Id` header search. Unit-test both with mocked APIs.
+- [x] **P4.4** Changes to the vendored TS server (arch §10.4):
   - Add an optional `idempotency_key` to both zod schemas.
   - New `services/localFileService.ts` (`MCP_BACKEND=local`): append to `samples/appended_doc_entry.md` and write `samples/email_draft.md`, de-duplicating on a `<!-- action:{key} -->` line.
   - Skip the OAuth startup check in local mode.
   - Google backend duplicate checks: a Docs named range `action:{key}`, and a Gmail `X-Support-Desk-Action-Id` header.
   - vitest coverage for all of the above, plus "exactly two tools, no send".
-- [ ] **P4.5** `reply_send` executor → `outbox_replies` insert.
-- [ ] **P4.6** Explainer-promotion hook: when a `doc_append` action whose subject is a fee explainer executes successfully, call `bridge.canonical.promote()`. It's a stub until P7, but the hook point lands now.
+- [x] **P4.5** `reply_send` executor → `outbox_replies` insert.
+- [x] **P4.6** Explainer-promotion hook: when a `doc_append` action whose subject is a fee explainer executes successfully, call `bridge.canonical.promote()`. It's a stub until P7, but the hook point lands now.
   - Promotion runs in the same DB transaction that marks the action `executed`.
   - On failure, record `result.promotion="pending"`, and a reconciler retries it. MCP is never re-run (G8).
-- [ ] **P4.7** CI grep check: nothing outside `app/gate/executor.py` imports `mcp_client` or writes `outbox_replies`.
+- [x] **P4.7** CI grep check: nothing outside `app/gate/executor.py` imports `mcp_client` or writes `outbox_replies`.
 
 **Tests**
 
@@ -346,29 +349,29 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P5.1** `llm/client.py`
+- [x] **P5.1** `llm/client.py`
   - `choose(prompt, schema: type[Enum] | dict, timeout=8)`: JSON/structured output, enum validation, **no retry**, and `ERROR` → null choice.
   - Backends: Groq, Gemini and CuesOnly (D2).
   - Per-call metrics: latency, raw choice, validated choice.
-- [ ] **P5.2** `llm/prompts/{facts,pattern,compliance}.md`. Each states the closed list and the rules. Prompts contain no corpus text.
-- [ ] **P5.3** `response/state.py`: `TicketState` and the `FactsOut` / `PatternOut` / `ComplianceOut` TypedDicts (arch §8.3), with last-write-wins reducers per key.
-- [ ] **P5.4** `agents/facts.py`
+- [x] **P5.2** `llm/prompts/{facts,pattern,compliance}.md`. Each states the closed list and the rules. Prompts contain no corpus text.
+- [x] **P5.3** `response/state.py`: `TicketState` and the `FactsOut` / `PatternOut` / `ComplianceOut` TypedDicts (arch §8.3), with last-write-wins reducers per key.
+- [x] **P5.4** `agents/facts.py`
   - The model picks `(scheme_id|null, section|null)`.
   - The code writer resolves the block, selects ≤ 2 sentences, and records `snapshot` and `last_checked`.
   - Not covered: names the 6 schemes, the 7 sections and both snapshots. The scheme-missing-section case is handled. The out-of-corpus AMC lexicon applies.
   - Out-of-section topic lexicon forces "not covered" for: lock-in, returns history/CAGR, holdings, brokerage/DP charge, SIP mandate, KYC, nominee (G14).
   - Multi-scheme detection: `multi_scheme: [ids]`, answer the picked scheme only, no comparative wording (G10).
   - Family answers follow the identical-text rule; ELSS is excluded from the equity family.
-- [ ] **P5.5** `agents/pattern.py`
+- [x] **P5.5** `agents/pattern.py`
   - The model picks `theme_id`; an invalid value becomes `other`.
   - The code adds trend, count, window and a ≤ 5 `review_ids` sample from the latest `theme_snapshots`.
   - `in_week_repeats` comes from a stub returning 0 until P7.
-- [ ] **P5.6** `agents/compliance.py`: the model picks `advice | performance_claim | none`, ORed with the regex detectors. The PII flag comes from ingress.
-- [ ] **P5.7** `response/graph.py`
+- [x] **P5.6** `agents/compliance.py`: the model picks `advice | performance_claim | none`, ORed with the regex detectors. The PII flag comes from ingress.
+- [x] **P5.7** `response/graph.py`
   - `entry_router` → `redaction_guard` → fan-out to the 3 agents → `orchestrator` (pass-through stub) → `reviewer` (pass stub) → END.
   - `SqliteSaver` checkpointer with `thread_id = ticket_id`.
-- [ ] **P5.8** Ticket ingress service: `create_ticket(text, channel)` → `pii.redact` → insert → `graph.ainvoke`. Record every agent run in `agent_outputs`.
-- [ ] **P5.9** `data/seed_questions.json`:
+- [x] **P5.8** Ticket ingress service: `create_ticket(text, channel)` → `pii.redact` → insert → `graph.ainvoke`. Record every agent run in `agent_outputs`.
+- [x] **P5.9** `data/seed_questions.json`:
   - The 20 M3 complaints, redacted on load.
   - 6 rephrasings of the exit-load question.
   - 5 out-of-scope questions.
@@ -398,36 +401,36 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P6.1** `response/templates.py`
+- [x] **P6.1** `response/templates.py`
   - Advice refusal, performance refusal, not-covered and family lead-ins.
   - The disagreement banner text.
   - Refusal wording ported from M1.
-- [ ] **P6.2** `response/orchestrator.py`
+- [x] **P6.2** `response/orchestrator.py`
   - Decision table rows 1–5. The canonical row 3 is a stub until P7.
   - Every draft carries `citation_url` and `last_checked`.
   - Routing note: team, priority and `why` per the arch §8.5 tables, with the PII bump.
   - Disagreement rule with `close_on_send=False`.
-- [ ] **P6.3** Rework mode: apply the per-failure-code deterministic fixes (arch §8.5 table).
-- [ ] **P6.4** `response/reviewer.py`: the hard-fail checks `UNCITED_CLAIM`, `ADVICE`, `BUY_SELL`, `PERFORMANCE`, `PII`, `LENGTH` and `URL_SCOPE`, plus the soft `MISSING_LAST_CHECKED`. Pure code.
-- [ ] **P6.5** Graph wiring:
+- [x] **P6.3** Rework mode: apply the per-failure-code deterministic fixes (arch §8.5 table).
+- [x] **P6.4** `response/reviewer.py`: the hard-fail checks `UNCITED_CLAIM`, `ADVICE`, `BUY_SELL`, `PERFORMANCE`, `PII`, `LENGTH` and `URL_SCOPE`, plus the soft `MISSING_LAST_CHECKED`. Pure code.
+- [x] **P6.5** Graph wiring:
   - reviewer pass → `awaiting_human`, and propose a `reply_send` action.
   - fail with `rework_count == 0` → `mark_rework` → orchestrator.
   - fail with `rework_count == 1` → `blocked`, and **no** `reply_send`.
-- [ ] **P6.6** Human actions (service layer):
+- [x] **P6.6** Human actions (service layer):
   - Edit: `redact` → new `draft_versions` row (`origin=human_edit`) → reviewer.
     - **Pass:** supersede and re-propose `reply_send`. On a `blocked` ticket this creates its first `reply_send` (G9).
     - **Fail:** the failing version becomes current, the old pending `reply_send` is superseded, and the ticket is `blocked` (arch §8.7, eval EDIT-04).
     - **Identical edit:** no-op.
   - Reject: only this ticket and its action change.
   - Approve: delegates to `gate.approve`.
-- [ ] **P6.7** `response/refinement.py`
+- [x] **P6.7** `response/refinement.py`
   - The `entry_router` refine branches: `shorter` → orchestrator; `different_scheme` → facts; `check_fee_issue` → pattern; `other` → orchestrator.
   - The hint is redacted.
   - Cap of 5 per ticket, with `409` beyond it.
   - Each refinement writes a `refinements` row and an audit event.
-- [ ] **P6.8** Test-only fault injection behind `EVAL_FAULTS`: `uncited_once`, `advice_always`, `llm_down` and `advice_ideas`, plus the per-ticket `X-Eval-Ticket` and the `X-Eval-Now` clock headers (eval §2.4).
+- [x] **P6.8** Test-only fault injection behind `EVAL_FAULTS`: `uncited_once`, `advice_always`, `llm_down` and `advice_ideas`, plus the per-ticket `X-Eval-Ticket` and the `X-Eval-Now` clock headers (eval §2.4).
   - Honored **only** when `APP_ENV=test`. In any other environment, startup logs a refusal (G11).
-- [ ] **P6.9** CLI: `python -m app.response.cli ask "…"` and `… refine <id> shorter`.
+- [x] **P6.9** CLI: `python -m app.response.cli ask "…"` and `… refine <id> shorter`.
 
 **Tests**
 
@@ -459,23 +462,23 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P7.1** `bridge/repeats.py`
+- [x] **P7.1** `bridge/repeats.py`
   - `normalize(text)` and the `fingerprint(theme_id, section, compliance_class, simhash_bucket)`.
   - Store `tickets.fingerprint` and upsert `question_clusters`.
   - `repeat_count(fp, now)`, computed on demand over a 7-day window anchored on **ticket time (`now`)**, never on the review `as_of` (G1). Store `received_at` in UTC and compute windows in IST.
   - `repeat_questions(now, min_count=5)` → `[{representative_text, count, window_start, window_end, theme_id, possible_duplicate_burst}]`. Representative text is rendered with `provenance=question` (G3).
   - Burst flag: ≥ 3 identical normalized texts within 10 minutes.
-- [ ] **P7.2** Replace the stubs:
+- [x] **P7.2** Replace the stubs:
   - The Pattern agent's `in_week_repeats`.
   - The pulse's repeat-questions section.
   - The orchestrator's P1 priority and disagreement rule now use real counts.
-- [ ] **P7.3** `bridge/canonical.py`
+- [x] **P7.3** `bridge/canonical.py`
   - `promote(explainer_id, action_id)`: derives `covers` from the bullets, then expands to scheme families by comparing identical normalized text across snapshots.
   - Deactivates the previous canonical explainer.
   - Promotes only if the explainer's `as_of` ≥ the active one's. Otherwise records `skipped: older than active` (G8).
   - `lookup(theme_id, section, scheme_id)`.
-- [ ] **P7.4** Orchestrator row 3 (canonical reuse): copy the bullet verbatim, cite the bullet's `source_url`, set `origin=canonical`, and record the reuse for the explainer's reuse log.
-- [ ] **P7.5** Tune the fingerprint on the 6 exit-load rephrasings plus 10 distinct fee questions. The 6 must collide; distinct questions must not.
+- [x] **P7.4** Orchestrator row 3 (canonical reuse): copy the bullet verbatim, cite the bullet's `source_url`, set `origin=canonical`, and record the reuse for the explainer's reuse log.
+- [x] **P7.5** Tune the fingerprint on the 6 exit-load rephrasings plus 10 distinct fee questions. The 6 must collide; distinct questions must not.
 
 **Tests**
 
@@ -496,14 +499,14 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P8.1** Pydantic response models and a frozen OpenAPI schema (`docs/openapi.json`) to unblock P9 and P10.
-- [ ] **P8.2** Routers: `queue.py`, `weekly.py`, `sources.py`, `approvals.py`, `explainers.py`, `health.py`, `audit`. Every route listed in arch §12.
-- [ ] **P8.2a** Custom `RequestValidationError` handler that drops `input` and `ctx`. Free-text fields are plain `str`, and their length and empty checks run after `pii.redact()`. Request bodies are never logged (G6).
-- [ ] **P8.3** Auth: `ADMIN_TOKEN` bearer on mutating routes. Read routes are public in the demo (redacted data only).
-- [ ] **P8.4** `scheduler.py`: APScheduler `AsyncIOScheduler`, cron `WEEKLY_CRON`, `Asia/Kolkata`. It shares the run lock with the manual trigger and returns `409` on overlap.
-- [ ] **P8.5** Background ticket worker (asyncio queue, concurrency 4) for `/api/tickets/seed`.
-- [ ] **P8.6** First-boot seeding: if the DB is empty, run the weekly loop once and load `seed_questions.json`.
-- [ ] **P8.7** `.github/workflows/weekly.yml`: a cron POST to `/api/weekly/run`, as a backup for sleeping hosts.
+- [x] **P8.1** Pydantic response models and a frozen OpenAPI schema (`docs/openapi.json`) to unblock P9 and P10.
+- [x] **P8.2** Routers: `queue.py`, `weekly.py`, `sources.py`, `approvals.py`, `explainers.py`, `health.py`, `audit`. Every route listed in arch §12.
+- [x] **P8.2a** Custom `RequestValidationError` handler that drops `input` and `ctx`. Free-text fields are plain `str`, and their length and empty checks run after `pii.redact()`. Request bodies are never logged (G6).
+- [x] **P8.3** Auth: `ADMIN_TOKEN` bearer on mutating routes. Read routes are public in the demo (redacted data only).
+- [x] **P8.4** `scheduler.py`: APScheduler `AsyncIOScheduler`, cron `WEEKLY_CRON`, `Asia/Kolkata`. It shares the run lock with the manual trigger and returns `409` on overlap.
+- [x] **P8.5** Background ticket worker (asyncio queue, concurrency 4) for `/api/tickets/seed`.
+- [x] **P8.6** First-boot seeding: if the DB is empty, run the weekly loop once and load `seed_questions.json`.
+- [x] **P8.7** `.github/workflows/weekly.yml`: a cron POST to `/api/weekly/run`, as a backup for sleeping hosts.
 
 **Tests**
 
@@ -520,34 +523,93 @@ These apply to every phase and are checked in code review and CI:
 
 ---
 
-### P9 — User interface (3 d)
+### P9 — User interface (4 d)
 
-**Goal:** the five views from brief §6, with the disclaimer on every screen (arch §13).
+**Goal:** the five views from brief §6, with the disclaimer on every screen (arch §13). The visual design is the Stitch export (decision **D6**), rebuilt as production React components that show only live API data.
+
+**Design source:** `docs/design/stitch/`, moved from `stitch_support_desk_compliance_console/` in P9.0. It has 11 screens, each with a `screen.png` and a `code.html` (static HTML on the Tailwind CDN), plus `DESIGN.md` (tokens, type scale, component specs).
+
+| Stitch screen | Route | Used for |
+| --- | --- | --- |
+| `support_desk_queue`, `support_desk_queue_master_detail` | `/queue`, `/queue/:ticketId` | Table, filters, detail pane, sticky action bar |
+| `support_desk_queue_blocked_ticket` | `/queue/:ticketId` (status `blocked`) | Blocked banner and failed checks; **no** Send button |
+| `support_desk_queue_not_covered_refinement_cap` | `/queue/:ticketId` (row 5, refinements 5/5) | "Searched" list, no-citation tag, disabled Refine |
+| `support_desk_weekly_pulse`, `…_weekly_pulse_empty_mcp_health_banner` | `/pulse`, `/pulse/:runId` | KPI tiles, themes table, pulse and explainer previews, empty state |
+| `support_desk_sources_corpus`, `support_desk_sources_drift` | `/sources`, `/sources/drift` | Grouped corpus list, block drawer, drift table |
+| `support_desk_approvals`, `…_approvals_empty_mcp_health_banner` | `/approvals` | Action cards, confirm dialog, read-only gate banner, empty state |
+| `support_desk_canonical_explainers` | `/explainers` | Active explainer, reuse log, history |
+
+**What the Stitch export is not.** It's a design reference, not shippable code. An audit on 2026-11-25 found these problems, which P9 must fix rather than copy:
+
+| # | Finding in the export | Why it matters | Fix (task) |
+| --- | --- | --- | --- |
+| S1 | **Invented copy.** It includes an LTCG rule ("12.5% … ₹1.25 Lakh"), "Regular plan 1.02% p.a.", "SEBI Gazette Jul 2020", "UPI auto-pay mandate latency … HDFC/SBI rails", `leadership-briefing@company.internal`, `console.internal/runs/…`, "cryptographic sign-off required", "Cryptographically sealed revisions" and "Cannot be undone". | None of it is in the corpus or the system. Shown in the UI, it would break facts-only and misdescribe the gate (it's a sha256 payload hash, not a signature). | P9.2: no literal content from the export. P9.11: a CI denylist check. |
+| S2 | **Wrong source URLs.** `hdfc-top-100-fund`, `hdfc-taxsaver`, `hdfc-mid-cap-opportunities-fund`, `hdfc-gold-fund`, `hdfc-silver-etf-fund-of-fund`, and bare `https://groww.in`. | None of these is a corpus `source_url` (arch §5.1). A wrong link breaks the grounding rule. | P9.4 `CitationLink` only renders URLs from the API. |
+| S3 | **Two token sets disagree.** The inline Tailwind config uses Material-3 tokens (`surface #f8f9ff`, `primary #005c55`), while `DESIGN.md` prose specifies slate and teal hex values (`#F8FAFC`, `#0F766E`). | Colours drift screen to screen. | P9.1: one token file. |
+| S4 | **Font fallbacks missing.** `JetBrains Mono` has no `monospace` fallback, so status pills and ID chips render in a serif font in the screenshots. Fonts and Material Symbols come from Google Fonts at runtime (4 stylesheet links per page). | Looks broken, and depends on a third-party request at load time. | P9.1: self-host fonts and icons, with full fallback stacks. |
+| S5 | **Scrollbars hidden** (`::-webkit-scrollbar{display:none}` on every page). Almost no `aria-*`, and status shown by colour plus a dot only. | Accessibility. Long payloads and tables become hard to scroll and read. | P9.3, P9.11 |
+| S6 | **Light mode only**, Tailwind loaded from a CDN, no interactivity. | The CDN build isn't for production, and every behaviour has to be written. | P9.1: Tailwind build. Dark mode is out of scope (R8). |
+
+**Stack (D6):** Vite + React 18 + TypeScript (strict) + Tailwind 3 (built, not CDN), React Router, TanStack Query, `openapi-typescript` types from `docs/openapi.json`, Radix UI primitives (Dialog, DropdownMenu, Tabs, Tooltip, Collapsible) for accessible behaviour, MSW for fixture-backed development, and Vitest, Testing Library, Playwright and `@axe-core/playwright` for tests. The M3 `web/` shell is reused for the Playwright setup and the API-client pattern only. Its visual design is replaced by Stitch.
 
 **Tasks**
 
-- [ ] **P9.1** Port the M3 `web/` shell into `ui/` (Vite, React 18, Tailwind, Playwright). Generate the API client from `docs/openapi.json`.
-- [ ] **P9.2** Global header with the **"Facts-only. No investment advice."** banner, the corpus last-checked dates (A/B), the pending-approvals badge and the staleness badge.
-- [ ] **P9.3** **Queue view**
-  - Table with filters.
-  - Detail pane: draft, citation, last checked + snapshot, routing note, disagreement banner, reviewer flags, agent outputs (raw vs validated), versions, refinements n/5.
-  - Actions: Approve & send (hidden when `blocked`), Edit, Reject, Refine (4 buttons + hint).
-- [ ] **P9.4** **Weekly pulse view**
-  - Run picker and a "Run weekly loop now" button.
-  - Themes table with trend, window and expandable review ids.
-  - Pulse preview with `n/250`, quotes with review-id chips, and the repeat-questions section.
-  - Explainer preview with `n/6`.
-- [ ] **P9.5** **Sources view**: resolved block per (scheme, section) with the snapshot; expand to the other snapshot, the original B content and quarantined text; drift tab; reverse index of citing drafts.
-- [ ] **P9.6** **Approvals view**
-  - Cards show kind, destination, exact payload, hash and "What else happens".
-  - A confirm dialog names the destination.
-  - No bulk approve.
-- [ ] **P9.7** **Canonical explainers view**: active explainer, bullets with links, approval record, history and reuse log.
-- [ ] **P9.8** Build to `ui/dist`, served by FastAPI at `/`.
-- [ ] **P9.9** Playwright e2e:
-  - The disclaimer is visible on all 5 routes.
-  - Approve one action, and only that card changes.
-  - A blocked ticket has no Send button.
+- [x] **P9.0** Move `stitch_support_desk_compliance_console/` to `docs/design/stitch/`, unchanged, and add a `README.md` there with the screen-to-route table above and the S1–S6 audit. These files are reference only. Nothing under `ui/` imports from them.
+- [x] **P9.1** **Design tokens and foundation** (`ui/src/styles/tokens.css`, `ui/tailwind.config.ts`)
+  - One token set, taken from `DESIGN.md` prose (slate neutrals, teal `#0F766E` primary, success/warning/critical/info triplets: text, container, border) and exposed as CSS variables. Tailwind theme keys map to those variables. Delete the Material-3 names that are unused (S3).
+  - Type scale from `DESIGN.md` (`headline-lg` … `label-sm`), with `font-variant-numeric: tabular-nums` on tables, counts and dates.
+  - Self-host Inter and JetBrains Mono via `@fontsource`, with stacks `Inter, system-ui, sans-serif` and `"JetBrains Mono", ui-monospace, monospace`. Icons: `lucide-react`, or the self-hosted `material-symbols` package, mapped 1:1 to the Stitch icon names (S4).
+  - Spacing, radius and shadow levels 0–2 from `DESIGN.md`.
+- [x] **P9.2** **Port, don't paste.** Rebuild each Stitch screen as React components from `screen.png` + `code.html`, keeping its layout and Tailwind classes but replacing **every** text literal with API data or UI copy from `ui/src/copy.ts`. No sentence from the Stitch sample data goes into `ui/src` (S1).
+- [x] **P9.3** **Component library** (`ui/src/components/`), each with a Vitest test:
+  - `AppShell`: header, sidebar (240 px, collapsible), main area. `DisclaimerBanner` reads exactly **"Facts-only. No investment advice."** and can't be dismissed. Header data comes from `/api/health`: last-checked A/B, `pending_approvals`, `gate_mode` and the staleness badge.
+  - `Button` (primary, secondary, destructive, ghost; 32/36 px), `StatusPill` and `PriorityPill` (icon + text, never colour alone), `IdChip` (mono, click to copy), `RedactionToken` (renders `[PAN]`, `[PHONE]`, … as chips by tokenising the string, never via HTML).
+  - `AuditCard`, `DataTable` (36 px rows, sticky header, sortable, keyboard row selection with ↑/↓ and Enter), `Counter` (`2 / 3 sentences`, `212 / 250 words`, `6 / 6 bullets`, `1 / 5 refinements`, turning red only above the cap), `WindowLabel` (keeps "Review window" and "Ticket window" separate, arch §7.1), `ReviewerChecklist`, `Banner` (info, warning, critical), `EmptyState`, `Skeleton`.
+  - `ConfirmDialog` (Radix Dialog) whose body names the destination as the API returns it. No "don't ask again" option.
+- [x] **P9.4** **Grounding-safe rendering** (`ui/src/lib/safe.ts`)
+  - `CitationLink` renders a link only for a URL from the API **and** on a domain in `PUBLIC_DOMAINS` (served by `/api/health`, see P9.5). Anything else renders as plain text with a warning icon (S2).
+  - Free text (questions, drafts, payloads, quotes) is rendered as text. **No `dangerouslySetInnerHTML`** anywhere in `ui/src`, checked in CI.
+  - Approval payloads render in a `<pre>` exactly as stored, whitespace preserved, beside a "Rendered" preview toggle. The UI recomputes sha256 of the displayed bytes with WebCrypto and shows ✓ when it matches the server hash, or a critical banner and a disabled Approve when it doesn't.
+- [x] **P9.5** **Data layer** (`ui/src/api/`).
+  - **API addition (small, backend).** `HealthResponse` today has `status`, `corpus_loaded`, `db_reachable`, `gate_mode`, `pending_approvals`, `seeded` and `last_weekly_run`. Add `corpus_last_checked: {A, B}` and `public_domains: [str]`, then regenerate `docs/openapi.json` and update arch §12 in the same change (rule 6).
+  - TanStack Query hooks per endpoint (arch §12), typed from `openapi-typescript`. Mutations (`approve`, `reject`, `edit`, `refine`, `weekly/run`) are disabled while in flight, so a double-click can't double-submit. On success they invalidate **only** the affected action or ticket and the header count. Errors are mapped: `409 refinement_cap_reached` → disabled Refine with a tooltip, `409` weekly run lock → "Run already in progress (run id)", `422` → field message without echoing input (arch §12, G6).
+- [x] **P9.6** **Queue view** (Stitch: queue, master_detail, blocked_ticket, not_covered_refinement_cap)
+  - Table with Status, Team and Priority filters kept in the URL query string.
+  - Detail pane: draft with `Counter`, citation, last checked + snapshot, origin chip, internal routing note with a lock icon, disagreement banner, reviewer checklist, agent outputs (model pick vs validated), version history, refinements `n/5`.
+  - Actions: Approve & send, Edit, Reject, and a Refine menu with exactly Shorter, Different scheme, Check fee issue, and Other + hint.
+  - **Blocked:** the Send button is **not rendered** (not just disabled). Edit is primary.
+  - **Not covered:** an expandable "Searched" list of 6 schemes × 7 sections and a "No factual claim, no citation needed" tag.
+  - Submit-question modal with the redaction hint. After submit, show the **redacted** text the server returned, never the typed text.
+- [x] **P9.7** **Weekly pulse view** (Stitch: weekly_pulse, empty): run picker, "Run weekly loop now", KPI tiles each with its window, themes table with trend and expandable review-id chips (+N more), pulse preview with `n/250`, quotes with review-id chips, repeat-questions section on the ticket clock, explainer preview with `n/6` and the scope line, and the four proposed-action cards linking to Approvals.
+- [x] **P9.8** **Sources view** (Stitch: sources_corpus, sources_drift): grouped by scheme, 7 canonical sections each, snapshot badge, NAV date, last checked and "Cited by n". The block drawer shows the other snapshot (identical/changed tag), the original B content in mono, quarantined sentences with reasons, and the reverse index. Sections the corpus doesn't hold (e.g. ELSS Benchmark) show "Not covered in corpus". The drift tab shows the A→B table and the note "Drift is informational."
+  - **Gap (2026-11-25):** `/api/sources` doesn't return the original B `content` per block or per-block quarantine reasons (only a global `quarantined` list, which the UI shows). The drawer shows what the API returns. Adding those two fields to `SourceBlockOut` would complete this item.
+- [x] **P9.9** **Approvals view** (Stitch: approvals, empty_mcp_health_banner)
+  - Cards grouped by kind: action id, source, destination, exact payload (P9.4), hash, and **"What else happens"** from the API (never hard-coded).
+  - The replacement-draft note with the original flags (G9).
+  - Approve opens the `ConfirmDialog`. **No bulk select, no "Approve all".** After approval, only that card moves to Approved.
+  - **Gate read-only mode** (from `/api/health`): an amber banner, `doc_append` and `email_draft` Approve disabled with the reason, while `reply_send` still works (arch §16).
+  - Replace the Stitch copy "cryptographic sign-off required" with "Payload hash (sha256)" (S1).
+- [x] **P9.10** **Canonical explainers view** (Stitch: canonical_explainers): active explainer with Canonical badge, approved by/at and a link to the approval record, covers (schemes, sections), scope line, bullets each with its own `CitationLink` and snapshot, the two source URLs, last checked, a reuse-log timeline linking to tickets, and a history table.
+- [x] **P9.11** **States and quality pass**
+  - Every view has loading (skeleton), empty (Stitch empty states), error (retry) and stale-corpus states.
+  - Scrollbars visible (remove the S5 rule). Visible focus ring (2 px teal), `aria-label` on icon-only buttons, `prefers-reduced-motion` respected, WCAG AA contrast on every token pair (amber text on amber container must be checked).
+  - Responsive per `DESIGN.md`: split pane at ≥ 1280 px, detail as a 380 px overlay sheet at 1024–1279 px, single column with a sticky action footer below 1024 px. No horizontal page scroll except inside tables.
+  - CI check `ui/scripts/check-content.mjs`: fails the build if `ui/src` or `ui/dist` contains `dangerouslySetInnerHTML`, `cdn.tailwindcss.com`, `fonts.googleapis.com`, or any S1/S2 denylist string (`LTCG`, `cryptographic`, `leadership-briefing`, `console.internal`, `hdfc-top-100`, `hdfc-taxsaver`, `mid-cap-opportunities`, `hdfc-gold-fund`).
+- [x] **P9.12** Build to `ui/dist`, served by FastAPI at `/`, with SPA fallback for client routes. Code-split per route. Budget: initial JS ≤ 250 KB gzipped.
+  - Done: `app/main.py` mounts `app/static` (Docker) or `ui/dist` (checkout) through `SpaStaticFiles`. Initial JS ≈ 112 KB gzipped (vendor 102 KB + app 10 KB); each view is its own chunk.
+- [x] **P9.13** **Tests**
+  - Vitest: every component in P9.3, `safe.ts` (link allow-list, hash match and mismatch), and error mapping in P9.5.
+  - MSW fixtures built from a real local run (P8 seed + one weekly run), redacted, so P9 can start before P8 finishes. The PII sweep (§5 rule 1) also runs over `ui/src/mocks/`.
+  - Playwright e2e against the real API (`APP_ENV=test`):
+    1. The disclaimer is visible on all 5 routes.
+    2. Approve one action, and only that card changes.
+    3. A blocked ticket has no Send button in the DOM.
+    4. The confirm dialog names the destination.
+    5. Refine is disabled at 5/5.
+    6. Read-only gate mode disables doc/email approvals but not `reply_send`.
+    7. Every rendered `a[href]` on all routes is in `CITATION_URLS` ∪ edu URLs or is an internal route.
+  - `@axe-core/playwright` on all 5 routes and the dialog: 0 serious or critical violations.
+  - Visual check: Playwright screenshots of each route at 1440 px, committed under `ui/tests/__screenshots__/` and reviewed side by side with the Stitch `screen.png` (layout parity, not pixel parity).
 
 **Exit criteria (CP3)**
 
@@ -557,9 +619,12 @@ These apply to every phase and are checked in code review and CI:
   3. Submit the exit-load question and see a canonical reuse.
   4. See a reviewer-blocked ticket.
   5. Approve a reply.
-- The Playwright suite is green.
+- Every route matches its Stitch screen in layout, and no Stitch sample text appears (content check green).
+- Playwright and axe green. Lighthouse accessibility ≥ 95 on `/queue` and `/approvals`. The JS budget is met.
 
-**Risks:** UI scope creep. The five views and the listed interactions are the full scope; styling polish comes last.
+**Risks:**
+- UI scope creep. The five views, their states and the listed interactions are the full scope. Dark mode, animations beyond hover/focus, and extra pages are out (R8).
+- Stitch copy leaking into the product (R10). The content check in P9.11 is the guard.
 
 ---
 
@@ -675,7 +740,7 @@ These apply to every phase and are checked in code review and CI:
 | §5.3 repeat Q 5×/week → pulse | P7 | P7 tests, CP3 |
 | §5.3 approved explainer → canonical reuse | P4.6, P7 | P7 tests, P10 |
 | §5.4 / §7 scope enforced in code | P1 (+ every phase) | P10 grounding and compliance |
-| §6 five views + disclaimer | P9 | Playwright e2e |
+| §6 five views + disclaimer | P9 | Playwright e2e, axe, content check |
 | §7 hard rules (grounding, public sources, gaps, provenance, privacy, gate, caps, agent calls, loop caps) | P1–P7 | P10 |
 | §8 three eval suites over the assembled system | P10 | `evals/results/latest.md` |
 | §9.1 repo + README + artifacts | P12 | §8 checklist |
@@ -694,7 +759,7 @@ Mirrors the brief's Summary Checklist, with the evidence for each item:
 - [ ] Cross-loop link: repeat questions (5×/week) → pulse; fee explainer → canonical reuse. **Evidence:** pulse repeat section, explainer reuse log.
 - [ ] Facts-only + no PII, enforced in code. **Evidence:** `evals/results/latest.md` grounding and compliance section, PII sweep = 0.
 - [ ] Approval gate before every write and send; no auto-send. **Evidence:** edit-correctness diffs, MCP tool list test.
-- [ ] Queue, pulse, sources, approval and canonical explainer UI. **Evidence:** Playwright run, README screenshots.
+- [ ] Queue, pulse, sources, approval and canonical explainer UI, matching the Stitch design. **Evidence:** Playwright + axe run, content check, README screenshots.
 - [ ] Three eval suites over the assembled system. **Evidence:** `evals/results/`.
 - [ ] Repo artifacts, prototype link, and optional demo video if unhosted. **Evidence:** `samples/`, README.
 
@@ -711,5 +776,6 @@ Mirrors the brief's Summary Checklist, with the evidence for each item:
 | R5 | Snapshot drift confuses users (different dates per claim) | M | L | Per-claim snapshot + date, drift tab, documented in known limits | P2, P9 |
 | R6 | Fingerprint collisions distort the 5× threshold | M | M | Fixture tuning, counts shown with the representative text for human judgement | P7 |
 | R7 | Host sleeps and misses the cron | M | M | GH Actions backup ping, idempotent runs | P8, P11 |
-| R8 | UI scope creep delays the deploy | M | M | Fixed view scope, deploy after CP3 before any polish | P9 |
+| R8 | UI scope creep delays the deploy | M | M | Fixed view scope (five views + their states), no dark mode, deploy after CP3 before any polish | P9 |
+| R10 | Stitch sample copy or links (invented tax rules, wrong scheme URLs) leak into the UI and break facts-only | M | H | Port, don't paste (P9.2); links only from the API through the domain allow-list (P9.4); CI content denylist and link e2e (P9.11, P9.13) | P9 |
 | R9 | Free-tier disk loses state | L | M | Persistent disk; otherwise re-seed on boot and document it | P11 |

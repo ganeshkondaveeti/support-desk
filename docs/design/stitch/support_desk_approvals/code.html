@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_dashboard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=JetBrains+Mono:wght@100..900&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"surface-container-low":"#eff4ff","on-tertiary-container":"#ffe6d5","surface-tint":"#006a63","tertiary":"#7d4200","primary":"#005c55","on-tertiary-fixed":"#2f1500","on-tertiary":"#ffffff","on-secondary-fixed":"#00174b","on-secondary":"#ffffff","outline":"#6e7977","surface-container-highest":"#d3e4fe","secondary":"#0051d5","surface":"#f8f9ff","inverse-primary":"#80d5cb","secondary-fixed-dim":"#b4c5ff","error-container":"#ffdad6","inverse-surface":"#213145","on-error-container":"#93000a","on-secondary-fixed-variant":"#003ea8","inverse-on-surface":"#eaf1ff","surface-variant":"#d3e4fe","on-secondary-container":"#fefcff","surface-bright":"#f8f9ff","primary-fixed":"#9cf2e8","secondary-fixed":"#dbe1ff","primary-container":"#0f766e","on-background":"#0b1c30","tertiary-fixed-dim":"#ffb77d","background":"#f8f9ff","tertiary-fixed":"#ffdcc3","error":"#ba1a1a","on-tertiary-fixed-variant":"#6e3900","primary-fixed-dim":"#80d5cb","on-error":"#ffffff","surface-container":"#e5eeff","surface-container-high":"#dce9ff","on-primary":"#ffffff","on-surface-variant":"#3e4947","tertiary-container":"#a15600","on-primary-fixed-variant":"#00504a","surface-dim":"#cbdbf5","on-primary-fixed":"#00201d","secondary-container":"#316bf3","outline-variant":"#bdc9c6","on-surface":"#0b1c30","on-primary-container":"#a3faef","surface-container-lowest":"#ffffff"},borderRadius:{DEFAULT:"0.25rem",lg:"0.5rem",xl:"0.75rem",full:"9999px"},spacing:{"margin":"1.5rem","space-md":"0.75rem","gutter-compact":"0.5rem","space-xs":"0.25rem","margin-sm":"1rem","space-xl":"1.5rem","space-lg":"1rem","gutter":"1rem","space-sm":"0.5rem"},fontFamily:{"headline-md":["Inter"],"body-lg":["Inter"],"body-md":["Inter"],"body-sm":["Inter"],"label-md":["JetBrains Mono"],"label-lg":["Inter"],"label-sm":["JetBrains Mono"],"headline-sm":["Inter"],"headline-lg":["Inter"]},fontSize:{"headline-md":["1.25rem",{lineHeight:"1.75rem",letterSpacing:"-0.015em",fontWeight:"600"}],"body-lg":["0.875rem",{lineHeight:"1.375rem",fontWeight:"500"}],"body-md":["0.8125rem",{lineHeight:"1.25rem",fontWeight:"400"}],"body-sm":["0.75rem",{lineHeight:"1.125rem",fontWeight:"400"}],"label-md":["0.75rem",{lineHeight:"1rem",letterSpacing:"-0.01em",fontWeight:"500"}],"label-lg":["0.75rem",{lineHeight:"1rem",letterSpacing:"0.02em",fontWeight:"600"}],"label-sm":["0.6875rem",{lineHeight:"0.875rem",fontWeight:"400"}],"headline-sm":["1rem",{lineHeight:"1.5rem",letterSpacing:"-0.01em",fontWeight:"600"}],"headline-lg":["1.5rem",{lineHeight:"2rem",letterSpacing:"-0.02em",fontWeight:"600"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 h-14 z-50 bg-surface-container-lowest border-b border-outline-variant/30 px-space-lg flex items-center justify-between"><div class="flex items-center gap-space-lg"><div class="flex items-center gap-space-sm"><span class="material-symbols-outlined text-primary text-[20px]">verified_user</span><span class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Support Desk</span></div><div class="hidden md:inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border border-[#FDE68A] bg-[#FEF3C7] text-[#92400E] font-body-sm text-body-sm font-medium"><span class="material-symbols-outlined text-[15px] leading-none">info</span><span>Facts-only. No investment advice.</span></div></div><div class="flex items-center gap-space-lg"><span class="hidden xl:inline-block font-label-sm text-label-sm text-on-surface-variant font-mono">Corpus last checked: A 28-Jun-2026 · B 01-Sep-2026</span><a class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary transition-colors" data-path="approvals" href="#"><span class="material-symbols-outlined text-[16px]">task_alt</span><span>Approvals</span><span class="px-1.5 py-0.2 rounded-full bg-surface-container-lowest/20 font-label-sm text-label-sm font-semibold">5</span></a><div class="flex items-center gap-space-sm pl-space-sm border-l border-outline-variant/30 cursor-pointer"><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div><span class="hidden sm:inline font-body-sm text-body-sm text-on-surface font-medium">Reviewer</span><span class="material-symbols-outlined text-on-surface-variant text-[18px]">arrow_drop_down</span></div></div></header><aside class="fixed left-0 top-14 bottom-0 w-60 z-40 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col justify-between py-space-md"><div class="flex flex-col gap-space-sm px-space-sm"><nav class="flex flex-col gap-0.5" data-active-classes="bg-primary-container text-on-primary font-medium"><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="queue" href="#"><span>Queue</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="weekly-pulse" href="#"><span>Weekly pulse</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="sources" href="#"><span>Sources</span><span class="font-label-sm text-label-sm px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono">6 HDFC MF</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="approvals" href="#"><span>Approvals</span><span class="font-label-sm text-label-sm px-1.5 py-0.2 rounded bg-primary-container text-on-primary font-semibold">5</span></a><a class="flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-md text-body-md transition-colors" data-path="canonical-explainers" href="#"><span>Canonical explainers</span></a></nav></div><div class="px-space-sm pt-space-sm border-t border-outline-variant/30"><button class="w-full flex items-center justify-between px-space-md py-space-sm rounded text-on-surface-variant hover:bg-surface-container hover:text-on-surface font-body-sm text-body-sm transition-colors" type="button"><span class="flex items-center gap-space-md"><span class="material-symbols-outlined text-[18px]">keyboard_double_arrow_left</span><span>Collapse Sidebar</span></span><span class="font-label-sm text-label-sm text-on-surface-variant/70 font-mono">⌘[</span></button></div></aside><div class="pl-60"><main class="pt-14 min-h-screen bg-surface px-space-xl py-space-lg w-full"><div class="flex flex-col w-full">
+<!-- Page Context & Security Strip -->
+<div class="flex flex-col md:flex-row md:items-center justify-between pb-space-lg gap-space-md">
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-space-sm">
+<h1 class="font-headline-lg text-headline-lg text-on-surface font-semibold tracking-tight">Approvals</h1>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-primary-container/10 text-primary-container font-label-md text-label-md font-semibold">
+          5 pending
+        </span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">
+        Each card shows exactly what will be written and where. Approving one action never triggers another.
+      </p>
+</div>
+<div class="flex items-center gap-space-sm self-start md:self-auto px-3 py-1.5 rounded bg-surface-container text-on-surface-variant">
+<span class="material-symbols-outlined text-[17px] text-primary" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+<span class="font-label-sm text-label-sm font-mono tracking-tight text-on-surface">Gated execution mode · SHA-256 verified</span>
+</div>
+</div>
+<!-- Filter State Ribbon (Strictly tabs: No bulk selectors, No multi-action bars) -->
+<div class="flex items-center justify-between bg-surface-container-lowest rounded-lg p-1.5 shadow-sm mb-space-xl">
+<div class="flex items-center gap-1">
+<button class="inline-flex items-center gap-2 px-3 py-1.5 rounded font-body-sm text-body-sm font-medium bg-primary-container text-on-primary shadow-sm transition-colors" type="button">
+<span>Pending</span>
+<span class="px-1.5 py-0.2 rounded-full bg-on-primary/20 font-label-sm text-label-sm font-mono font-semibold">5</span>
+</button>
+<button class="inline-flex items-center gap-2 px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span>Approved</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-mono">48</span>
+</button>
+<button class="inline-flex items-center gap-2 px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" type="button">
+<span>Rejected</span>
+<span class="px-1.5 py-0.2 rounded-full bg-surface-container-high text-on-surface-variant font-label-sm text-label-sm font-mono">7</span>
+</button>
+</div>
+<div class="hidden sm:flex items-center gap-space-sm pr-2 text-on-surface-variant font-label-sm text-label-sm font-mono">
+<span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>
+<span>Isolated scope · No cascade writes</span>
+</div>
+</div>
+<!-- Main Feed of Individual Approval Cards -->
+<div class="flex flex-col gap-space-xl max-w-[1400px]">
+<!-- ==========================================
+         GROUP 1: DOC APPEND (2)
+         ========================================== -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Doc append</h2>
+<span class="px-2 py-0.2 rounded-full bg-surface-container-high font-label-sm text-label-sm font-mono text-on-surface-variant font-semibold">2</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Direct appends to internal Google Docs knowledge base.</p>
+</div>
+<!-- Card 1: act_01JD8K9P01 -->
+<article class="bg-surface-container-lowest rounded-lg shadow-sm flex flex-col overflow-hidden transition-all duration-150">
+<!-- Top Metadata Strip -->
+<div class="flex flex-wrap items-center justify-between gap-space-sm px-space-lg py-2.5 bg-surface-container-low text-on-surface">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[15px] text-primary">description</span>
+<span>Doc append</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm font-mono shadow-xs">
+              act_01JD8K9P01
+            </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm font-mono">04-Jul 11:30 IST</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Source:</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+              Weekly run run_01JD8K9M2P
+            </span>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Destination Block -->
+<div class="rounded-lg bg-surface-container-low p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 text-primary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">edit_document</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold text-primary">Destination Target</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">
+                  Google Doc · Weekly Product Pulse log · <span class="font-normal text-on-surface-variant">heading: Week ending 04-Jul-2026</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md pl-11 sm:pl-0 font-label-sm text-label-sm font-mono text-on-surface-variant">
+<span>doc_id: <span class="text-on-surface font-semibold">14vQ9...Lp92</span></span>
+<span>·</span>
+<span>Position: <span class="text-on-surface">Section 4.2 (Bottom)</span></span>
+</div>
+</div>
+<!-- Exact Payload Block -->
+<div class="flex flex-col rounded-lg bg-surface-container-low overflow-hidden">
+<div class="flex items-center justify-between px-space-md py-2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">tag</span>
+<span>sha256: 3f9a778cc21e809dfb003a276b92a5491f28b49ac21e</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container transition-colors py-0.5 px-1.5 rounded hover:bg-surface-container-highest" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy payload</span>
+</button>
+</div>
+<pre class="p-space-md font-label-md text-label-md text-on-surface font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-text bg-surface-container-lowest m-1.5 rounded">Weekly Product Pulse — week ending 04-Jul-2026 (reviews 12-Apr → 04-Jul-2026)
+Facts-only. No investment advice.
+
+TOP THEMES:
+1. Trading, charts &amp; orders: 'Order execution lags during market open and chart candles freeze.' [rev_0419]
+2. Withdrawals, deposits &amp; payments: 'UPI mandate stayed pending for 48 hours before reflecting.' [rev_0502]
+3. Fees &amp; brokerage: 'Unexpected deduction on redemption; breakdown was hard to locate.' [rev_0142]
+
+Fee confusion: 136 reviews, recurring. Brokerage is outside scheme corpus.
+Action ideas: Surface scheme-level exit load window before redemption confirmation.</pre>
+</div>
+<!-- What Else Happens Callout -->
+<div class="rounded-lg bg-surface-container-low px-space-md py-2.5 flex items-center gap-2.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[17px] text-primary">check_circle</span>
+<span class="font-body-sm text-body-sm font-medium">What else happens: <strong class="text-on-surface font-semibold">Nothing else. This action only.</strong></span>
+</div>
+</div>
+<!-- Card Footer Actions -->
+<div class="flex items-center justify-between px-space-lg py-space-sm bg-surface-container-low">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span>Singular cryptographic sign-off required</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-error hover:bg-error-container hover:text-on-error-container transition-colors" type="button">
+              Reject
+            </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary shadow-xs transition-colors" onclick="document.getElementById('confirm-modal-1').classList.remove('hidden')" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Approve</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: act_01JD8K9P02 -->
+<article class="bg-surface-container-lowest rounded-lg shadow-sm flex flex-col overflow-hidden transition-all duration-150">
+<div class="flex flex-wrap items-center justify-between gap-space-sm px-space-lg py-2.5 bg-surface-container-low text-on-surface">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[15px] text-primary">description</span>
+<span>Doc append</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm font-mono shadow-xs">
+              act_01JD8K9P02
+            </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm font-mono">04-Jul 11:32 IST</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Source:</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+              Weekly run run_01JD8K9M2P
+            </span>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Destination Block -->
+<div class="rounded-lg bg-surface-container-low p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 text-primary-container flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">library_books</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold text-primary">Destination Target</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">
+                  Google Doc · Canonical Explainers · <span class="font-normal text-on-surface-variant">heading: E3 — Exit Load Rules</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md pl-11 sm:pl-0 font-label-sm text-label-sm font-mono text-on-surface-variant">
+<span>doc_id: <span class="text-on-surface font-semibold">92xKL...001v</span></span>
+<span>·</span>
+<span>Position: <span class="text-on-surface">Replace Subsection 2</span></span>
+</div>
+</div>
+<!-- Exact Payload Block -->
+<div class="flex flex-col rounded-lg bg-surface-container-low overflow-hidden">
+<div class="flex items-center justify-between px-space-md py-2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">tag</span>
+<span>sha256: 7d1e84aa330f81ceef401bda0089e928fa4890ff</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container transition-colors py-0.5 px-1.5 rounded hover:bg-surface-container-highest" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy payload</span>
+</button>
+</div>
+<pre class="p-space-md font-label-md text-label-md text-on-surface font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-text bg-surface-container-lowest m-1.5 rounded">CANONICAL EXPLAINER #E3: MUTUAL FUND REDEMPTION CHARGES &amp; EXIT LOADS
+- Large Cap Equity Fund: Exit load of 1.00% if redeemed or switched out on or before 365 days from allotment date; 0% thereafter.
+- Gold ETF FoF: Exit load of 1.00% applicable if units redeemed within 15 calendar days of purchase; nil thereafter.
+- Mandatory Stamp Duty: 0.005% flat applicable on gross subscription value at time of issuance (SEBI Gazette Jul 2020).
+- Expense Ratio Cap: Direct plan 0.20% p.a., Regular plan 1.02% p.a. accrued daily into NAV.
+- LTCG Applicability: 12.5% on capital gains exceeding ₹1.25 Lakh per financial year (Finance Act 2024).
+- STCG Applicability: Flat 20% on units held under 12 months for equity schemes.</pre>
+</div>
+<!-- Critical Amber Callout -->
+<div class="rounded-lg bg-tertiary-fixed/30 p-space-md flex items-start gap-3">
+<span class="material-symbols-outlined text-[20px] text-tertiary shrink-0 mt-0.5">warning</span>
+<div class="flex flex-col gap-0.5">
+<span class="font-body-sm text-body-sm font-semibold text-tertiary">Critical Canonical Promotion Notice</span>
+<p class="font-body-sm text-body-sm text-on-surface">
+                Approving this makes Explainer #E3 the canonical fee answer. Future exit-load questions will reuse its bullets.
+              </p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between px-space-lg py-space-sm bg-surface-container-low">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span>Singular cryptographic sign-off required</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-error hover:bg-error-container hover:text-on-error-container transition-colors" type="button">
+              Reject
+            </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Approve</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- ==========================================
+         GROUP 2: EMAIL DRAFT (2)
+         ========================================== -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Email draft</h2>
+<span class="px-2 py-0.2 rounded-full bg-surface-container-high font-label-sm text-label-sm font-mono text-on-surface-variant font-semibold">2</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Staged email dispatches requiring explicit mailbox authorization.</p>
+</div>
+<!-- Card 3: act_01JD8K9P03 -->
+<article class="bg-surface-container-lowest rounded-lg shadow-sm flex flex-col overflow-hidden transition-all duration-150">
+<div class="flex flex-wrap items-center justify-between gap-space-sm px-space-lg py-2.5 bg-surface-container-low text-on-surface">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[15px] text-secondary">mail</span>
+<span>Email draft</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm font-mono shadow-xs">
+              act_01JD8K9P03
+            </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm font-mono">04-Jul 11:34 IST</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Source:</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+              Weekly run run_01JD8K9M2P
+            </span>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="rounded-lg bg-surface-container-low p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container/10 text-secondary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">outgoing_mail</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold text-secondary">Target Mailbox</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">
+                  Gmail draft · <span class="font-normal text-on-surface-variant">To: <span class="font-mono text-on-surface">product-team@</span> (internal distribution list)</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md pl-11 sm:pl-0 font-label-sm text-label-sm font-mono text-on-surface-variant">
+<span>Subject: <span class="text-on-surface">Weekly Product Pulse — 04-Jul-2026</span></span>
+</div>
+</div>
+<div class="flex flex-col rounded-lg bg-surface-container-low overflow-hidden">
+<div class="flex items-center justify-between px-space-md py-2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">tag</span>
+<span>sha256: 9b3f021c55a108e4ba9c87889e2170ba329cffaa</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container transition-colors py-0.5 px-1.5 rounded hover:bg-surface-container-highest" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy payload</span>
+</button>
+</div>
+<pre class="p-space-md font-label-md text-label-md text-on-surface font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-text bg-surface-container-lowest m-1.5 rounded">To: product-team@company.internal
+Subject: Weekly Product Pulse — 04-Jul-2026
+
+Team,
+Attached is the factual digest of customer feedback for the week ending 04-Jul-2026.
+Total customer mentions analyzed: 412.
+Key recurring blocker: UPI auto-pay mandate latency (48h delays reported across HDFC/SBI rails).
+Engineering recommendation: Verify NPCI callback retry intervals.
+
+Review details: https://console.internal/runs/run_01JD8K9M2P
+Audit reference: act_01JD8K9P03</pre>
+</div>
+<div class="rounded-lg bg-surface-container-low px-space-md py-2.5 flex items-center gap-2.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[17px] text-primary">check_circle</span>
+<span class="font-body-sm text-body-sm font-medium">What else happens: <strong class="text-on-surface font-semibold">Nothing else. This action only.</strong></span>
+</div>
+</div>
+<div class="flex items-center justify-between px-space-lg py-space-sm bg-surface-container-low">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span>Singular cryptographic sign-off required</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-error hover:bg-error-container hover:text-on-error-container transition-colors" type="button">
+              Reject
+            </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Approve</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 4: act_01JD8K9P04 -->
+<article class="bg-surface-container-lowest rounded-lg shadow-sm flex flex-col overflow-hidden transition-all duration-150">
+<div class="flex flex-wrap items-center justify-between gap-space-sm px-space-lg py-2.5 bg-surface-container-low text-on-surface">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[15px] text-secondary">mail</span>
+<span>Email draft</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm font-mono shadow-xs">
+              act_01JD8K9P04
+            </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm font-mono">04-Jul 11:35 IST</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Source:</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+              Weekly run run_01JD8K9M2P
+            </span>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md">
+<div class="rounded-lg bg-surface-container-low p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-secondary-container/10 text-secondary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">outgoing_mail</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold text-secondary">Target Mailbox</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">
+                  Gmail draft · <span class="font-normal text-on-surface-variant">To: <span class="font-mono text-on-surface">leadership-briefing@</span> (internal distribution list)</span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md pl-11 sm:pl-0 font-label-sm text-label-sm font-mono text-on-surface-variant">
+<span>Subject: <span class="text-on-surface">Fee Explainer Brief — HDFC Mutual Fund Rules (01-Sep-2026)</span></span>
+</div>
+</div>
+<div class="flex flex-col rounded-lg bg-surface-container-low overflow-hidden">
+<div class="flex items-center justify-between px-space-md py-2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">tag</span>
+<span>sha256: 4a81bc7ed1209f8c655320e8b11179ab4e9c7103</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container transition-colors py-0.5 px-1.5 rounded hover:bg-surface-container-highest" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy payload</span>
+</button>
+</div>
+<pre class="p-space-md font-label-md text-label-md text-on-surface font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-text bg-surface-container-lowest m-1.5 rounded">To: leadership-briefing@company.internal
+Subject: Fee Explainer Brief — HDFC Mutual Fund Rules (01-Sep-2026)
+
+Summary for Executive Review:
+- Explainer #E3 updated with revised SEBI categorization.
+- Exit load periods aligned across 6 active schemes in corpus.
+- Compliance stamp: No investment advisory triggers detected.
+- Corpus validation timestamp: 01-Sep-2026.</pre>
+</div>
+<div class="rounded-lg bg-surface-container-low px-space-md py-2.5 flex items-center gap-2.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[17px] text-primary">check_circle</span>
+<span class="font-body-sm text-body-sm font-medium">What else happens: <strong class="text-on-surface font-semibold">Nothing else. This action only.</strong></span>
+</div>
+</div>
+<div class="flex items-center justify-between px-space-lg py-space-sm bg-surface-container-low">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span>Singular cryptographic sign-off required</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-error hover:bg-error-container hover:text-on-error-container transition-colors" type="button">
+              Reject
+            </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Approve</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+<!-- ==========================================
+         GROUP 3: REPLY SEND (1)
+         ========================================== -->
+<section class="flex flex-col gap-space-md">
+<div class="flex items-baseline justify-between">
+<div class="flex items-center gap-space-sm">
+<h2 class="font-headline-sm text-headline-sm text-on-surface font-semibold tracking-tight">Reply send</h2>
+<span class="px-2 py-0.2 rounded-full bg-surface-container-high font-label-sm text-label-sm font-mono text-on-surface-variant font-semibold">1</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Outbound customer ticket communications.</p>
+</div>
+<!-- Card 5: act_01JD8K9P05 -->
+<article class="bg-surface-container-lowest rounded-lg shadow-sm flex flex-col overflow-hidden transition-all duration-150">
+<div class="flex flex-wrap items-center justify-between gap-space-sm px-space-lg py-2.5 bg-surface-container-low text-on-surface">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container text-on-surface font-body-sm text-body-sm font-medium">
+<span class="material-symbols-outlined text-[15px] text-tertiary">send</span>
+<span>Reply send</span>
+</span>
+<span class="px-2 py-0.5 rounded bg-surface-container-lowest text-on-surface-variant font-label-sm text-label-sm font-mono shadow-xs">
+              act_01JD8K9P05
+            </span>
+<span class="text-on-surface-variant font-label-sm text-label-sm font-mono">24-Nov 10:48 IST</span>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm text-on-surface-variant">Source:</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+              Ticket tkt_01JD8K9M2P
+            </span>
+</div>
+</div>
+<div class="p-space-lg flex flex-col gap-space-md">
+<!-- Flagged replacement warning container -->
+<div class="rounded-lg bg-error-container/30 p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-[20px] text-error shrink-0 mt-0.5">report</span>
+<div class="flex flex-col gap-1">
+<div class="flex items-center gap-2 flex-wrap">
+<span class="font-body-sm text-body-sm font-semibold text-error">
+                    This reply replaces a draft that failed automated compliance review
+                  </span>
+<span class="px-1.5 py-0.2 rounded bg-error text-on-error font-label-sm text-label-sm font-mono font-semibold">UNCITED_CLAIM</span>
+<span class="px-1.5 py-0.2 rounded bg-error text-on-error font-label-sm text-label-sm font-mono font-semibold">PERFORMANCE</span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+                  Initial automated agent draft attempted performance speculation; sanitized by human editor v2.
+                </p>
+</div>
+</div>
+<span class="font-label-sm text-label-sm font-mono text-error font-medium shrink-0 pl-8 sm:pl-0">Sanitized Revision · Strict Audit</span>
+</div>
+<!-- Destination Block -->
+<div class="rounded-lg bg-surface-container-low p-space-md flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
+<div class="flex items-start gap-3">
+<div class="w-8 h-8 rounded bg-primary-container/10 text-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">forum</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider font-semibold text-primary">Destination Target</span>
+<span class="font-body-md text-body-md font-semibold text-on-surface">
+                  Outbox · ticket tkt_01JD8K9M2P · <span class="font-normal text-on-surface-variant">Recipient: <span class="font-mono text-on-surface">redacted user</span></span>
+</span>
+</div>
+</div>
+<div class="flex items-center gap-space-md pl-11 sm:pl-0 font-label-sm text-label-sm font-mono text-on-surface-variant">
+<span class="px-2 py-0.5 rounded bg-surface-container text-primary font-semibold">PAN_VERIFIED</span>
+<span>·</span>
+<span>Channel: Support Webhook</span>
+</div>
+</div>
+<!-- Exact Payload Block -->
+<div class="flex flex-col rounded-lg bg-surface-container-low overflow-hidden">
+<div class="flex items-center justify-between px-space-md py-2 bg-surface-container text-on-surface-variant font-label-sm text-label-sm font-mono">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-[15px]">tag</span>
+<span>sha256: e1a498b208cc738a192bb3e72109ab30138cd91f</span>
+</div>
+<button class="inline-flex items-center gap-1 text-primary hover:text-primary-container transition-colors py-0.5 px-1.5 rounded hover:bg-surface-container-highest" type="button">
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+<span>Copy payload</span>
+</button>
+</div>
+<pre class="p-space-md font-label-md text-label-md text-on-surface font-mono overflow-x-auto whitespace-pre-wrap leading-relaxed select-text bg-surface-container-lowest m-1.5 rounded">"We can't offer investment advice or recommend whether to buy, hold or redeem. For general guidance on mutual funds, please see the AMFI investor education page. Exit load of 1% if redeemed within 1 year. (groww.in · HDFC Large Cap Fund – Exit load · Snapshot B)"</pre>
+</div>
+<div class="rounded-lg bg-surface-container-low px-space-md py-2.5 flex items-center gap-2.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[17px] text-primary">check_circle</span>
+<span class="font-body-sm text-body-sm font-medium">What else happens: <strong class="text-on-surface font-semibold">Nothing else. This action only.</strong></span>
+</div>
+</div>
+<div class="flex items-center justify-between px-space-lg py-space-sm bg-surface-container-low">
+<div class="flex items-center gap-1.5 text-on-surface-variant font-label-sm text-label-sm font-mono">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+<span>Singular cryptographic sign-off required</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="px-3 py-1.5 rounded font-body-sm text-body-sm font-medium text-error hover:bg-error-container hover:text-on-error-container transition-colors" type="button">
+              Reject
+            </button>
+<button class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary shadow-xs transition-colors" type="button">
+<span class="material-symbols-outlined text-[16px]">check</span>
+<span>Approve</span>
+</button>
+</div>
+</div>
+</article>
+</section>
+</div>
+<!-- ==========================================
+       MODAL: CONFIRMATION DIALOG (FOR CARD 1)
+       ========================================== -->
+<div class="fixed inset-0 z-50 flex items-center justify-center p-space-md bg-inverse-surface/60 backdrop-blur-xs transition-opacity duration-200" id="confirm-modal-1">
+<div class="bg-surface-container-lowest rounded-xl max-w-lg w-full shadow-xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95 duration-150">
+<!-- Modal Header -->
+<div class="px-space-xl pt-space-xl pb-space-md flex items-start gap-space-md">
+<div class="w-10 h-10 rounded-full bg-primary-container/10 text-primary-container flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<div class="flex flex-col gap-1">
+<h3 class="font-headline-md text-headline-md text-on-surface font-semibold tracking-tight">Approve this action?</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+            This will append 1 section to Google Doc <span class="font-semibold text-on-surface">'Weekly Product Pulse log'</span> under heading <span class="font-semibold text-on-surface">'Week ending 04-Jul-2026'</span>.
+          </p>
+</div>
+</div>
+<!-- Audit Metadata Summary Block -->
+<div class="px-space-xl py-space-sm">
+<div class="rounded-lg bg-surface-container-low p-space-md flex flex-col gap-2 font-label-sm text-label-sm font-mono text-on-surface-variant">
+<div class="flex justify-between items-center pb-1.5 border-b border-surface-container-high/60">
+<span class="text-on-surface-variant">Target Document</span>
+<span class="text-on-surface font-semibold">14vQ9...Lp92 (Google Docs)</span>
+</div>
+<div class="flex justify-between items-center pb-1.5 border-b border-surface-container-high/60">
+<span class="text-on-surface-variant">Payload Digest</span>
+<span class="text-on-surface">sha256: 3f9a778c...c21e</span>
+</div>
+<div class="flex justify-between items-center pb-1.5 border-b border-surface-container-high/60">
+<span class="text-on-surface-variant">Mutation Impact</span>
+<span class="text-error font-semibold">1 write operation. Cannot be undone.</span>
+</div>
+<div class="flex justify-between items-center text-primary pt-0.5">
+<span>Execution Scope</span>
+<span>Singular write · No secondary hooks</span>
+</div>
+</div>
+</div>
+<!-- Critical Compliance Note -->
+<div class="px-space-xl py-space-sm">
+<div class="rounded bg-surface-container px-3 py-2 text-on-surface-variant font-body-sm text-body-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[16px] text-on-surface-variant">info</span>
+<span>Singular authorization only. No persistent auto-approvals granted.</span>
+</div>
+</div>
+<!-- Actions -->
+<div class="px-space-xl py-space-lg bg-surface-container-low flex items-center justify-end gap-space-sm mt-space-sm">
+<button class="px-4 py-2 rounded font-body-sm text-body-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors" onclick="document.getElementById('confirm-modal-1').classList.add('hidden')" type="button">
+          Cancel
+        </button>
+<button class="inline-flex items-center gap-1.5 px-4 py-2 rounded bg-primary-container text-on-primary font-body-sm text-body-sm font-medium hover:bg-primary shadow-xs transition-colors" onclick="document.getElementById('confirm-modal-1').classList.add('hidden')" type="button">
+<span class="material-symbols-outlined text-[17px]">check</span>
+<span>Approve and write</span>
+</button>
+</div>
+</div>
+</div>
+</div></main></div></body></html>

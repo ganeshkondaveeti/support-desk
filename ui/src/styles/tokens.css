@@ -1,0 +1,57 @@
+/*
+ * Support Desk design tokens (plan P9.1). One token set, taken from
+ * docs/design/stitch/support_desk_operations_console/DESIGN.md prose.
+ * Values are RGB channels so Tailwind can apply alpha: rgb(var(--x) / 0.5).
+ *
+ * Deviation from DESIGN.md: metadata text uses slate-500 (#64748B, 4.8:1 on white)
+ * instead of slate-400 (#94A3B8, 2.6:1), which fails WCAG AA.
+ */
+:root {
+  /* Structure */
+  --canvas: 248 250 252; /* #F8FAFC */
+  --surface: 255 255 255; /* #FFFFFF */
+  --subtle: 241 245 249; /* #F1F5F9 */
+  --line: 226 232 240; /* #E2E8F0 */
+  --line-strong: 203 213 225; /* #CBD5E1 */
+
+  /* Text */
+  --ink: 15 23 42; /* #0F172A */
+  --ink-muted: 71 85 105; /* #475569 */
+  --ink-faint: 100 116 139; /* #64748B */
+
+  /* Primary (deep teal) */
+  --primary: 15 118 110; /* #0F766E */
+  --primary-hover: 17 94 89; /* #115E59 */
+  --primary-wash: 240 253 250; /* #F0FDFA */
+  --primary-line: 153 246 228; /* #99F6E4 */
+
+  /* Status triplets: fg (text), bg (container), line (border), solid (dot/fill) */
+  --success-fg: 21 128 61; /* #15803D */
+  --success-bg: 240 253 244; /* #F0FDF4 */
+  --success-line: 187 247 208; /* #BBF7D0 */
+  --success-solid: 22 163 74; /* #16A34A */
+
+  --warning-fg: 146 64 14; /* #92400E (AA on #FFFBEB) */
+  --warning-bg: 255 251 235; /* #FFFBEB */
+  --warning-line: 253 230 138; /* #FDE68A */
+  --warning-solid: 217 119 6; /* #D97706 */
+
+  --critical-fg: 185 28 28; /* #B91C1C */
+  --critical-bg: 254 242 242; /* #FEF2F2 */
+  --critical-line: 254 202 202; /* #FECACA */
+  --critical-solid: 220 38 38; /* #DC2626 */
+
+  --info-fg: 29 78 216; /* #1D4ED8 */
+  --info-bg: 239 246 255; /* #EFF6FF */
+  --info-line: 191 219 254; /* #BFDBFE */
+  --info-solid: 37 99 235; /* #2563EB */
+
+  /* Elevation (DESIGN.md levels 1 and 2) */
+  --shadow-1: 0 1px 2px 0 rgb(15 23 42 / 0.05);
+  --shadow-2: 0 4px 6px -1px rgb(15 23 42 / 0.08), 0 2px 4px -2px rgb(15 23 42 / 0.04);
+
+  /* Layout */
+  --header-h: 56px;
+  --sidebar-w: 240px;
+  --sidebar-w-collapsed: 64px;
+}
