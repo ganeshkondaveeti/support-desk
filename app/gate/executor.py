@@ -13,7 +13,7 @@ from app.bridge.canonical import promote
 from app.db import models
 from app.db.repository import add
 from app.gate.actions import GateError, payload_hash, write_audit
-from app.gate.mcp_client import McpClient, McpClientError, get_mcp_client
+from app.gate.mcp_client import McpClient, McpClientError, get_mcp_client, reset_mcp_client
 from app.guardrails.pii import scan
 from app.ids import safe_hex_id
 
@@ -111,6 +111,16 @@ def execute(
     )
     session.flush()
     return action
+
+
+def list_mcp_tools() -> list[str]:
+    """Startup handshake (arch §16): read-only list of the MCP server's tools."""
+    return get_mcp_client().list_tools()
+
+
+def stop_mcp() -> None:
+    """Stop the long-lived MCP stdio session (app shutdown)."""
+    reset_mcp_client()
 
 
 def _audit_safe(mcp_result: dict[str, Any]) -> dict[str, Any]:

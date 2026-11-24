@@ -1,0 +1,47 @@
+# Render blueprint for The Support Desk (arch §16, plan P11.2).
+# Deploy: Render dashboard → New → Blueprint → pick this repo. Then set the
+# `sync: false` secrets in the service's Environment tab (docs/deploy.md).
+services:
+  - type: web
+    name: support-desk
+    runtime: docker
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    # A persistent disk needs a paid instance; "starter" is the smallest with disks.
+    plan: starter
+    region: singapore
+    branch: master
+    autoDeploy: true
+    healthCheckPath: /api/health
+    disk:
+      name: support-desk-state
+      mountPath: /data/state  # SQLite DB, LangGraph checkpoints, local MCP outputs
+      sizeGB: 1
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: LLM_PROVIDER
+        value: groq
+      - key: LLM_MODEL
+        value: openai/gpt-oss-120b
+      - key: DATABASE_URL
+        value: sqlite:////data/state/support_desk.sqlite3
+      - key: MCP_BACKEND
+        value: local
+      - key: LOCAL_DOC_PATH
+        value: /data/state/samples/appended_doc_entry.md
+      - key: LOCAL_EMAIL_PATH
+        value: /data/state/samples/email_draft.md
+      - key: WEEKLY_CRON
+        value: "0 9 * * 1"
+      - key: TZ
+        value: Asia/Kolkata
+      - key: LOG_TEXT
+        value: "0"
+      # Secrets: set in the dashboard, never committed (plan P11.3).
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ADMIN_TOKEN
+        sync: false
+      - key: PRODUCT_TEAM_EMAILS
+        sync: false

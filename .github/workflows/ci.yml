@@ -157,3 +157,42 @@ jobs:
             ui/playwright-report
             ui/test-results
           retention-days: 7
+
+  docker:
+    # Plan P11.1 / P11.6: build the production image, run it, smoke-test it, and check
+    # that state survives a restart on the volume without re-seeding.
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Build image
+        run: docker build -t support-desk:ci .
+
+      - name: Run container
+        run: |
+          docker run -d --name sd -p 8000:8000 \
+            -e ADMIN_TOKEN=ci-smoke-token -e LLM_PROVIDER=cues_only \
+            -v sd-state:/data/state support-desk:ci
+
+      - name: Smoke test
+        env:
+          ADMIN_TOKEN: ci-smoke-token
+        run: python3 scripts/smoke.py http://127.0.0.1:8000
+
+      - name: State survives a restart
+        run: |
+          count() { curl -fsS "http://127.0.0.1:8000/api/tickets?limit=1" \
+            | python3 -c 'import json,sys; print(json.load(sys.stdin)["total"])'; }
+          before=$(count)
+          docker restart sd
+          for i in $(seq 1 60); do curl -fsS http://127.0.0.1:8000/api/health >/dev/null && break; sleep 2; done
+          after=$(count)
+          echo "tickets before=$before after=$after"
+          test "$before" = "$after"
+          curl -fsS http://127.0.0.1:8000/api/health | python3 -c \
+            'import json,sys; d=json.load(sys.stdin); assert d["gate_mode"]=="full", d; print(d)'
+
+      - name: Container logs
+        if: always()
+        run: docker logs sd 2>&1 | tail -150

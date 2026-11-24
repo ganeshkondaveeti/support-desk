@@ -10,6 +10,7 @@ from app.api.schemas import HealthResponse
 from app.api.serializers import weekly_summary
 from app.corpus.loader import A_LAST_CHECKED, B_LAST_CHECKED, load_corpus
 from app.db import models
+from app.gate.mode import gate_mode
 from app.guardrails.allowlists import EDU_URLS, PUBLIC_DOMAINS
 
 router = APIRouter(tags=["health"])
@@ -59,7 +60,7 @@ def health(session: DbSession) -> HealthResponse:
         db_reachable=db_reachable,
         last_weekly_run=last_run,
         pending_approvals=pending,
-        gate_mode="full",
+        gate_mode=gate_mode(),
         seeded=ticket_count > 0,
         corpus_last_checked={"A": A_LAST_CHECKED, "B": B_LAST_CHECKED},
         public_domains=sorted(PUBLIC_DOMAINS),
