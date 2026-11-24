@@ -1,0 +1,60 @@
+{
+  "literals": [
+    {
+      "type": "PAN",
+      "value": "ABCDE1234F",
+      "variants": [
+        "abcde1234f",
+        "AB CDE 1234 F",
+        "ABCDE 1234 F",
+        "ABCDE1234F"
+      ]
+    },
+    {
+      "type": "PHONE",
+      "value": "9876543210",
+      "variants": [
+        "9876543210",
+        "９８７６５４３２１０",
+        "९८७६५४३२१०"
+      ]
+    },
+    {
+      "type": "ACCOUNT",
+      "value": "50100234567890",
+      "variants": [
+        "50100234567890"
+      ]
+    },
+    {
+      "type": "AADHAAR",
+      "value": "234567890124",
+      "variants": [
+        "2345 6789 0124",
+        "234567890124"
+      ]
+    },
+    {
+      "type": "EMAIL",
+      "value": "user.eval@example.com",
+      "variants": [
+        "user.eval@example.com"
+      ]
+    },
+    {
+      "type": "OTP",
+      "value": "482913",
+      "variants": [
+        "482913",
+        "code is 482913"
+      ]
+    },
+    {
+      "type": "UPI",
+      "value": "evaluser@oksbi",
+      "variants": [
+        "evaluser@oksbi"
+      ]
+    }
+  ]
+}

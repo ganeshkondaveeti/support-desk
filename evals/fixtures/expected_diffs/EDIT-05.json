@@ -1,0 +1,33 @@
+{
+  "id": "EDIT-05",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/actions/{pulse_email}/approve",
+  "expect_status": 200,
+  "tables": {
+    "proposed_actions": {
+      "changed": [
+        {
+          "id": "{pulse_email}",
+          "status": [
+            "pending",
+            "executed"
+          ]
+        }
+      ]
+    },
+    "audit_events": {
+      "added": {
+        "min_count": 1,
+        "entity_id": "{pulse_email}"
+      }
+    }
+  },
+  "files": {
+    "samples/email_draft.md": "created"
+  },
+  "unchanged_action_ids": [
+    "{pulse_doc}",
+    "{expl_doc}",
+    "{expl_email}"
+  ]
+}

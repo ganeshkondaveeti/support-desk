@@ -444,6 +444,17 @@
             "title": "Routing Note",
             "type": "object"
           },
+          "row": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Row"
+          },
           "version": {
             "title": "Version",
             "type": "integer"
@@ -1113,6 +1124,11 @@
           "status": {
             "title": "Status",
             "type": "string"
+          },
+          "unchanged": {
+            "default": false,
+            "title": "Unchanged",
+            "type": "boolean"
           }
         },
         "required": [
@@ -1481,6 +1497,15 @@
               }
             ],
             "title": "Reviews Path"
+          },
+          "trigger": {
+            "default": "manual",
+            "enum": [
+              "manual",
+              "cron"
+            ],
+            "title": "Trigger",
+            "type": "string"
           }
         },
         "title": "WeeklyRunRequest",

@@ -1,0 +1,45 @@
+{
+  "id": "EDIT-04",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t2}/edit",
+  "expect_status": 200,
+  "tables": {
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t2}",
+        "reviewer_flags_include": [
+          "UNCITED_CLAIM"
+        ]
+      }
+    },
+    "tickets": {
+      "changed": [
+        {
+          "id": "{t2}",
+          "status": [
+            "awaiting_human",
+            "blocked"
+          ]
+        }
+      ]
+    },
+    "proposed_actions": {
+      "changed": [
+        {
+          "subject_id": "{t2}",
+          "kind": "reply_send",
+          "status": [
+            "pending",
+            "superseded"
+          ]
+        }
+      ]
+    }
+  },
+  "proposed_actions_must_not_add": {
+    "kind": "reply_send",
+    "subject_id": "{t2}",
+    "status": "pending"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "id": "EDIT-01",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t1}/edit",
+  "expect_status": 200,
+  "tables": {
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t1}",
+        "origin": "human_edit"
+      }
+    },
+    "proposed_actions": {
+      "changed": [
+        {
+          "subject_id": "{t1}",
+          "kind": "reply_send",
+          "status": [
+            "pending",
+            "superseded"
+          ]
+        }
+      ],
+      "added": {
+        "min_count": 1,
+        "kind": "reply_send",
+        "subject_id": "{t1}",
+        "status": "pending"
+      }
+    },
+    "audit_events": {
+      "added": {
+        "min_count": 1,
+        "entity_id": "{t1}"
+      }
+    }
+  }
+}

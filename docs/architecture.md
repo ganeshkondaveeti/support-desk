@@ -388,7 +388,7 @@ erDiagram
 
 ### 5.3 Tables
 
-All free-text columns hold **redacted** text only. A DB-level `CHECK` isn't practical for regex, so the repository layer runs `pii.scan()` on every write and raises `PIILeakError` if anything matches. Evals assert that this error never fires on real paths and that a final DB sweep is clean (§15.3).
+All free-text columns hold **redacted** text only. A DB-level `CHECK` isn't practical for regex, so the repository layer runs `pii.scan()` on every write and raises `PIILeakError` if anything matches. Identifiers are excluded in exactly two positions: the pulse's `review <16-hex id>` citation and JSON values under `review_id`, `review_ids`, `review_ids_sample` and `fingerprint`. Some real review ids look like a PAN or phone number to the scanner (11 of 1,650), which would otherwise fail a weekly run. Evals assert that this error never fires on real paths and that a final DB sweep is clean (§15.3).
 
 | Table | Key columns | Notes |
 | --- | --- | --- |
@@ -871,7 +871,7 @@ Checks are run on `draft.reply_text` plus `citation_url`:
 
 | Check | Hard fail? | Rule |
 | --- | --- | --- |
-| `UNCITED_CLAIM` | **Yes** | Each sentence must be either (a) a verbatim substring of a corpus block or canonical bullet, with `citation_url` equal to that block's `source_url`, or (b) an exact template sentence from `templates.py`. Any other sentence that contains a digit, `%`, `₹` or a fee keyword counts as an uncited factual claim. Factual drafts must have a `citation_url` in `CITATION_URLS`. |
+| `UNCITED_CLAIM` | **Yes** | Each sentence must be either (a) a verbatim substring of a corpus block or canonical bullet, with `citation_url` equal to that block's `source_url`, or (b) an exact template sentence from `templates.py`. A fact lead-in (*"Per the scheme page:"*) or family lead (*"For the equity schemes (…):"*) is a prefix, never a pass on its own: the text after it must meet (a), and a family lead may only name in-corpus schemes. Any other sentence that contains a digit, `%`, `₹` or a fee keyword counts as an uncited factual claim. Factual drafts must have a `citation_url` in `CITATION_URLS`. |
 | `ADVICE` / `BUY_SELL` | **Yes** | `scope.check_advice` and `check_buy_sell` on non-corpus spans. |
 | `PERFORMANCE` | **Yes** | `scope.check_performance` on non-corpus spans. |
 | `PII` | **Yes** | `pii.scan(reply_text) == []`. |
@@ -1064,7 +1064,7 @@ The backend is chosen by `MCP_BACKEND=google|local`. The hosted demo defaults to
 | Schedule | APScheduler cron `0 9 * * MON`, `Asia/Kolkata` (configurable: `WEEKLY_CRON`). |
 | Manual trigger | `POST /api/weekly/run` (admin token) and a "Run weekly loop now" button in the Pulse view. |
 | Concurrency | A DB-row lock (`weekly_runs.status='running'` with a TTL of 15 min) stops overlapping runs. A second trigger returns `409` with the running run id. |
-| Hosts that sleep | Some free tiers stop idle containers, so a GitHub Actions workflow (`.github/workflows/weekly.yml`) also calls the manual trigger endpoint on the same cron as a backup. Thanks to the idempotency rule in §7.1, the in-process scheduler and the external ping can't double-run. |
+| Hosts that sleep | Some free tiers stop idle containers, so a GitHub Actions workflow (`.github/workflows/weekly.yml`) also calls `POST /api/weekly/run` with `{"trigger": "cron"}` on the same cron as a backup. Because it identifies as cron, the idempotency rule in §7.1 makes an unchanged-input run a no-op, so the in-process scheduler and the external ping can't double-run. |
 | Completion | A run finishes in `awaiting_approval` (success) or `failed` (error recorded, alert in UI). No step waits for a human. |
 | Response loop | Event-driven: each `POST /api/tickets` invokes the graph immediately. A background worker (`asyncio` task queue, concurrency 4) handles bulk seed loads. |
 
@@ -1084,11 +1084,11 @@ Free-text fields (`text`, `hint`, `edit`) are typed as plain `str` with no lengt
 | `POST` | `/api/tickets` | Submit a question (redacted at ingress), returns ticket id |
 | `POST` | `/api/tickets/seed` | Load `seed_questions.json` through the normal path |
 | `GET` | `/api/tickets` | Queue list (filters: status, team, priority) |
-| `GET` | `/api/tickets/{id}` | Ticket detail: current draft, versions, agent outputs, reviewer result, routing note, refinements |
-| `POST` | `/api/tickets/{id}/edit` | Human edit → new draft version → reviewer |
+| `GET` | `/api/tickets/{id}` | Ticket detail: current draft (incl. decision-table `row` 1–5), versions, agent outputs, reviewer result, routing note, refinements |
+| `POST` | `/api/tickets/{id}/edit` | Human edit → new draft version → reviewer. Identical text → `200` with `unchanged=true` (no-op). Rejected tickets → `409`. |
 | `POST` | `/api/tickets/{id}/reject` | Reject draft |
 | `POST` | `/api/tickets/{id}/refine` | `{kind, hint}` → scoped node re-run (≤5) |
-| `POST` | `/api/weekly/run` | Manual weekly trigger |
+| `POST` | `/api/weekly/run` | Weekly trigger. `{trigger: "manual"}` (default) always creates a run; `{trigger: "cron"}` is a no-op when the input is unchanged (§7.1). Test-only `as_of` / `reviews_path` overrides (eval §2.4). |
 | `GET` | `/api/weekly/runs` / `/api/weekly/runs/{id}` | Run history; themes, pulse, explainer, repeat questions for a run |
 | `GET` | `/api/sources` | Corpus index: scheme, section, `source_url`, last checked, which drafts and explainers cite it |
 | `GET` | `/api/actions?status=pending` | Approval queue |

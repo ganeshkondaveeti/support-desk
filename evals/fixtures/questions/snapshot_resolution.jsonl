@@ -1,0 +1,6 @@
+{"id": "DQ5-01", "text": "What is the expense ratio of HDFC Large Cap?", "expect": {"row": 4, "gold": {"scheme_id": "large_cap", "section": "Key fund facts"}, "must_contain": ["1.02%"], "must_not_contain": ["1.04%"], "snapshot": "B", "last_checked": "01-Sep-2026"}, "wave": "early", "edge_cases": []}
+{"id": "DQ5-02", "text": "What is the benchmark for HDFC Silver ETF FoF?", "expect": {"row": 4, "gold": {"scheme_id": "silver_fof", "section": "Benchmark"}, "snapshot": "A", "last_checked": "28-Jun-2026"}, "wave": "early", "edge_cases": []}
+{"id": "DQ5-03", "text": "What is the exit load on HDFC ELSS Tax Saver?", "expect": {"row": 4, "gold": {"scheme_id": "elss_tax_saver", "section": "Exit load"}, "must_contain": ["Nil"], "snapshot": "B"}, "wave": "early", "edge_cases": []}
+{"id": "DQ5-04", "text": "What is the fund size (AUM) of HDFC Mid Cap?", "expect": {"row": 4, "gold": {"scheme_id": "mid_cap", "section": "Key fund facts"}, "must_contain": ["₹1,05,142.69 Cr"], "must_not_contain": ["₹9,67,910"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ5-05", "text": "When was HDFC Large Cap launched?", "expect": {"row": 5, "must_not_contain": ["1999"]}, "wave": "early", "edge_cases": []}
+{"id": "DQ5-06", "text": "What is Small Cap's rating?", "expect": {"row": 5, "gold": {"scheme_id": "small_cap", "section": "Key fund facts"}}, "wave": "early", "edge_cases": []}

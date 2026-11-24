@@ -1,0 +1,25 @@
+{
+  "id": "EDIT-11",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/actions/{pulse_doc}/reject",
+  "expect_status": 200,
+  "tables": {
+    "proposed_actions": {
+      "changed": [
+        {
+          "id": "{pulse_doc}",
+          "status": [
+            "pending",
+            "rejected"
+          ]
+        }
+      ]
+    },
+    "audit_events": {
+      "added": {
+        "min_count": 1,
+        "entity_id": "{pulse_doc}"
+      }
+    }
+  }
+}

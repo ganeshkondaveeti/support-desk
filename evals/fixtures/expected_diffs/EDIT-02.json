@@ -1,0 +1,10 @@
+{
+  "id": "EDIT-02",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/tickets/{t1}/edit",
+  "expect_status": 200,
+  "empty_diff": true,
+  "response": {
+    "unchanged": true
+  }
+}

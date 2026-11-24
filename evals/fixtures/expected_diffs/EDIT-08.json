@@ -1,0 +1,8 @@
+{
+  "id": "EDIT-08",
+  "all_other_tables": "unchanged",
+  "operation": "POST /api/actions/{pulse_email}/approve",
+  "expect_status": 409,
+  "empty_diff": true,
+  "response_error": "already_approved"
+}

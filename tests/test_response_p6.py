@@ -426,7 +426,8 @@ def test_edit_pass_reproposes_reply_send(db_url: str, compiled) -> None:
         )
         current = _current_draft(session, ticket.id)
         # Identical edit is a no-op.
-        noop = edit_ticket(session, ticket.id, current.reply_text, "tester")
+        noop, unchanged = edit_ticket(session, ticket.id, current.reply_text, "tester")
+        assert unchanged is True
         assert noop.id == current.id
 
         corpus = load_corpus()
@@ -439,9 +440,10 @@ def test_edit_pass_reproposes_reply_send(db_url: str, compiled) -> None:
         text = f"From the scheme information: {sentence}"
         assert text != current.reply_text
         before = snapshot(session)
-        edited = edit_ticket(session, ticket.id, text, "tester")
+        edited, changed = edit_ticket(session, ticket.id, text, "tester")
         after = snapshot(session)
         d = diff(before, after)
+        assert changed is False
         assert edited.origin == "human_edit"
         assert ticket.status == "awaiting_human", edited.reviewer_result
         pending = [a for a in _reply_sends(session, ticket.id) if a.status == "pending"]
@@ -462,7 +464,7 @@ def test_edit_fail_blocks_and_supersedes(db_url: str, compiled) -> None:
             ticket.id,
             "You should redeem now. The fund returned 18% last year.",
             "tester",
-        )
+        )  # returns (draft, unchanged)
         assert ticket.status == "blocked"
         pending = [a for a in _reply_sends(session, ticket.id) if a.status == "pending"]
         assert pending == []
@@ -491,7 +493,7 @@ def test_blocked_then_passing_edit_creates_reply_send(db_url: str, compiled) -> 
         if not sentence.endswith("."):
             sentence += "."
         text = f"Per the scheme page: {sentence}"
-        edit_ticket(session, "t_g9", text, "tester")
+        _dv, _unchanged = edit_ticket(session, "t_g9", text, "tester")
         ticket = session.get(models.Ticket, "t_g9")
         assert ticket is not None
         assert ticket.status == "awaiting_human"

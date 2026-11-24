@@ -29,11 +29,15 @@ _REFUSAL_LOGGED = False
 
 
 def fault_injection_enabled(settings: Settings | None = None) -> bool:
-    """True only in APP_ENV=test with a non-empty EVAL_FAULTS."""
+    """True in APP_ENV=test when EVAL_FAULTS is set (including ``on``).
+
+    ``on`` / ``true`` enables per-ticket headers without activating process-wide
+    faults. Named values in EVAL_FAULTS activate those faults for every ticket.
+    """
     cfg = settings or get_settings()
     if cfg.app_env != "test":
         return False
-    return bool(_parse_faults(cfg.eval_faults))
+    return bool(cfg.eval_faults.strip())
 
 
 def check_fault_injection_on_startup(settings: Settings | None = None) -> None:
@@ -155,7 +159,9 @@ def _parse_faults(raw: str) -> frozenset[str]:
     if not raw or not raw.strip():
         return frozenset()
     parts = {p.strip() for p in raw.replace(";", ",").split(",") if p.strip()}
-    # EVAL_FAULTS=on / 1 enables the named suite defaults used by eval harness.
+    # EVAL_FAULTS=on / 1 / true means "hooks allowed" but activates no process-wide
+    # fault. Named faults (llm_down, advice_always, …) must be listed explicitly.
+    # Per-ticket faults still use X-Eval-Ticket under APP_ENV=test.
     if parts <= {"on", "1", "true", "yes"}:
-        return frozenset({"uncited_once", "advice_always", "llm_down", "advice_ideas"})
+        return frozenset()
     return frozenset(p for p in parts if p in KNOWN_FAULTS)

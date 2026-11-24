@@ -1,0 +1,29 @@
+{
+  "id": "EDIT-14",
+  "operation": "POST /api/tickets/{t5}/refine",
+  "expect_status": 200,
+  "request": {
+    "mode": "check_fee_issue"
+  },
+  "tables": {
+    "refinements": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t5}",
+        "n": 3
+      }
+    },
+    "agent_outputs": {
+      "added": {
+        "min_count": 1,
+        "agent": "pattern"
+      }
+    },
+    "draft_versions": {
+      "added": {
+        "min_count": 1,
+        "ticket_id": "{t5}"
+      }
+    }
+  }
+}

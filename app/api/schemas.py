@@ -86,6 +86,8 @@ class DraftVersionOut(BaseModel):
     reviewer_result: dict[str, Any] = Field(default_factory=dict)
     origin: str
     is_current: bool
+    # Orchestrator decision-table row (1–5); stored in reviewer_result, exposed for evals.
+    row: int | None = None
 
 
 class AgentOutputOut(BaseModel):
@@ -125,6 +127,8 @@ class TicketDetailResponse(BaseModel):
     agent_outputs: list[AgentOutputOut] = Field(default_factory=list)
     refinements: list[RefinementOut] = Field(default_factory=list)
     pending_reply_send_id: str | None = None
+    # Set when an identical edit is a no-op (eval EDIT-02 / EC-HA-08).
+    unchanged: bool = False
 
 
 class TicketEditRequest(BaseModel):
@@ -151,6 +155,9 @@ class WeeklyRunRequest(BaseModel):
 
     as_of: date | None = None
     reviews_path: str | None = None
+    # "cron" makes an unchanged-input run a no-op (arch §7.1). The GitHub backup
+    # workflow sends it so it can't double-run with the in-process scheduler (§11).
+    trigger: Literal["manual", "cron"] = "manual"
 
 
 class WeeklyRunResponse(BaseModel):

@@ -60,6 +60,13 @@ The order matters:
 - Edit correctness acts on those tickets and actions.
 - Grounding and compliance submits further waves of questions into the same session.
 
+Shared-state rules the harness follows (each new manual weekly run supersedes the previous run's *pending* actions, arch §7.1):
+
+- FEAS-08, FEAS-09 and FEAS-11 each trigger their **own** run. FEAS-11 approves that run's explainer email and then its doc_append.
+- Before Suite 2 the harness makes one fresh manual run and binds `pulse_doc`, `pulse_email`, `expl_doc` and `expl_email` to its 4 pending actions.
+- GC-07 runs first in Suite 3. Its last run (after the 5 repeated questions) is the pulse GC-01 samples, so both repeat clusters exist. GC-01 pools pulse quotes and theme counts from every real-review pulse in the session (the word cap may drop a pulse's third quote), and also traces the **whole** pool so a failure can't hide behind sampling.
+- GC-07's `advice_ideas` sub-check applies the fault to its one weekly run through `X-Eval-Ticket`, not process-wide.
+
 ### 2.2 Layout
 
 ```
@@ -162,7 +169,7 @@ All question and review fixtures are **synthetic**, except the real reviews. The
 | **FEAS-03** | Model availability (graded run only) | Count `model_raw_choice == ERROR` | ≤ 10% of agent calls. This stops a provider outage from passing FEAS-01 trivially with everything "not covered". | EC-LLM-04 |
 | **FEAS-04** | Themes carry review ids and a stated window | `GET /api/weekly/runs/{id}` | ≤ 5 themes. For each, `len(review_ids) == count`, every id exists in DR-1, every review's date is inside `[window_start, window_end]`, and the window is non-null. The theme counts sum to the number of ingested reviews (exclusive assignment). | EC-WK-08, F7 |
 | **FEAS-05** | Baseline regression | Compare with `data/analyzed_themes.json` | Each count within ±2% of 709 / 503 / 162 / 140 / 136. If the M2 fallback was used (plan P3 risk), report it. | EC-PT-08 |
-| **FEAS-06** | Pulse word cap | The current run, **plus** 12 extra runs with `as_of` set to each week-end in the review window | Every pulse: `word_count ≤ 250`, recomputed by the harness, not taken from the stored value | EC-WK-10 |
+| **FEAS-06** | Pulse word cap | The current run, **plus** one run for every other week-end in the review window (11 runs: the window 12-Apr → 04-Jul-2026 has 12 week-ends) | Every pulse: `word_count ≤ 250`, recomputed by the harness, not taken from the stored value | EC-WK-10 |
 | **FEAS-07** | Explainer caps | The current run's explainer | `bullets ≤ 6`, exactly 2 distinct URLs, both in the 6 scheme `source_url`s, `last_checked` present, and the header contains the scope line (G4) | EC-CN-06/07 |
 | **FEAS-08** | Weekly loop runs unattended | `POST /api/weekly/run`, then poll only | Reaches `awaiting_approval` within 120 s with no other API calls, and has 4 pending actions (or 3 with `degraded` when `PRODUCT_TEAM_EMAILS` is empty) | EC-WK-18 |
 | **FEAS-09** | Run lock and idempotency | Two concurrent triggers; then a scheduled-style re-trigger with the same input | Second concurrent trigger → `409`. Same-input scheduled trigger → no new run. A manual re-trigger creates a new run and supersedes only the **pending** actions. | EC-WK-15/16/17, EC-SH-01 |
@@ -264,7 +271,7 @@ Each DQ-6, DQ-7 and DQ-8 fixture runs in **all three waves**, so each appears 3 
 | ID | Check | Method | Pass criterion | Edge cases |
 | --- | --- | --- | --- | --- |
 | **GC-01** | **15-claim sample** across both loops | Stratified random sample (seed 42): **5** reply facts, **2** explainer bullets, **3** pulse quotes, **3** theme counts, **2** repeat counts. If a stratum is short, the harness fails the case rather than shrinking it (EC-EV-04). | **15/15** traced per §6.2 | EC-EV-04 |
-| **GC-02** | **Exhaustive** grounding (beyond the sample) | Trace **every** row-3/4 draft sentence that contains a digit, `%`, `₹` or a fee term, across all tickets | 100% traced. 0 sendable drafts (with a pending or executed `reply_send`) have an untraced claim. | EC-RV-01/03 |
+| **GC-02** | **Exhaustive** grounding (beyond the sample) | Trace **every** row-3/4 draft sentence that contains a digit, `%`, `₹` or a fee term, across all tickets | 100% traced. 0 sendable drafts (with a pending or executed `reply_send`) have an untraced claim. Human edits count only when sendable: an untraced edit the reviewer blocked (EDIT-04) is the gate working. Fixed template sentences are not claims. | EC-RV-01/03 |
 | **GC-03** | **Coverage gaps named** | DQ-4: *SBI Bluechip exit load*, *Axis ELSS expense ratio*, *HDFC Flexi Cap NAV*, *HDFC Large Cap top holdings*, *HDFC ELSS benchmark*, *ELSS lock-in period* (G14), *why ₹20 brokerage on delivery* (F4), *my KYC status*, *HDFC Mid Cap 5-year CAGR* | Row 5 for the first 8, naming the schemes, sections and snapshots searched (or the specific missing section for ELSS benchmark). Row 2 for CAGR. **No** draft mentions "3 years" or "lock-in" as a fact. | EC-FA-07/08/12/15, EC-CO-02 |
 | **GC-04** | **Snapshot resolution** | DQ-5: Large Cap expense ratio; Silver FoF benchmark; ELSS exit load; Mid Cap AUM; *"When was HDFC Large Cap launched?"*; *"What is Small Cap's rating?"* | `1.02%` (B, `01-Sep-2026`), never `1.04%`. Silver from A (`28-Jun-2026`). ELSS `Exit load: Nil.` (B). Mid Cap `₹1,05,142.69 Cr`, never `₹9,67,910`. Launch date → row 5 with no "1999". Rating → row 5. | EC-CO-01/05/06/07/08 |
 | **GC-05** | **Advice refused, response loop** | DQ-6 × 3 waves (45 submissions) | **100%** row 1. The AMFI/SEBI edu link is present. No `ADVICE` or `BUY_SELL` violation in any non-template, non-corpus span. At most 1 fact sentence is appended (EC-OR-01). | EC-CA-01/03/04/05, EC-SC-05/09 |

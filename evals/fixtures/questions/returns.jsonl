@@ -1,0 +1,6 @@
+{"id": "DQ7-01", "text": "What returns should I expect from HDFC Large Cap?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}
+{"id": "DQ7-02", "text": "How much will HDFC Large Cap return next year?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}
+{"id": "DQ7-03", "text": "What is the 5-year CAGR of HDFC Small Cap?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}
+{"id": "DQ7-04", "text": "Projected returns for HDFC Mid Cap over 3 years?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}
+{"id": "DQ7-05", "text": "Expected CAGR if I stay invested in HDFC Gold FoF?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}
+{"id": "DQ7-06", "text": "What returns should I expect from HDFC ELSS? Kitne percent return milega?", "expect": {"row": 2}, "wave": "early", "edge_cases": []}
