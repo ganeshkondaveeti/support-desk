@@ -21,6 +21,7 @@ from app.bootstrap import bootstrap_if_empty
 from app.config import get_settings
 from app.corpus.loader import CorpusValidationError, load_corpus
 from app.db.session import init_db
+from app.gate.executor import stop_mcp
 from app.guardrails.logging_filter import configure_logging
 from app.response.faults import (
     check_fault_injection_on_startup,
@@ -30,6 +31,7 @@ from app.response.faults import (
     set_ticket_fault,
 )
 from app.scheduler import start_scheduler, stop_scheduler
+from app.startup import StartupCheckError, mcp_handshake, pii_self_test
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +81,7 @@ def create_app(
     enable_scheduler: bool = False,
     enable_bootstrap: bool = False,
     enable_worker: bool = False,
+    check_mcp: bool = False,
 ) -> FastAPI:
     """
     Build the FastAPI application.
@@ -101,11 +104,20 @@ def create_app(
         except (CorpusValidationError, FileNotFoundError, OSError, ValueError) as exc:
             raise SystemExit(f"corpus validation failed: {exc}") from exc
 
+    # arch §16: refuse to start if redaction is broken.
+    try:
+        pii_self_test()
+    except StartupCheckError as exc:
+        raise SystemExit(str(exc)) from exc
+
     # Ensure tables exist even when lifespan is not entered (e.g. some TestClient uses).
     init_db()
 
     @asynccontextmanager
     async def lifespan(_app: FastAPI) -> AsyncIterator[None]:
+        if check_mcp:
+            # Failure switches the gate to read-only; it never stops the app.
+            await asyncio.to_thread(mcp_handshake)
         bootstrap_task: asyncio.Task[None] | None = None
         if enable_bootstrap:
             # Background so /api/health responds during first-boot seeding.
@@ -134,6 +146,8 @@ def create_app(
             if enable_worker:
                 await get_worker().stop()
                 reset_worker()
+            if check_mcp:
+                await asyncio.to_thread(stop_mcp)
 
     application = FastAPI(
         title="The Support Desk",
@@ -155,4 +169,9 @@ def create_app(
 
 
 # Uvicorn target: scheduler + first-boot seed + background worker (arch §11/§16).
-app = create_app(enable_scheduler=True, enable_bootstrap=True, enable_worker=True)
+app = create_app(
+    enable_scheduler=True,
+    enable_bootstrap=True,
+    enable_worker=True,
+    check_mcp=True,
+)

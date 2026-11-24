@@ -3,7 +3,7 @@
 API_PORT ?= 8000
 IMAGE ?= support-desk
 
-.PHONY: help install dev test lint evals docker ui ui-dev ui-test ui-e2e
+.PHONY: help install dev test lint evals docker docker-run smoke ui ui-dev ui-test ui-e2e
 
 help:
 	@echo "install   uv sync + mcp-server npm ci/build"
@@ -12,6 +12,8 @@ help:
 	@echo "lint      ruff + mypy (guardrails/gate when present)"
 	@echo "evals     python -m evals.run_all (P10)"
 	@echo "docker    build the image"
+	@echo "docker-run  run the image on :$(API_PORT) with a named state volume"
+	@echo "smoke     smoke-test a running instance (URL=..., ADMIN_TOKEN=...)"
 	@echo "ui        build the UI (served by FastAPI at /)"
 	@echo "ui-dev    Vite dev server on :5173 (proxies /api to :$(API_PORT))"
 	@echo "ui-test   UI lint, types, unit tests"
@@ -44,6 +46,15 @@ evals:
 
 docker:
 	docker build -t $(IMAGE) .
+
+# Throwaway container (removed on exit); state persists in the named volume.
+docker-run:
+	docker run --rm -p $(API_PORT):8000 -e ADMIN_TOKEN -e GROQ_API_KEY \
+		-e LLM_PROVIDER=$${LLM_PROVIDER:-groq} -v support-desk-state:/data/state $(IMAGE)
+
+URL ?= http://127.0.0.1:$(API_PORT)
+smoke:
+	uv run python scripts/smoke.py $(URL)
 
 ui:
 	cd ui && npm run build

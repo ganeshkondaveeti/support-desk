@@ -36,7 +36,7 @@ class McpClient:
         self._loop: asyncio.AbstractEventLoop | None = None
         self._thread: threading.Thread | None = None
         self._session: ClientSession | None = None
-        self._cm: Any | None = None
+        self._stop_event: asyncio.Event | None = None
         self._lock = threading.Lock()
         self._ready = threading.Event()
         self._start_error: BaseException | None = None
@@ -65,22 +65,19 @@ class McpClient:
             ) from self._start_error
 
     def stop(self) -> None:
+        """Signal the session task to close; it exits the stdio contexts itself."""
         with self._lock:
             loop = self._loop
-            if loop is not None and loop.is_running():
-                fut = asyncio.run_coroutine_threadsafe(self._shutdown(), loop)
-                try:
-                    fut.result(timeout=10)
-                except Exception:  # noqa: BLE001
-                    logger.exception("MCP shutdown error")
-                loop.call_soon_threadsafe(loop.stop)
+            event = self._stop_event
+            if loop is not None and event is not None and loop.is_running():
+                loop.call_soon_threadsafe(event.set)
             thread = self._thread
         if thread is not None:
             thread.join(timeout=10)
         self._thread = None
         self._loop = None
         self._session = None
-        self._cm = None
+        self._stop_event = None
         self._ready.clear()
 
     def list_tools(self) -> list[str]:
@@ -154,52 +151,42 @@ class McpClient:
         asyncio.set_event_loop(loop)
         self._loop = loop
         try:
-            loop.run_until_complete(self._connect())
-            self._ready.set()
-            loop.run_forever()
+            loop.run_until_complete(self._main())
         except BaseException as exc:
             self._start_error = exc
-            self._ready.set()
         finally:
-            try:
-                loop.run_until_complete(self._shutdown())
-            except Exception:  # noqa: BLE001
-                pass
+            self._session = None
+            self._ready.set()
             loop.close()
 
-    async def _connect(self) -> None:
-        params = self._server_params()
-        self._cm = stdio_client(params)
-        read, write = await self._cm.__aenter__()
-        session = ClientSession(read, write)
-        await session.__aenter__()
-        await session.initialize()
-        tools = await session.list_tools()
-        names = {t.name for t in tools.tools}
-        if names != EXPECTED_TOOLS:
-            raise McpClientError(
-                f"unexpected MCP tools: {sorted(names)}; expected {sorted(EXPECTED_TOOLS)}"
-            )
-        self._session = session
-        logger.info(
-            "MCP session ready; tools=%s backend=%s",
-            sorted(names),
-            self._settings.mcp_backend,
-        )
+    async def _main(self) -> None:
+        """
+        Own the stdio transport and session for their whole life in one task.
 
-    async def _shutdown(self) -> None:
-        if self._session is not None:
-            try:
-                await self._session.__aexit__(None, None, None)
-            except Exception:  # noqa: BLE001
-                logger.exception("MCP session close")
-            self._session = None
-        if self._cm is not None:
-            try:
-                await self._cm.__aexit__(None, None, None)
-            except Exception:  # noqa: BLE001
-                logger.exception("MCP transport close")
-            self._cm = None
+        anyio requires a context to be exited by the task that entered it, so this
+        task opens both, serves until ``stop()`` sets the event, then closes both.
+        Tool calls run as separate tasks on the same loop.
+        """
+        self._stop_event = asyncio.Event()
+        params = self._server_params()
+        async with stdio_client(params) as (read, write):
+            async with ClientSession(read, write) as session:
+                await session.initialize()
+                tools = await session.list_tools()
+                names = {t.name for t in tools.tools}
+                if names != EXPECTED_TOOLS:
+                    raise McpClientError(
+                        f"unexpected MCP tools: {sorted(names)}; expected {sorted(EXPECTED_TOOLS)}"
+                    )
+                self._session = session
+                logger.info(
+                    "MCP session ready; tools=%s backend=%s",
+                    sorted(names),
+                    self._settings.mcp_backend,
+                )
+                self._ready.set()
+                await self._stop_event.wait()
+        self._session = None
 
     async def _list_tools(self) -> list[str]:
         assert self._session is not None

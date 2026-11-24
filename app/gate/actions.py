@@ -14,6 +14,7 @@ from sqlalchemy.orm import Session
 from app.config import get_settings
 from app.db import models
 from app.db.repository import add
+from app.gate.mode import MCP_KINDS, gate_mode
 from app.ids import safe_hex_display, safe_hex_id
 
 
@@ -149,6 +150,14 @@ def approve(
         raise GateError(
             "INVALID_STATUS",
             f"action {action_id} is {action.status!r}; only pending can be approved",
+        )
+
+    # arch §16: without the MCP writer, doc/email approvals pause; replies still work.
+    if action.kind in MCP_KINDS and gate_mode() == "read_only":
+        raise GateError(
+            "GATE_READ_ONLY",
+            "gate is read-only: the MCP writer is unavailable, so doc and email "
+            "approvals are paused",
         )
 
     before = action.status

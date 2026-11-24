@@ -1203,7 +1203,8 @@ flowchart LR
   1. A `node:22` stage builds `ui/` and runs `npm ci && npm run build` in `mcp-server/`.
   2. A `python:3.11-slim` stage installs the app and copies in the Node 22 runtime, along with `mcp-server/dist` and `mcp-server/node_modules` (production dependencies only).
   3. The built UI is copied to `app/static`.
-  4. Entrypoint: `uvicorn app.main:app --workers 1`. The MCP server is **not** a separate service; the executor spawns it over stdio.
+  4. Entrypoint: `docker/entrypoint.sh` creates `/data/state/samples`, gives the disk to a non-root `app` user and drops privileges, then runs `uvicorn app.main:app --workers 1` on `$PORT`. The MCP server is **not** a separate service; the executor spawns it over stdio.
+  5. CI's `docker` job builds the image, runs `scripts/smoke.py` against it, restarts it and checks the state survived without re-seeding. Runbook: [deploy.md](deploy.md).
 - **Host.** Render, Railway or Fly.io (persistent disk), or Hugging Face Spaces (Docker SDK). The prototype URL goes in the README (§9.2).
 - **Configuration** (env):
   - `LLM_PROVIDER`, `LLM_MODEL`, `LLM_API_KEY`
@@ -1218,7 +1219,7 @@ flowchart LR
 - **Secrets.** Kept in the host's secret store, never committed. `.env.example` lists the keys with empty values.
 - **Startup checks.**
   - The app **refuses to start** if the corpus validation (§5.1) or the PII self-test (redacting planted samples) fails.
-  - The MCP handshake is checked as well: spawn the server, call `list_tools`, and assert exactly `google_docs_append` and `gmail_draft` are present. If it fails (e.g. Node is missing or the build is absent), the app still starts but in **"gate read-only" mode** with a banner. Proposals and approvals of `reply_send` still work, while `doc_append`/`email_draft` approvals are disabled with an explanation.
+  - The MCP handshake is checked as well: spawn the server, call `list_tools`, and assert exactly `google_docs_append` and `gmail_draft` are present. If it fails (e.g. Node is missing or the build is absent), the app still starts but in **"gate read-only" mode** with a banner: `/api/health` reports `gate_mode: "read_only"`, and approving a `doc_append` or `email_draft` returns `409 GATE_READ_ONLY`. Proposals and approvals of `reply_send` still work. (`app/startup.py`; the handshake goes through the executor, which stays the only module that touches MCP.)
 - **Data seeding.** On first boot with an empty DB, the app runs the weekly loop once and loads `seed_questions.json`, so the hosted demo isn't empty.
 
 ---

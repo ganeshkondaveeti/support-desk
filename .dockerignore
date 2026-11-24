@@ -1,0 +1,35 @@
+# Secrets and local state never enter the image.
+.env
+.env.*
+!.env.example
+data/state/
+**/*.sqlite3
+data/chroma_db/
+data/raw/
+samples/
+logs/
+
+# Build outputs and dependencies are rebuilt inside the image.
+**/node_modules/
+ui/dist/
+ui/test-results/
+ui/playwright-report/
+mcp-server/dist/
+mcp-server/data/
+.venv/
+**/__pycache__/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+
+# Not needed at runtime.
+.git/
+.github/
+docs/
+evals/
+tests/
+alembic/
+*.md
+!README.md
+.DS_Store
