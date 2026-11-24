@@ -1,0 +1,40 @@
+# Secrets and local env
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+
+# SQLite outside data/ (corpus chroma sqlite is under data/ and is tracked)
+*.sqlite3
+!data/**/*.sqlite3
+
+# Node / UI / MCP
+node_modules/
+ui/dist/
+mcp-server/dist/
+mcp-server/data/
+credential*.json
+
+# Logs and runtime
+logs/
+*.log
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*~

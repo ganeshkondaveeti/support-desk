@@ -1,0 +1,57 @@
+The Support Desk
+Same product you picked in Milestone 1: Groww (HDFC Mutual Fund schemes). Play Store app: https://play.google.com/store/apps/details?id=com.nextbillion.groww&hl=en_IN
+Objective
+Build a deployed system that runs the support and product loop for Groww. Reviews come in and become themes. User questions come in and become cited, compliance-checked reply drafts. A weekly pulse goes out to the product team. Nothing leaves without a human approving it.
+The problem
+Two teams are solving halves of the same problem and neither can see the other half.
+Support answers the same fee question forty times a month ("why was I charged an exit load?"), writing it fresh each time, sometimes getting it wrong. Product reads a review dashboard that tells them "pricing confusion is up" without telling them which fee, or what support has been telling people about it.
+A support agent answering that question needs three things at once: the fact (in a scheme document), the pattern (whether forty other users asked the same thing decides reply vs escalation), and compliance (no advice, no return figure, no echoing back a PAN the user pasted). A single model asked to do all three does the first and forgets the rest.
+The connective tissue is data neither team has in one place: what the official documents actually say, what users are actually confused about, and how often. That's what you're building.
+What you bring forward
+Milestone 1 (RAG-Chatbot) gave you a cited FAQ corpus over official pages, with a facts-only refusal: answers of 3 sentences or fewer, exactly one citation link, a "Last updated from sources: <date>" footer, and polite refusals of advisory queries with an AMFI/SEBI educational link.
+Milestone 2 gave you review clustering, the weekly pulse, the fee explainer and an approval-gated MCP workflow (doc append + email draft, no auto-send).
+Milestone 3 (Multi-Agentic-System) gave you the three-agent response desk with its reviewer: Facts, Pattern and Compliance agents in parallel on one LangGraph, an orchestrator, a reviewer, and scoped refinement.
+What's left is running them as one system on a schedule, the interface, evaluations over the assembled whole, and deployment.
+Data carried forward
+Facts corpus (data/parsed/, Milestone 1): public Groww scheme pages for five HDFC schemes, parsed 2026-06-28, NAV date 25-Jun-2026. source_url is the one citation link; nav_date / fetched_at is the "last checked" date.
+- large_cap: HDFC Large Cap Fund Direct Growth - https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth - exit load 1% within 1 year
+- mid_cap: HDFC Mid Cap Fund Direct Growth - https://groww.in/mutual-funds/hdfc-mid-cap-fund-direct-growth - exit load 1% within 1 year
+- small_cap: HDFC Small Cap Fund Direct Growth - https://groww.in/mutual-funds/hdfc-small-cap-fund-direct-growth - exit load 1% within 1 year
+- gold_fof: HDFC Gold ETF Fund of Fund Direct Plan Growth - https://groww.in/mutual-funds/hdfc-gold-etf-fund-of-fund-direct-plan-growth - exit load 1% within 15 days
+- silver_fof: HDFC Silver ETF FoF Direct Growth - https://groww.in/mutual-funds/hdfc-silver-etf-fof-direct-growth - exit load 1% within 15 days
+Each file has 7 text_blocks: Key fund facts, Exit load, Benchmark, Investment objective, Stamp duty and tax, Fund management, Minimum investments. Anything outside these schemes or sections is not covered. (The Milestone 1 brief listed HDFC ELSS Tax Saver; the materialized corpus uses HDFC Silver ETF FoF instead.)
+Reviews (data/normalized_reviews.json, Milestone 2): 1,650 Play Store reviews dated 2026-04-12 to 2026-07-04. Fields: id, source, rating, title, text, date, version.
+Themes (data/analyzed_themes.json, Milestone 2): other (709), trading_charts (503), money_movement (162), reliability (140), fees_brokerage (136). topThemes = trading_charts, money_movement, reliability. fees_brokerage is the recurring fee/charge confusion (exit load, brokerage) and feeds the fee explainer.
+What you build
+A deployed web application with two loops.
+1. The weekly loop. Ingest your reviews CSV, cluster into a maximum of five themes, identify the top three, and pull the recurring fee or charge confusion (fees_brokerage). Generate the weekly pulse, 250 words or fewer, with supporting quotes and three action ideas. Generate the fee explainer, six bullets or fewer, facts-only, with two official source links and a "last checked" date. Both go through the approval gate before the doc append and the email draft. Runs on a schedule and completes without manual intervention.
+2. The response loop. A queue of incoming user questions. PII is redacted first. Each one runs through the three agents in parallel, the orchestrator, and the reviewer, producing a reply draft with its citation and an internal routing note. A human approves, edits or rejects each draft.
+- Facts Agent: model picks one scheme_id and one section (or neither); code copies the answer from that text_block with one source_url, or returns "not covered" plus the schemes and sections searched.
+- Pattern Agent: model picks one theme_id from allThemes; code reports recurring / rising / one-off, the theme id, the review count and the window.
+- Compliance Agent: model flags advice or performance_claim (or neither); code adds a PII flag. PAN, Aadhaar, account numbers, phone numbers, emails and OTPs are redacted before anything is stored.
+- Orchestrator: reply draft (3 sentences or fewer, cited, "last checked" date) and an internal routing note (team, reason, priority from the Pattern signal). When agents disagree, it says so instead of closing the ticket.
+- Reviewer: hard-fails uncited claims, advice, and surviving PII. Sends back once with the failure named; if it still fails, show the draft flagged and do not offer the send.
+- Refinement: only affected agents re-run ("Shorter" -> Orchestrator; "different scheme" -> Facts; "is this last week's fee issue" -> Pattern). Log which agents fired. Capped at five.
+3. The connection between them. This is what neither milestone did on its own. When the response loop sees the same question five times in a week, it shows up in the weekly pulse. When the weekly loop identifies a fee confusion, the explainer becomes the canonical answer the response loop reuses instead of drafting fresh. Build this link and show it working.
+4. Scope enforcement. Facts-only across both loops. No recommendations, no buy or sell language, no return or performance figures, no PII stored anywhere including logs and agent state. Enforced in code, not only in prompts.
+The interface
+A queue view of incoming questions with their draft replies, citations, routing notes and any reviewer flags. A weekly pulse view with the themes, quotes and counts behind them. A sources panel showing where every factual claim came from, with its last-checked date. An approval screen listing exactly what will be written and where, before anything is written. And a way to see the canonical fee explainers the response loop is reusing. Show the disclaimer "Facts-only. No investment advice." throughout.
+Rules
+Every factual claim carries one source link from your Milestone 1 corpus
+Public sources only (Groww scheme pages, AMC, AMFI, SEBI). No third-party blogs, no app back-end screenshots
+When the corpus doesn't cover a question, the system says so and names what it searched
+Every theme traces to review ids, and every count states the window it covers
+No PII anywhere in the dataset, the interface, the logs or agent state
+Nothing is written or sent without a human approving that specific action. No auto-send
+Reply drafts stay at three sentences or fewer, the pulse at 250 words, the explainer at six bullets
+One model call per agent node, returning an id or a flag; code writes the facts, counts and reply
+Reviewer rework capped at one round; refinement capped at five
+Evaluations
+Three checks minimum, running over the assembled system.
+Feasibility. Every question in the queue produces a draft or an explicit "not covered". Every theme carries review ids and a stated window. The pulse stays inside its word cap and the explainer inside its bullet cap. The weekly loop completes without manual intervention once triggered. All three agents return structured output on every question.
+Correctness of edits. A human edit to a draft changes only that draft. Approving one action doesn't trigger another. Rejecting a draft leaves the queue otherwise untouched. Test each and diff the state before and after.
+Grounding and compliance. Sample fifteen claims across both loops and confirm each traces to a source link or a review id. Feed in questions the corpus can't answer and confirm it says so. Then run advice requests ("should I redeem?", "is this scheme good?", "which fund is better?"), return-figure requests ("what returns should I expect?"), and messages containing a PAN, an account number and a phone number, in both loops, rephrased and repeated. Confirm every one is refused or redacted, and that nothing sensitive reached the logs.
+What to submit
+The GitHub repo. README covers the architecture and setup, your source list, where the approval gate sits, how the two loops connect, what fee issue came out of your reviews, how to run the evals, and known limits. Include the reviews CSV sample, five sample questions with their drafts, the appended doc entry, the email draft, and your evaluation results.
+A working prototype link. Hosted app or notebook.
+A demo video under 10 minutes, only if you can't host. Show the weekly loop running end to end, one question through the response loop, one reviewer rejection, the approval gate, and one evaluation.
