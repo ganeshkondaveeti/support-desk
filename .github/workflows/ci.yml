@@ -59,6 +59,21 @@ jobs:
       - name: Test
         run: uv run pytest -q
 
+      - name: Gate boundary grep (P4.7)
+        run: |
+          # Only executor may import mcp_client or construct OutboxReply.
+          set +e
+          hits=$(grep -RInE 'from app\.gate\.mcp_client import|import app\.gate\.mcp_client' app \
+            | grep -v 'app/gate/executor.py' | grep -v 'app/gate/mcp_client.py' || true)
+          outbox=$(grep -RInE 'OutboxReply[[:space:]]*\(' app \
+            | grep -v 'app/gate/executor.py' | grep -v 'app/db/models.py' || true)
+          set -e
+          if [ -n "$hits" ] || [ -n "$outbox" ]; then
+            echo "$hits"
+            echo "$outbox"
+            exit 1
+          fi
+
       - name: Health smoke
         run: |
           uv run uvicorn app.main:app --host 127.0.0.1 --port 8000 &
@@ -72,3 +87,54 @@ jobs:
           done
           kill $pid || true
           exit 1
+
+  ui:
+    # Plan P9: lint, types, unit tests, build + content check, then e2e (Playwright + axe)
+    # against the real API with the cues_only backend.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        working-directory: ui
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ui/.nvmrc
+          cache: npm
+          cache-dependency-path: ui/package-lock.json
+
+      - name: Install
+        run: |
+          npm ci
+          uv sync --frozen
+
+      - name: Lint and type check
+        run: |
+          npm run lint
+          npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build (includes the Stitch content check)
+        run: npm run build
+
+      - name: End-to-end (Playwright + axe)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: |
+            ui/playwright-report
+            ui/test-results
+          retention-days: 7

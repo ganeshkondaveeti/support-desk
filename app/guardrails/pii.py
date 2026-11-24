@@ -81,7 +81,9 @@ _ACCOUNT_LABEL = re.compile(
     re.IGNORECASE,
 )
 _ACCOUNT_LABELED = re.compile(r"\b\d{9,18}\b")
-_ACCOUNT_BARE = re.compile(r"(?<!\d)\d{11,18}(?!\d)")
+# Bare 11–18 digits must be a standalone token — not a digit run inside a
+# hex review id such as baba26480501938e (EC-PII-17 / P3 pulse cites).
+_ACCOUNT_BARE = re.compile(r"(?<![0-9A-Za-z])\d{11,18}(?![0-9A-Za-z])")
 _UPI = re.compile(r"\b[\w.-]+@(?:ok\w+|ybl|paytm|upi|ibl|axl)\b", re.IGNORECASE)
 _IFSC = re.compile(r"\b[A-Z]{4}0[A-Z0-9]{6}\b")
 

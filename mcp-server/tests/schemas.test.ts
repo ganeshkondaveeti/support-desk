@@ -31,4 +31,26 @@ describe('Google Docs append schema', () => {
   it('rejects an append without content', () => {
     expect(GoogleDocsAppendSchema.safeParse({ document_id: '1234567890abcdef' }).success).toBe(false);
   });
+
+  it('accepts an optional idempotency_key', () => {
+    const result = GoogleDocsAppendSchema.safeParse({
+      document_id: '1234567890abcdef',
+      content: 'New line',
+      idempotency_key: 'a_1',
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.idempotency_key).toBe('a_1');
+  });
+});
+
+describe('Gmail draft idempotency_key', () => {
+  it('accepts an optional idempotency_key', () => {
+    const result = GmailDraftInputSchema.safeParse({
+      subject: 'Hello',
+      body: 'World',
+      idempotency_key: 'a_2',
+    });
+    expect(result.success).toBe(true);
+    expect(result.data?.idempotency_key).toBe('a_2');
+  });
 });

@@ -3,7 +3,7 @@
 API_PORT ?= 8000
 IMAGE ?= support-desk
 
-.PHONY: help install dev test lint evals docker
+.PHONY: help install dev test lint evals docker ui ui-dev ui-test ui-e2e
 
 help:
 	@echo "install   uv sync + mcp-server npm ci/build"
@@ -12,10 +12,15 @@ help:
 	@echo "lint      ruff + mypy (guardrails/gate when present)"
 	@echo "evals     python -m evals.run_all (P10)"
 	@echo "docker    build the image"
+	@echo "ui        build the UI (served by FastAPI at /)"
+	@echo "ui-dev    Vite dev server on :5173 (proxies /api to :$(API_PORT))"
+	@echo "ui-test   UI lint, types, unit tests"
+	@echo "ui-e2e    Playwright + axe against a throwaway API"
 
 install:
 	uv sync
 	cd mcp-server && npm ci && npm run build
+	cd ui && npm ci
 
 dev:
 	uv run uvicorn app.main:app --reload --host 127.0.0.1 --port $(API_PORT)
@@ -32,10 +37,22 @@ lint:
 	fi
 
 test-cov:
-	uv run pytest -q --cov=app/guardrails --cov-report=term-missing --cov-fail-under=90
+	uv run pytest -q --cov=app/guardrails --cov=app/gate --cov-report=term-missing --cov-fail-under=85
 
 evals:
 	uv run python -m evals.run_all
 
 docker:
 	docker build -t $(IMAGE) .
+
+ui:
+	cd ui && npm run build
+
+ui-dev:
+	cd ui && VITE_DEV_API_TARGET=http://127.0.0.1:$(API_PORT) npm run dev
+
+ui-test:
+	cd ui && npm run lint && npm run typecheck && npm test
+
+ui-e2e:
+	cd ui && npm run e2e

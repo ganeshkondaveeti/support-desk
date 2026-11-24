@@ -39,3 +39,7 @@ logs/
 .vscode/
 *.swp
 *~
+
+# UI test output
+ui/test-results/
+ui/playwright-report/

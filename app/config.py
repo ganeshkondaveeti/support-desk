@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import Field, field_validator
-from pydantic_settings import BaseSettings, SettingsConfigDict
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -42,6 +42,7 @@ class Settings(BaseSettings):
     mcp_backend: Literal["local", "google"] = "local"
     mcp_server_cmd: str = "node mcp-server/dist/index.js"
     local_doc_path: str = "samples/appended_doc_entry.md"
+    local_email_path: str = "samples/email_draft.md"
     product_team_emails: str = ""
     google_client_id: str = ""
     google_client_secret: str = ""
@@ -51,7 +52,11 @@ class Settings(BaseSettings):
     google_docs_id: str = ""
 
     # --- Fee explainer (D5 / arch §7.7) ---
-    explainer_schemes: list[str] = Field(default_factory=lambda: ["large_cap", "gold_fof"])
+    # NoDecode: env value is comma-separated, not JSON (pydantic-settings otherwise
+    # JSON-decodes list[str] before the validator runs).
+    explainer_schemes: Annotated[list[str], NoDecode] = Field(
+        default_factory=lambda: ["large_cap", "gold_fof"]
+    )
 
     # --- Trend thresholds (arch §7.4) ---
     trend_rising_ratio: float = 1.5
@@ -75,3 +80,7 @@ class Settings(BaseSettings):
 @lru_cache
 def get_settings() -> Settings:
     return Settings()
+
+
+def clear_settings_cache() -> None:
+    get_settings.cache_clear()

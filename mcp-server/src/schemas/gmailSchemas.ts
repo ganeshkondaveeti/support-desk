@@ -8,6 +8,7 @@ export const GmailDraftInputSchema = z.object({
   bcc: z.array(z.string().email("Invalid email address")).optional().default([]),
   subject: z.string().min(1, "Subject cannot be empty"),
   body: z.string().min(1, "Body cannot be empty"),
+  idempotency_key: z.string().min(1).optional(),
 });
 
 export type GmailDraftInput = z.infer<typeof GmailDraftInputSchema>;

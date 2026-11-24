@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 
 // config.ts exits when the OAuth client settings are missing, so set placeholders
 // before the server module is loaded. Nothing here calls Google.
+process.env.MCP_BACKEND ??= 'local';
 process.env.GOOGLE_CLIENT_ID ??= 'test-client-id';
 process.env.GOOGLE_CLIENT_SECRET ??= 'test-client-secret';
 process.env.GOOGLE_REDIRECT_URI ??= 'http://localhost:3000/oauth/callback';
