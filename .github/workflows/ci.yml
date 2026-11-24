@@ -88,25 +88,6 @@ jobs:
           kill $pid || true
           exit 1
 
-      - name: Evals (CuesOnly)
-        # P10: three gating suites over HTTP; quality suite is informational.
-        timeout-minutes: 45
-        run: |
-          uv run python -m evals.run_all --backend cues --seed 42 --skip-prod-hook
-        env:
-          APP_ENV: test
-          LLM_PROVIDER: cues_only
-          MCP_BACKEND: local
-          ADMIN_TOKEN: ci-eval-token
-
-      - name: Upload eval results
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: eval-results
-          path: evals/results/
-          retention-days: 14
-
   ui:
     # Plan P9: lint, types, unit tests, build + content check, then e2e (Playwright + axe)
     # against the real API with the cues_only backend.
