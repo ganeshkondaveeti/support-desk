@@ -26,12 +26,13 @@ test:
 lint:
 	uv run ruff check app tests
 	uv run ruff format --check app tests
-	@if [ -d app/guardrails ] && [ -n "$$(find app/guardrails -name '*.py' ! -name '__init__.py' 2>/dev/null)" ]; then \
-		uv run mypy --strict app/guardrails; \
-	fi
-	@if [ -d app/gate ] && [ -n "$$(find app/gate -name '*.py' ! -name '__init__.py' 2>/dev/null)" ]; then \
+	uv run mypy --strict app/guardrails
+	@if [ -n "$$(find app/gate -name '*.py' ! -name '__init__.py' 2>/dev/null)" ]; then \
 		uv run mypy --strict app/gate; \
 	fi
+
+test-cov:
+	uv run pytest -q --cov=app/guardrails --cov-report=term-missing --cov-fail-under=90
 
 evals:
 	uv run python -m evals.run_all

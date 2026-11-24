@@ -8,10 +8,12 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from app.config import get_settings
+from app.guardrails.logging_filter import configure_logging
 
 
 def create_app() -> FastAPI:
     get_settings()
+    configure_logging()
     application = FastAPI(
         title="The Support Desk",
         description="Facts-only. No investment advice.",

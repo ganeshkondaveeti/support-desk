@@ -161,23 +161,23 @@ These apply to every phase and are checked in code review and CI:
 
 **Tasks**
 
-- [ ] **P1.1** `guardrails/pii.py`
+- [x] **P1.1** `guardrails/pii.py`
   - Port the M3 `redact`/`scan`.
   - Pre-normalization before scanning (arch §6.1, G5): NFKC, strip zero-width characters, map non-ASCII digits, collapse whitespace, A–Z confusables map.
   - Use the arch §6.1 patterns, applied in order (EMAIL → PAN → AADHAAR → PHONE → OTP → ACCOUNT → UPI → IFSC), plus the PAN compact-window pass and the PHONE context rule (G13).
   - `RedactionResult(text, types)`.
   - Redaction tokens are treated as clean by a second `scan()`.
-- [ ] **P1.2** `guardrails/scope.py`:
+- [x] **P1.2** `guardrails/scope.py`:
   - `check_advice`, `check_buy_sell` and `check_performance`, each returning `Violation(code, span)`.
   - `mark_corpus_spans(text, corpus, explainer)` for the corpus-span exemption (arch §6.2).
   - `template` and `question` provenances, also exempt from scope checks but never from PII checks (arch §6.2, G3).
-- [ ] **P1.3** `guardrails/allowlists.py`: `EDU_URLS` and `PUBLIC_DOMAINS` as constants. `SCHEME_IDS`, `SECTIONS`, `THEME_IDS` and `CITATION_URLS` are filled at startup by the P2 and P3 loaders, through `register_*()` functions.
-- [ ] **P1.4** `guardrails/length.py`:
+- [x] **P1.3** `guardrails/allowlists.py`: `EDU_URLS` and `PUBLIC_DOMAINS` as constants. `SCHEME_IDS`, `SECTIONS`, `THEME_IDS` and `CITATION_URLS` are filled at startup by the P2 and P3 loaders, through `register_*()` functions.
+- [x] **P1.4** `guardrails/length.py`:
   - `count_sentences` handles `Rs.`, `e.g.`, `p.a.`, `₹1,000.50` and decimals.
   - `count_words` handles Markdown.
   - `count_bullets`.
-- [ ] **P1.5** `guardrails/logging_filter.py`: `PIIScrubFilter` attached to the root, `uvicorn.access`, `httpx`, `langgraph` and provider-SDK loggers. Use JSON log formatting.
-- [ ] **P1.6** `tests/fixtures/pii_cases.json`: ≥ 40 positive and negative cases, including tricky ones such as NAV `1243.32`, AUM `₹40,197.89 Cr`, a 10-digit phone written with spaces, a PAN in lowercase, and an OTP phrased "code is 482913".
+- [x] **P1.5** `guardrails/logging_filter.py`: `PIIScrubFilter` attached to the root, `uvicorn.access`, `httpx`, `langgraph` and provider-SDK loggers. Use JSON log formatting.
+- [x] **P1.6** `tests/fixtures/pii_cases.json`: ≥ 40 positive and negative cases, including tricky ones such as NAV `1243.32`, AUM `₹40,197.89 Cr`, a 10-digit phone written with spaces, a PAN in lowercase, and an OTP phrased "code is 482913".
 
 **Tests**
 
