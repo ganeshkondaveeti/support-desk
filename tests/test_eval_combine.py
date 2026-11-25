@@ -1,0 +1,70 @@
+"""Split graded runs (one --suite per run) gate and merge correctly (eval.md §9)."""
+
+from __future__ import annotations
+
+import json
+from pathlib import Path
+
+import pytest
+from evals.combine import combine
+from evals.run_all import _gating_pass
+
+RUN = {
+    "mode": "graded",
+    "backend": "groq",
+    "model": "openai/gpt-oss-120b",
+    "seed": 42,
+    "corpus_hash": "sha256:c",
+    "reviews_hash": "sha256:r",
+    "git_sha": "abc",
+    "duration_s": 10,
+}
+
+
+def _suite(status: str = "pass", case_status: str = "pass") -> dict:
+    return {"status": status, "cases": [{"id": "X-01", "status": case_status}]}
+
+
+def _write(
+    tmp: Path, name: str, suites: dict, *, hits: int = 0, started: str = "2026-11-25T12:00:00+05:30"
+) -> Path:
+    path = tmp / name
+    payload = {
+        "run": {**RUN, "started_at": started},
+        "suites": suites,
+        "pii_sweep": {"hits": hits, "locations_scanned": 6, "details": []},
+    }
+    path.write_text(json.dumps(payload))
+    return path
+
+
+def test_single_suite_run_is_judged_on_that_suite_only() -> None:
+    assert _gating_pass({"edit": _suite()})
+    assert not _gating_pass({"edit": _suite(case_status="fail")})
+    assert not _gating_pass({"quality": _suite()})  # no gating suite ran
+
+
+def test_combine_merges_suites_and_gates_on_all_three(tmp_path: Path) -> None:
+    a = _write(tmp_path, "a.json", {"edit": _suite()}, started="2026-11-25T12:00:00+05:30")
+    b = _write(tmp_path, "b.json", {"feasibility": _suite()}, started="2026-11-26T12:00:00+05:30")
+    partial = combine([a, b])
+    assert set(partial["suites"]) == {"edit", "feasibility"}
+    assert partial["gating_pass"] is False  # grounding missing
+    c = _write(tmp_path, "c.json", {"grounding": _suite(), "quality": _suite("info", "info")})
+    full = combine([a, b, c])
+    assert full["gating_pass"] is True
+    assert full["run"]["started_at"] == "2026-11-25T12:00:00+05:30"
+    assert full["pii_sweep"]["locations_scanned"] == 18
+
+
+def test_combine_fails_on_pii_hits_duplicates_and_mismatched_runs(tmp_path: Path) -> None:
+    a = _write(tmp_path, "a.json", {"edit": _suite(), "feasibility": _suite()})
+    b = _write(tmp_path, "b.json", {"grounding": _suite()}, hits=1)
+    assert combine([a, b])["gating_pass"] is False
+    with pytest.raises(ValueError, match="both"):
+        combine([a, _write(tmp_path, "dup.json", {"edit": _suite()})])
+    other = json.loads(b.read_text())
+    other["run"]["seed"] = 7
+    b.write_text(json.dumps(other))
+    with pytest.raises(ValueError, match="seed"):
+        combine([a, b])

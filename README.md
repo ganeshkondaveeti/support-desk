@@ -291,7 +291,7 @@ Each run writes `evals/results/{timestamp}.json` and [evals/results/latest.md](e
 
 The informational AQ-02 (Pattern pick accuracy 0.75 against a 0.80 target) is the rules backend's known weak spot.
 
-**About the graded run.** A full graded run is about 600 model calls and roughly 280K tokens. That's more than one day of Groq's free tier (200K tokens/day, and the client paces to 80% of it). Run it on a paid key, or run one suite per day with `--suite`. Splitting costs more in total: each `--suite` run starts a fresh app and repeats the ~93-ticket setup, so each one is roughly 130–170K tokens. In graded mode the harness sets `LLM_MAX_WAIT_S=150`, so calls wait for per-minute capacity instead of falling back to the rules, which would count against FEAS-03.
+**About the graded run.** A full graded run is about 600 model calls and roughly 280K tokens. That's more than one day of Groq's free tier (200K tokens/day, and the client paces to 80% of it). Run it on a paid key, or run one suite per day with `--suite`. Splitting costs more in total: each `--suite` run starts a fresh app and repeats the ~93-ticket setup, so each one is roughly 130–170K tokens. In graded mode the harness sets `LLM_MAX_WAIT_S=150`, so calls wait for per-minute capacity instead of falling back to the rules, which would count against FEAS-03. Merge the per-suite results into one report with `python -m evals.combine evals/results/<feasibility>.json evals/results/<edit>.json …`; the merged run passes only if all three gating suites are present and pass.
 
 ---
 

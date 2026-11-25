@@ -89,19 +89,21 @@ def _suite_to_dict(suite: SuiteResult) -> dict[str, Any]:
 
 
 def _gating_pass(suites: dict[str, Any]) -> bool:
-    for name in GATING_SUITES:
-        suite = suites.get(name) or {}
+    """
+    Every gating suite that ran passed (``skip`` allowed, e.g. remote edit suite).
+
+    Suites that didn't run (``--suite``/``--case``) aren't judged; a run with no
+    gating suite at all doesn't pass. ``evals.combine`` merges split runs.
+    """
+    ran = [name for name in GATING_SUITES if name in suites]
+    if not ran:
+        return False
+    for name in ran:
+        suite = suites[name] or {}
         if suite.get("status") not in {"pass", "skip"}:
-            # skip only for remote edit suite; otherwise require pass
-            if name == "edit" and suite.get("status") == "skip":
-                continue
-            if suite.get("status") != "pass":
-                return False
-        for case in suite.get("cases") or []:
-            if case.get("status") in {"fail"}:
-                return False
-            if case.get("status") in {"info", "skip"}:
-                continue
+            return False
+        if any(case.get("status") == "fail" for case in suite.get("cases") or []):
+            return False
     return True
 
 
