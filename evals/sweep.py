@@ -3,8 +3,10 @@
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 from dataclasses import dataclass, field
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
@@ -64,10 +66,32 @@ def _term_types(planted: dict[str, Any] | None = None) -> dict[str, str]:
     return out
 
 
+_NUMERIC_TERM = re.compile(r"[\d\s-]+")
+
+
+@lru_cache(maxsize=256)
+def _numeric_pattern(term: str) -> re.Pattern[str]:
+    """
+    A numeric literal (OTP, phone, account, Aadhaar) only counts when it stands alone.
+
+    Checkpoints and logs hold thousands of timestamps with microseconds
+    ("…:51.482913+00:00") and long floats, so a plain substring search for a 6-digit
+    OTP matches by coincidence now and then. Real leaks look like "OTP 482913" or
+    "call 9876543210", which this still catches.
+    """
+    return re.compile(rf"(?<![\d.]){re.escape(term)}(?!\d)")
+
+
+def _term_in(term: str, text: str) -> bool:
+    if _NUMERIC_TERM.fullmatch(term):
+        return _numeric_pattern(term).search(text) is not None
+    return term in text
+
+
 def _search_text(text: str, terms: list[str], type_map: dict[str, str], location: str) -> list[Hit]:
     hits: list[Hit] = []
     for term in terms:
-        if term and term in text:
+        if term and _term_in(term, text):
             hits.append(Hit(location=location, pii_type=type_map.get(term, "UNKNOWN")))
     return hits
 
