@@ -10,7 +10,7 @@ One Docker image runs everything: FastAPI, the built React UI, the weekly schedu
 | --- | --- |
 | `Dockerfile` | Stage 1 (`node:22`) builds `ui/` and `mcp-server/`. Stage 2 (`python:3.11-slim`) runs the app with the Node 22 runtime. `uvicorn --workers 1`. |
 | `docker/entrypoint.sh` | Creates `/data/state/samples`, gives the disk to the `app` user, then drops root. |
-| `render.yaml` | Render blueprint: one Docker web service, a 1 GB disk at `/data/state`, health check `/api/health`, env vars. |
+| `render.yaml` | Render blueprint: one Docker web service on the **free** plan, health check `/api/health`, env vars. |
 | `scripts/smoke.py` | Smoke test (standard library only): health, seeding, UI, one weekly run, one ticket, one approval. |
 | `.github/workflows/ci.yml` → `docker` job | Builds the image, runs it, smoke-tests it, restarts it and checks the state survived. |
 | `.github/workflows/weekly.yml` | Backup weekly trigger for hosts that sleep. Sends `{"trigger": "cron"}`, so it can't double-run with the in-app scheduler. |
@@ -26,9 +26,25 @@ One Docker image runs everything: FastAPI, the built React UI, the weekly schedu
    | `ADMIN_TOKEN` | A long random string, e.g. `python -c "import secrets; print(secrets.token_urlsafe(32))"`. Reviewers enter it in the UI when they first approve, edit or run something. **Required:** in production, mutating routes return 401 without it. |
    | `PRODUCT_TEAM_EMAILS` | Optional, comma-separated recipients for the email drafts. |
 
-3. Deploy. The first boot runs the weekly loop once and loads `data/seed_questions.json`, so the demo isn't empty. That takes about a minute; `/api/health` shows `"seeded": true` when it's done.
+3. Deploy. It shouldn't ask for payment: the blueprint has only a free web service. The first boot runs the weekly loop once and loads `data/seed_questions.json`, so the demo isn't empty. That takes about a minute; `/api/health` shows `"seeded": true` when it's done.
 
-**Plan and disk.** A persistent disk needs a paid instance (`starter` in `render.yaml`). On a free instance there's no disk: remove the `disk:` block, and every restart or spin-down starts from an empty database that first-boot seeding refills. Approvals and canonical explainers are then lost on restart. Say so in the README's known limits if you go that way.
+**Free plan (what `render.yaml` uses).** No payment is needed, with these trade-offs:
+
+- **No persistent disk.** The SQLite database, checkpoints and local MCP outputs live on the container's filesystem, so a restart, redeploy or spin-down wipes them. On the next boot, first-boot seeding runs the weekly loop and loads the seed questions again, so the demo is never empty. Approvals, edits, canonical explainers and written docs/emails don't survive.
+- **Spins down after ~15 minutes idle.** The next request wakes it in about a minute (Render shows a loading page meanwhile).
+- **512 MB of memory.** Python, LangGraph and the Node MCP subprocess are expected to fit but haven't been measured there. If the logs show out-of-memory restarts, move to a paid instance or another host.
+- **Weekly schedule.** The in-app scheduler can't fire while the service sleeps; the backup cron in step 4 wakes it.
+
+**To keep state (paid).** Set `plan: starter` and add a disk to the service in `render.yaml`:
+
+```yaml
+    disk:
+      name: support-desk-state
+      mountPath: /data/state
+      sizeGB: 1
+```
+
+The entrypoint already prepares `/data/state`, and CI's `docker` job checks that state on a volume survives a restart without re-seeding.
 
 **Google Docs / Gmail.** `MCP_BACKEND=local` writes approved docs and email drafts to `/data/state/samples/`. To write to Google instead, set `MCP_BACKEND=google` plus the `GOOGLE_*` values from M3's `npm run auth` (`GOOGLE_TOKEN_JSON` holds the token, since the container has no browser).
 

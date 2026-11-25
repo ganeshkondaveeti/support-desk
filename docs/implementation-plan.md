@@ -696,6 +696,7 @@ These apply to every phase and are checked in code review and CI:
 
 - Done: `Dockerfile`, `docker/entrypoint.sh` (prepares the disk, drops root), `.dockerignore`, `render.yaml`, startup checks (`app/startup.py`: PII self-test refuses to start; MCP handshake sets `gate_mode`, and doc/email approvals return `409 GATE_READ_ONLY` while replies still work), `scripts/smoke.py`, and a CI `docker` job that builds the image, smoke-tests it and checks state survives a restart without re-seeding.
 - Fixed on the way: the MCP client closed its stdio session from a different task than the one that opened it, which logged two ERROR tracebacks on every shutdown. One task now owns the session for its whole life.
+- Hosting choice (2026-11-25): Render's **free** plan, so no persistent disk. State resets on restart or spin-down and first-boot seeding refills the demo (arch §17.2 #13). This is the plan's stated fallback for risk R9.
 - Open (need the account): create the Render service and set its secrets (P11.3), set the `SUPPORT_DESK_URL` and `ADMIN_TOKEN` repo secrets for the backup cron (P11.5), and run the smoke test against the hosted URL (P11.6).
 
 **Exit criteria (CP4)**
