@@ -724,9 +724,9 @@ These apply to every phase and are checked in code review and CI:
   - how to run the evals
   - **known limits** (arch §17.2)
   - the hosted URL
-- [ ] **P12.2** `samples/reviews_sample.csv`: 50 redacted rows covering all 5 themes.
-- [ ] **P12.3** `samples/five_questions_with_drafts.md`: 5 questions (exit load with PII, ELSS exit load "Nil", an advice request, out-of-scope, and a canonical reuse), each with its draft, citation, last checked, routing note and reviewer result.
-- [ ] **P12.4** `samples/appended_doc_entry.md` and `samples/email_draft.md`, produced by real approvals through the local MCP backend, not written by hand.
+- [x] **P12.2** `samples/reviews_sample.csv`: 50 redacted rows covering all 5 themes.
+- [x] **P12.3** `samples/five_questions_with_drafts.md`: 5 questions (exit load with PII, ELSS exit load "Nil", an advice request, out-of-scope, and a canonical reuse), each with its draft, citation, last checked, routing note and reviewer result.
+- [x] **P12.4** `samples/appended_doc_entry.md` and `samples/email_draft.md`, produced by real approvals through the local MCP backend, not written by hand.
 - [ ] **P12.5** Commit `evals/results/latest.md` and its JSON from a Groq-backed run.
 - [ ] **P12.6** Demo video (only if hosting fails, under 10 minutes):
   1. weekly loop end to end
@@ -735,6 +735,12 @@ These apply to every phase and are checked in code review and CI:
   4. the approval gate
   5. one evaluation
 - [ ] **P12.7** Final pass over the brief's Summary Checklist (§8 below).
+
+**Status (2026-11-25).** Everything that doesn't need the Render account or a full day of Groq quota is done.
+
+- Done: the README covers every P12.1 item except the hosted URL, which is a marked placeholder until P11.3. `scripts/build_samples.py` produces all of `samples/` from a real run: it starts the full app on a throwaway DB, runs the weekly loop, submits the five questions with live Groq picks, and approves the pulse doc append, the explainer doc append and the pulse email through the gate, so the local MCP backend writes the doc entry and the email draft. `tests/test_samples.py` checks that the samples are still valid and PII-free. The Playwright screenshot spec now approves the explainer first, so the README shows a live Canonical explainers view instead of the empty state.
+- Fixed on the way: *"Should I move my money from HDFC Mid Cap Fund to HDFC Small Cap Fund for better returns this year?"* wasn't flagged as advice by the rules backend: `_ACTION` had no "move/shift/transfer", and chasing returns wasn't a cue. Two narrow question-side cues were added, with regression tests that logistics questions ("How do I transfer my units…") stay unflagged. The CI-mode evals still pass (AQ-03: 0 false refusals).
+- Open: the hosted URL (P11.3 → P12.1), the Groq-graded eval run (P10.7 / P12.5; about 280K tokens, more than one free-tier day, so it needs a paid key or a run split across days with `--suite`), and the §8 items that depend on them. The demo video (P12.6) is needed only if hosting fails.
 
 **Exit criteria:** every item in §8 is ticked.
 
@@ -769,14 +775,14 @@ These apply to every phase and are checked in code review and CI:
 
 Mirrors the brief's Summary Checklist, with the evidence for each item:
 
-- [ ] Same product as Milestone 1 (Groww, six HDFC schemes, `data/parsed/` + `data/processed/` snapshots). **Evidence:** startup validation log, Sources view.
+- [x] Same product as Milestone 1 (Groww, six HDFC schemes, `data/parsed/` + `data/processed/` snapshots). **Evidence:** startup validation log, Sources view.
 - [ ] Deployed web app with weekly loop + response loop, on a schedule. **Evidence:** hosted URL, a `weekly_runs` row with `trigger=cron`.
-- [ ] Three parallel agents → orchestrator → reviewer (one rework round). **Evidence:** P5 superstep test, P10 reviewer cases.
-- [ ] Cross-loop link: repeat questions (5×/week) → pulse; fee explainer → canonical reuse. **Evidence:** pulse repeat section, explainer reuse log.
-- [ ] Facts-only + no PII, enforced in code. **Evidence:** `evals/results/latest.md` grounding and compliance section, PII sweep = 0.
-- [ ] Approval gate before every write and send; no auto-send. **Evidence:** edit-correctness diffs, MCP tool list test.
-- [ ] Queue, pulse, sources, approval and canonical explainer UI, matching the Stitch design. **Evidence:** Playwright + axe run, content check, README screenshots.
-- [ ] Three eval suites over the assembled system. **Evidence:** `evals/results/`.
+- [x] Three parallel agents → orchestrator → reviewer (one rework round). **Evidence:** P5 superstep test, P10 reviewer cases.
+- [x] Cross-loop link: repeat questions (5×/week) → pulse; fee explainer → canonical reuse. **Evidence:** pulse repeat section, explainer reuse log.
+- [x] Facts-only + no PII, enforced in code. **Evidence:** `evals/results/latest.md` grounding and compliance section, PII sweep = 0.
+- [x] Approval gate before every write and send; no auto-send. **Evidence:** edit-correctness diffs, MCP tool list test.
+- [x] Queue, pulse, sources, approval and canonical explainer UI, matching the Stitch design. **Evidence:** Playwright + axe run, content check, README screenshots.
+- [x] Three eval suites over the assembled system. **Evidence:** `evals/results/`.
 - [ ] Repo artifacts, prototype link, and optional demo video if unhosted. **Evidence:** `samples/`, README.
 
 ---

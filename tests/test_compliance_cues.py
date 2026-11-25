@@ -43,7 +43,23 @@ def test_benign_fact_questions_are_not_refused(row: dict) -> None:
         "Is it the right time to buy HDFC Small Cap?",
         "Which one is safer, gold or silver FoF?",
         "I should just sell everything?",
+        # Found while building samples/five_questions_with_drafts.md (P12.3).
+        "Should I move my money from HDFC Mid Cap Fund to HDFC Small Cap Fund?",
+        "Which HDFC fund can I put money in for better returns this year?",
+        "Should we shift our SIP to the gold FoF?",
     ],
 )
 def test_more_advice_phrasings(text: str) -> None:
     assert _cue_flags(text)[0], text
+
+
+@pytest.mark.parametrize(
+    "text",
+    [
+        "How do I transfer my HDFC Large Cap units to another demat account?",
+        "Can I move my SIP date to the 5th of the month?",
+        "What is the exit load on HDFC Mid Cap Fund?",
+    ],
+)
+def test_logistics_questions_are_not_advice(text: str) -> None:
+    assert not _cue_flags(text)[0], text
