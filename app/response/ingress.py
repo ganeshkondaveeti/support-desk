@@ -81,6 +81,7 @@ def create_ticket(
     if not run_graph:
         return ticket
 
+    _release_write_lock(session)
     token = _DB_SESSION.set(session)
     try:
         state = invoke_ticket(
@@ -90,6 +91,9 @@ def create_ticket(
             db_session=session,
             compiled=compiled,
         )
+    except BaseException:
+        _discard_ticket(session, tid)
+        raise
     finally:
         _DB_SESSION.reset(token)
 
@@ -139,6 +143,7 @@ async def acreate_ticket(
     repository.add(session, ticket)
     session.flush()
 
+    _release_write_lock(session)
     token = _DB_SESSION.set(session)
     try:
         state = await ainvoke_ticket(
@@ -148,6 +153,9 @@ async def acreate_ticket(
             db_session=session,
             compiled=compiled,
         )
+    except BaseException:
+        _discard_ticket(session, tid)
+        raise
     finally:
         _DB_SESSION.reset(token)
 
@@ -155,6 +163,29 @@ async def acreate_ticket(
     persist_graph_result(session, ticket, state)
     session.flush()
     return ticket
+
+
+def _release_write_lock(session: Session) -> None:
+    """
+    Commit the ``processing`` row before the agents run.
+
+    SQLite has one writer. The INSERT above takes the write lock, and the agents'
+    model calls can take tens of seconds (rate-limit waits, slow responses). Holding
+    the lock across them made every other write (another ticket, an approval, the
+    weekly run) fail with "database is locked" after the 5 s busy timeout. The graph
+    only reads until the orchestrator, which is pure code, so committing here keeps
+    every lock short. The row is ``processing`` until the graph's result is persisted.
+    """
+    session.commit()
+
+
+def _discard_ticket(session: Session, ticket_id: str) -> None:
+    """The graph failed: drop the committed ``processing`` row, as before the early commit."""
+    session.rollback()
+    row = session.get(models.Ticket, ticket_id)
+    if row is not None:
+        session.delete(row)
+        session.commit()
 
 
 def _received_at_utc() -> datetime:
