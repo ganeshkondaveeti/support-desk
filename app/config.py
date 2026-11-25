@@ -28,6 +28,18 @@ class Settings(BaseSettings):
     llm_provider: Literal["groq", "gemini", "cues_only"] = "cues_only"
     llm_model: str = "openai/gpt-oss-120b"
     llm_api_key: str = ""
+    # Provider rate limits (defaults: Groq free tier for openai/gpt-oss-120b). The client
+    # stays under llm_headroom of each; see app/llm/budget.py.
+    llm_rpm: int = 30
+    llm_tpm: int = 8000
+    llm_rpd: int = 1000
+    llm_tpd: int = 200_000
+    llm_headroom: float = 0.8
+    # Longest a call waits for per-minute capacity before using the rules instead.
+    llm_max_wait_s: float = 20.0
+    # Seed/demo tickets use the rules, not the model, so re-seeding on every free-tier
+    # wake-up doesn't spend the daily quota (docs/deploy.md).
+    llm_for_seed: bool = False
     groq_api_key: str = ""
     gemini_api_key: str = ""
 

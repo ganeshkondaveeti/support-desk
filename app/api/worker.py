@@ -10,7 +10,7 @@ from typing import Any
 from app.db.session import session_scope
 from app.ids import safe_hex_id
 from app.response.ingress import create_ticket
-from app.response.seed import load_seed_file
+from app.response.seed import load_seed_file, seed_llm_scope
 
 logger = logging.getLogger(__name__)
 
@@ -110,7 +110,7 @@ class TicketWorker:
 
     def _create_one(self, item: dict[str, Any], job: SeedJob) -> None:
         text = item["text"]
-        with session_scope() as session:
+        with seed_llm_scope(), session_scope() as session:
             ticket = create_ticket(
                 text,
                 channel=str(item.get("channel") or "seed"),

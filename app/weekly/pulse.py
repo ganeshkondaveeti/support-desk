@@ -420,6 +420,10 @@ def _first_clause(text: str) -> str:
     return _shorten(text, 12)
 
 
+# Three ideas of ≤ 25 words plus low-effort reasoning fit well inside this.
+_IDEAS_MAX_TOKENS = 384
+
+
 def default_llm_action_ideas(
     top3: list[Theme],
     fee_terms: list[str],
@@ -450,7 +454,7 @@ def default_llm_action_ideas(
         from groq import Groq
     except ImportError:
         return None
-    client = Groq(api_key=settings.groq_api_key or settings.llm_api_key)
+    client = Groq(api_key=settings.groq_api_key or settings.llm_api_key, max_retries=0)
     payload = {
         "themes": [
             {
@@ -471,12 +475,29 @@ def default_llm_action_ideas(
         'Return JSON {"ideas": [str, str, str]}.\n'
         f"Context: {json.dumps(payload)}"
     )
-    response = client.chat.completions.create(
-        model=settings.llm_model,
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.2,
-        response_format={"type": "json_object"},
+    # Same pacing as the agents (app/llm/budget.py); over budget → templated ideas.
+    from app.llm.budget import estimate_tokens, get_limiter
+
+    limiter = get_limiter()
+    reservation = limiter.acquire(
+        estimate_tokens(prompt, _IDEAS_MAX_TOKENS), max_wait=settings.llm_max_wait_s
     )
+    if reservation is None:
+        return None
+    try:
+        response = client.chat.completions.create(
+            model=settings.llm_model,
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.2,
+            response_format={"type": "json_object"},
+            max_completion_tokens=_IDEAS_MAX_TOKENS,
+            reasoning_effort="low",
+            timeout=20.0,
+        )
+    except Exception:
+        limiter.settle(reservation, 0)
+        raise
+    limiter.settle(reservation, getattr(getattr(response, "usage", None), "total_tokens", None))
     content = response.choices[0].message.content or ""
     data = json.loads(content)
     ideas = data.get("ideas")

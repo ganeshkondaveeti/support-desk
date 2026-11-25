@@ -11,12 +11,15 @@ import json
 import logging
 import re
 import time
-from collections.abc import Callable, Mapping, Sequence
+from collections.abc import Callable, Iterator, Mapping, Sequence
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Literal, Protocol
 
 from app.config import Settings, get_settings
+from app.llm.budget import estimate_tokens, get_limiter
 
 logger = logging.getLogger(__name__)
 
@@ -77,17 +80,56 @@ class CuesOnlyBackend:
 class GroqBackend:
     name: BackendName = "groq"
 
-    def __init__(self, *, api_key: str, model: str, client: Any = None) -> None:
+    def __init__(
+        self,
+        *,
+        api_key: str,
+        model: str,
+        client: Any = None,
+        max_wait: float | None = None,
+    ) -> None:
         if not api_key.strip():
             raise ValueError("GROQ_API_KEY is empty")
         self.model = model.strip() or DEFAULT_GROQ_MODEL
         if client is None:
             from groq import Groq
 
-            client = Groq(api_key=api_key.strip())
+            # No hidden SDK retries: the limiter paces calls, and a 429 is handled
+            # once below using the provider's retry-after.
+            client = Groq(api_key=api_key.strip(), max_retries=0)
         self._client = client
+        self._max_wait = get_settings().llm_max_wait_s if max_wait is None else max_wait
 
     def complete(self, prompt: str, *, timeout: float) -> str:
+        """One model call, paced by the shared rate limiter (app/llm/budget.py)."""
+        limiter = get_limiter()
+        estimate = estimate_tokens(prompt, GROQ_MAX_COMPLETION_TOKENS)
+        deadline = time.monotonic() + self._max_wait
+        for attempt in (1, 2):
+            reservation = limiter.acquire(estimate, max_wait=max(0.0, deadline - time.monotonic()))
+            if reservation is None:
+                raise LLMBudgetExceeded("LLM rate budget spent; using the rules")
+            try:
+                completion = self._create(prompt, timeout=timeout)
+            except Exception as exc:
+                limiter.settle(reservation, 0)  # a rejected call used no tokens
+                retry_after = _rate_limit_retry_after(exc)
+                if retry_after is None:
+                    raise
+                limiter.cool_down(retry_after)
+                if attempt == 2 or time.monotonic() + retry_after > deadline:
+                    raise LLMBudgetExceeded("provider rate limit (429)") from exc
+                logger.info("llm rate limited; waiting %.1fs once", retry_after)
+                continue
+            usage = getattr(completion, "usage", None)
+            limiter.settle(reservation, getattr(usage, "total_tokens", None))
+            content = completion.choices[0].message.content
+            if not isinstance(content, str) or not content.strip():
+                raise ValueError("groq response is empty")
+            return content
+        raise LLMBudgetExceeded("provider rate limit (429)")  # pragma: no cover
+
+    def _create(self, prompt: str, *, timeout: float) -> Any:
         kwargs: dict[str, Any] = {
             "model": self.model,
             "messages": [
@@ -102,11 +144,25 @@ class GroqBackend:
         }
         if self.model in _LOW_REASONING_MODELS:
             kwargs["reasoning_effort"] = GROQ_REASONING_EFFORT
-        completion = self._client.chat.completions.create(**kwargs)
-        content = completion.choices[0].message.content
-        if not isinstance(content, str) or not content.strip():
-            raise ValueError("groq response is empty")
-        return content
+        return self._client.chat.completions.create(**kwargs)
+
+
+class LLMBudgetExceeded(RuntimeError):
+    """The call was not made: over the rate budget. Callers fall back to the rules."""
+
+
+def _rate_limit_retry_after(exc: Exception) -> float | None:
+    """Seconds to wait if ``exc`` is a provider 429, else None."""
+    status = getattr(exc, "status_code", None)
+    if status != 429:
+        return None
+    response = getattr(exc, "response", None)
+    headers = getattr(response, "headers", None) or {}
+    raw = headers.get("retry-after") if hasattr(headers, "get") else None
+    try:
+        return max(0.5, float(raw)) if raw is not None else 5.0
+    except (TypeError, ValueError):
+        return 5.0
 
 
 class GeminiBackend:
@@ -210,11 +266,32 @@ class LLMClient:
 
 
 _CLIENT: LLMClient | None = None
+_RULES_ONLY: ContextVar[bool] = ContextVar("llm_rules_only", default=False)
+_RULES_CLIENT: LLMClient | None = None  # built on first use
+
+
+@contextmanager
+def rules_only() -> Iterator[None]:
+    """
+    Within this scope agents use the rules (CuesOnly), not the model.
+
+    Used for seed/demo tickets: on the free host they are re-created on every
+    wake-up, and spending ~120 model calls each time would use up the daily quota.
+    """
+    token = _RULES_ONLY.set(True)
+    try:
+        yield
+    finally:
+        _RULES_ONLY.reset(token)
 
 
 def get_llm_client(settings: Settings | None = None) -> LLMClient:
-    """Process-wide client from settings (D2)."""
-    global _CLIENT
+    """Process-wide client from settings (D2); the rules backend inside ``rules_only()``."""
+    global _CLIENT, _RULES_CLIENT
+    if _RULES_ONLY.get():
+        if _RULES_CLIENT is None:
+            _RULES_CLIENT = LLMClient(backend=CuesOnlyBackend())
+        return _RULES_CLIENT
     if _CLIENT is not None and settings is None:
         return _CLIENT
     cfg = settings or get_settings()

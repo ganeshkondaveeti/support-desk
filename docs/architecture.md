@@ -1261,9 +1261,10 @@ flowchart LR
 12. **Two clocks** (G1). Review trends describe the data window (ending 2026-07-04), while repeat questions describe the last 7 days of tickets. The pulse shows both, but readers must not compare them as if they covered the same period.
 13. **Multi-scheme questions** (G10) are answered for one scheme at a time.
 14. **Duplicate bursts** (§9.1). Without user identity, one person repeating a question counts toward the 5× threshold. Bursts are flagged, not removed.
-11. **Single reviewer role.** No multi-user RBAC or SSO. The audit trail records a single actor id.
-12. **Outbox, not helpdesk.** Approved replies are written to an outbox table and aren't delivered to users.
-13. **Free-tier hosting.** The demo runs on Render's free plan: no persistent disk, a spin-down after ~15 minutes idle, and a ~1 minute cold start. A restart or spin-down wipes the SQLite state (approvals, edits, canonical explainers, written docs/emails); first-boot seeding refills the demo on the next boot. The in-app scheduler can't fire while asleep, so the external cron ping wakes it. A paid instance with a disk keeps state (docs/deploy.md).
+15. **Single reviewer role.** No multi-user RBAC or SSO. The audit trail records a single actor id.
+16. **Outbox, not helpdesk.** Approved replies are written to an outbox table and aren't delivered to users.
+17. **Free-tier hosting.** The demo runs on Render's free plan: no persistent disk, a spin-down after ~15 minutes idle, and a ~1 minute cold start. A restart or spin-down wipes the SQLite state (approvals, edits, canonical explainers, written docs/emails); first-boot seeding refills the demo on the next boot. The in-app scheduler can't fire while asleep, so the external cron ping wakes it. A paid instance with a disk keeps state (docs/deploy.md).
+18. **LLM rate limits.** On Groq's free tier (30 requests/min, 8K tokens/min, 200K tokens/day) the client paces calls to 80% of each limit and falls back to the rules when over budget (`app/llm/budget.py`). Seed/demo tickets always use the rules, so their agent picks show "code rules decided". A graded eval run (~600 calls, ~280K tokens) does not fit one free day; split it or use a paid key.
 
 ---
 
