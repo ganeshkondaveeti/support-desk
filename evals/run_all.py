@@ -197,12 +197,32 @@ def _base_env(
         }
     )
     if provider == "groq":
-        key = os.environ.get("GROQ_API_KEY") or os.environ.get("LLM_API_KEY") or ""
+        key = (
+            os.environ.get("GROQ_API_KEY")
+            or os.environ.get("LLM_API_KEY")
+            or _dotenv("GROQ_API_KEY")
+        )
         if not key:
-            raise SystemExit("GROQ_API_KEY required for --backend groq")
+            raise SystemExit("GROQ_API_KEY required for --backend groq (env or .env)")
         env["GROQ_API_KEY"] = key
         env["LLM_API_KEY"] = key
+        # The harness submits tickets faster than the free tier's 8K tokens/min. With the
+        # app's default 20 s wait, most calls would fall back to the rules and FEAS-03
+        # would measure our own pacing, not provider availability. Wait for capacity.
+        env.setdefault("LLM_MAX_WAIT_S", "150")
     return env
+
+
+def _dotenv(name: str) -> str:
+    """One value from the repo's .env (the app reads it, but this harness's env doesn't)."""
+    path = ROOT / ".env"
+    if not path.is_file():
+        return ""
+    for line in path.read_text(encoding="utf-8").splitlines():
+        key, sep, value = line.partition("=")
+        if sep and key.strip() == name:
+            return value.strip().strip("\"'")
+    return ""
 
 
 def _assert_production_ignores_faults() -> CaseResult:
