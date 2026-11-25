@@ -7,16 +7,14 @@ services:
     runtime: docker
     dockerfilePath: ./Dockerfile
     dockerContext: .
-    # A persistent disk needs a paid instance; "starter" is the smallest with disks.
-    plan: starter
+    # Free plan: no persistent disk, spins down after ~15 min idle. State is wiped on
+    # restart or spin-down and first-boot seeding refills the demo (docs/deploy.md).
+    # For persistence, switch to plan: starter and add the disk block shown in deploy.md.
+    plan: free
     region: singapore
     branch: master
     autoDeploy: true
     healthCheckPath: /api/health
-    disk:
-      name: support-desk-state
-      mountPath: /data/state  # SQLite DB, LangGraph checkpoints, local MCP outputs
-      sizeGB: 1
     envVars:
       - key: APP_ENV
         value: production
@@ -24,6 +22,7 @@ services:
         value: groq
       - key: LLM_MODEL
         value: openai/gpt-oss-120b
+      # /data/state is the container's own filesystem on the free plan (ephemeral).
       - key: DATABASE_URL
         value: sqlite:////data/state/support_desk.sqlite3
       - key: MCP_BACKEND

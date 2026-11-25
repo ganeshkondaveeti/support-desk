@@ -1205,7 +1205,7 @@ flowchart LR
   3. The built UI is copied to `app/static`.
   4. Entrypoint: `docker/entrypoint.sh` creates `/data/state/samples`, gives the disk to a non-root `app` user and drops privileges, then runs `uvicorn app.main:app --workers 1` on `$PORT`. The MCP server is **not** a separate service; the executor spawns it over stdio.
   5. CI's `docker` job builds the image, runs `scripts/smoke.py` against it, restarts it and checks the state survived without re-seeding. Runbook: [deploy.md](deploy.md).
-- **Host.** Render, Railway or Fly.io (persistent disk), or Hugging Face Spaces (Docker SDK). The prototype URL goes in the README (§9.2).
+- **Host.** Render's free plan via `render.yaml` (no persistent disk; state resets on restart, see §17.2). A paid Render instance with a disk, Railway, Fly.io or Hugging Face Spaces (Docker SDK) also work. The prototype URL goes in the README (§9.2).
 - **Configuration** (env):
   - `LLM_PROVIDER`, `LLM_MODEL`, `LLM_API_KEY`
   - `DATABASE_URL`
@@ -1263,7 +1263,7 @@ flowchart LR
 14. **Duplicate bursts** (§9.1). Without user identity, one person repeating a question counts toward the 5× threshold. Bursts are flagged, not removed.
 11. **Single reviewer role.** No multi-user RBAC or SSO. The audit trail records a single actor id.
 12. **Outbox, not helpdesk.** Approved replies are written to an outbox table and aren't delivered to users.
-13. **Free-tier hosting.** Cold starts are possible. The scheduler is backed up by an external cron ping.
+13. **Free-tier hosting.** The demo runs on Render's free plan: no persistent disk, a spin-down after ~15 minutes idle, and a ~1 minute cold start. A restart or spin-down wipes the SQLite state (approvals, edits, canonical explainers, written docs/emails); first-boot seeding refills the demo on the next boot. The in-app scheduler can't fire while asleep, so the external cron ping wakes it. A paid instance with a disk keeps state (docs/deploy.md).
 
 ---
 
