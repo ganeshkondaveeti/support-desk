@@ -48,6 +48,15 @@ The entrypoint already prepares `/data/state`, and CI's `docker` job checks that
 
 **Google Docs / Gmail.** `MCP_BACKEND=local` writes approved docs and email drafts to `/data/state/samples/`. To write to Google instead, set `MCP_BACKEND=google` plus the `GOOGLE_*` values from M3's `npm run auth` (`GOOGLE_TOKEN_JSON` holds the token, since the container has no browser).
 
+### Groq free-tier limits
+
+`openai/gpt-oss-120b` on Groq's free tier allows **30 requests/min, 8K tokens/min, 1K requests/day and 200K tokens/day**. Each agent call uses about 460 tokens, so the per-minute token limit (about 17 calls) is the one that bites. The app handles this in `app/llm/budget.py`:
+
+- **Seed tickets use the rules, not the model.** First-boot seeding (and the *Load seed questions* button) would otherwise make ~120 calls (~55K tokens) on every free-plan wake-up and use up the daily quota in a few wake-ups. In the UI these drafts show *"No model pick; code rules decided"*. Set `LLM_FOR_SEED=true` to seed with the model instead.
+- **Live calls are paced** to 80% of each limit. A call waits up to `LLM_MAX_WAIT_S` (20 s) for capacity. If Groq still returns 429, the call waits once for its `retry-after`, then falls back to the rules. The SDK's own hidden retries are off.
+- **When the day's budget is spent**, calls fall back to the rules immediately instead of failing slowly. The rules always produce a safe, compliant draft; only the agents' picks get less accurate.
+- On a paid Groq plan, raise `LLM_RPM`, `LLM_TPM`, `LLM_RPD` and `LLM_TPD` in the service's environment.
+
 ## 2. Check the startup checks
 
 In the service's **Logs** after a deploy:

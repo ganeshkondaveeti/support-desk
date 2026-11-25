@@ -696,7 +696,7 @@ These apply to every phase and are checked in code review and CI:
 
 - Done: `Dockerfile`, `docker/entrypoint.sh` (prepares the disk, drops root), `.dockerignore`, `render.yaml`, startup checks (`app/startup.py`: PII self-test refuses to start; MCP handshake sets `gate_mode`, and doc/email approvals return `409 GATE_READ_ONLY` while replies still work), `scripts/smoke.py`, and a CI `docker` job that builds the image, smoke-tests it and checks state survives a restart without re-seeding.
 - Fixed on the way: the MCP client closed its stdio session from a different task than the one that opened it, which logged two ERROR tracebacks on every shutdown. One task now owns the session for its whole life.
-- Hosting choice (2026-11-25): Render's **free** plan, so no persistent disk. State resets on restart or spin-down and first-boot seeding refills the demo (arch §17.2 #13). This is the plan's stated fallback for risk R9.
+- Hosting choice (2026-11-25): Render's **free** plan, so no persistent disk. State resets on restart or spin-down and first-boot seeding refills the demo (arch §17.2 #17). This is the plan's stated fallback for risk R9.
 - Open (need the account): create the Render service and set its secrets (P11.3), set the `SUPPORT_DESK_URL` and `ADMIN_TOKEN` repo secrets for the backup cron (P11.5), and run the smoke test against the hosted URL (P11.6).
 
 **Exit criteria (CP4)**
@@ -787,7 +787,7 @@ Mirrors the brief's Summary Checklist, with the evidence for each item:
 | --- | --- | --- | --- | --- | --- |
 | R1 | Regex PII misses a format or over-redacts corpus numbers | M | H | Fixture-driven tuning, zero-change test on the corpus, final literal-value sweep | P1, P10 |
 | R2 | Lexicon clustering can't reproduce baseline counts | M | M | Fall back to the M2 assignment for known ids, and document it | P3 |
-| R3 | LLM nondeterminism or rate limits | M | M | Enum outputs, no-retry null path, regex ORing, CuesOnly in CI, queue-level backoff | P5, P10 |
+| R3 | LLM nondeterminism or rate limits | M | M | Enum outputs, no-retry null path, regex ORing, CuesOnly in CI. Client-side pacing to 80% of Groq's free-tier limits with a rules fallback; seed tickets use the rules (`app/llm/budget.py`, 2026-11-25) | P5, P10 |
 | R4 | TS MCP server stdio lifecycle in Python | L | M | Single long-lived session, restart on failure, gate read-only mode | P4, P11 |
 | R5 | Snapshot drift confuses users (different dates per claim) | M | L | Per-claim snapshot + date, drift tab, documented in known limits | P2, P9 |
 | R6 | Fingerprint collisions distort the 5× threshold | M | M | Fixture tuning, counts shown with the representative text for human judgement | P7 |
