@@ -89,3 +89,14 @@ def test_llm_down_also_skips_the_pulse_action_ideas_call(monkeypatch: pytest.Mon
         assert pulse.default_llm_action_ideas([], [], []) is None
     finally:
         clear_settings_cache()
+
+
+def test_notes_reach_the_json_and_latest_md(tmp_path: Path) -> None:
+    from evals.report import render_latest_md
+
+    a = _write(tmp_path, "a.json", {"feasibility": _suite()})
+    payload = combine([a], notes=["FEAS-13 re-checked after the fix.", "  "])
+    assert payload["run"]["notes"] == ["FEAS-13 re-checked after the fix."]
+    md = render_latest_md(payload)
+    assert "**Notes**\n\n- FEAS-13 re-checked after the fix.\n" in md
+    assert "**Notes**" not in render_latest_md(combine([a]))

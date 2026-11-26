@@ -97,7 +97,7 @@ evals/
 | `make evals` | CI mode: CuesOnly backend, all suites, seed 42 |
 | `python -m evals.run_all --backend groq --seed 42` | Graded run (needs `GROQ_API_KEY`) |
 | `python -m evals.run_all --suite edit` | Run one suite (`feasibility`, `edit`, `grounding`, `quality`) |
-| `python -m evals.combine A.json B.json …` | Merge split runs (one `--suite` each) into one results JSON + `latest.md`. Gating only if all three gating suites are present and pass. |
+| `python -m evals.combine A.json B.json … [--note TEXT]` | Merge split runs (one `--suite` each) into one results JSON + `latest.md`. Gating only if all three gating suites are present and pass. `--note` (repeatable) adds a line to both, e.g. a case re-checked after its suite ran. |
 | `python -m evals.run_all --case GC-05` | Run one case and its prerequisites |
 | `python -m evals.run_all --base-url https://… --allow-remote` | Against a hosted instance in an eval namespace. State-diff cases (Suite 2) are skipped because the DB isn't local. |
 | `--keep-tmp` | Keep the temp dir even on success, for debugging |

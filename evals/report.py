@@ -53,6 +53,7 @@ def render_latest_md(payload: dict[str, Any]) -> str:
         f"Mode: {mode} · Backend: {backend} / {model} · Seed {seed} · git {git_sha}",
         "Facts-only. No investment advice.",
         "",
+        *_notes_block(run),
         "| Suite | Cases | Passed | Status |",
         "|---|---:|---:|---|",
     ]
@@ -80,6 +81,13 @@ def render_latest_md(payload: dict[str, Any]) -> str:
     lines.append(_per_case_detail(suites))
     lines.append("")
     return "\n".join(lines)
+
+
+def _notes_block(run: dict[str, Any]) -> list[str]:
+    notes = run.get("notes") or []
+    if not notes:
+        return []
+    return ["**Notes**", "", *(f"- {n}" for n in notes), ""]
 
 
 def _format_title_time(started: Any) -> str:

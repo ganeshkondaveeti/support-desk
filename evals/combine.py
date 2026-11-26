@@ -8,7 +8,8 @@ split by suite across days. This merges those results JSONs into one combined
 
 Each suite is taken from the file that ran it; a suite in two files is an error.
 PII sweep hits and locations are summed. The combined run is gating only if every
-gating suite is present and passes, and the sweep found nothing.
+gating suite is present and passes, and the sweep found nothing. ``--note`` adds
+a line to the report (e.g. a case re-checked after its suite ran).
 """
 
 from __future__ import annotations
@@ -23,7 +24,7 @@ from .report import write_results
 from .run_all import GATING_SUITES, RESULTS_DIR, _gating_pass
 
 
-def combine(paths: list[Path]) -> dict[str, Any]:
+def combine(paths: list[Path], notes: list[str] | None = None) -> dict[str, Any]:
     runs = [json.loads(p.read_text(encoding="utf-8")) for p in paths]
     if not runs:
         raise ValueError("no results files given")
@@ -67,6 +68,7 @@ def combine(paths: list[Path]) -> dict[str, Any]:
             "git_sha": ",".join(dict.fromkeys(p["run"].get("git_sha", "") for p in runs)),
             "prod_hook": hook or first.get("prod_hook"),
             "combined_from": sources,
+            "notes": [n.strip() for n in notes or [] if n.strip()],
         },
         "suites": suites,
         "pii_sweep": {"hits": hits, "locations_scanned": locations, "details": details},
@@ -77,8 +79,11 @@ def combine(paths: list[Path]) -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("results", nargs="+", type=Path, help="results JSON files, one per suite")
+    parser.add_argument(
+        "--note", action="append", default=[], help="a line for the report; repeatable"
+    )
     args = parser.parse_args(argv)
-    payload = combine(args.results)
+    payload = combine(args.results, notes=args.note)
     json_path, md_path = write_results(RESULTS_DIR, payload)
     print(f"wrote {json_path} and {md_path} (gating_pass={payload['gating_pass']})")
     return 0 if payload["gating_pass"] else 1
