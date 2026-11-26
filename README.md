@@ -10,7 +10,7 @@ A support and product loop for Groww's six HDFC Mutual Fund schemes, the same pr
 
 | | |
 | --- | --- |
-| **Hosted app** | _Pending: the Render service hasn't been created yet ([docs/deploy.md](docs/deploy.md), plan P11.3)._ |
+| **Hosted app** | <https://support-desk-0gfk.onrender.com> (Render free tier: the first request after it has been idle can take about a minute, and its data resets when it restarts) |
 | **Design** | [docs/architecture.md](docs/architecture.md) · brief: [docs/problemStatement.md](docs/problemStatement.md) · plan: [docs/implementation-plan.md](docs/implementation-plan.md) · evals: [docs/eval.md](docs/eval.md) |
 | **Sample outputs** | [samples/](samples/): reviews CSV, five questions with drafts, the appended doc entry and the email draft |
 | **Eval results** | [evals/results/latest.md](evals/results/latest.md) |
