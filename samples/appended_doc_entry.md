@@ -1,0 +1,42 @@
+
+
+<!-- action:a_d82-0cd-c63-fed-478-ab1-10a-547-c24-251-8c -->
+## Weekly pulse
+
+# Weekly Product Pulse — week ending 2026-07-04  (reviews 2026-04-12 → 2026-07-04)
+Facts-only. No investment advice.
+
+## Top themes
+1. Trading, charts & orders — 503 reviews, avg 2.7★, recurring (2026-04-12 → 2026-07-04)
+   > "Not reliable for options trading at all. Charts fail to load during peak hours, and stop-loss orders don't execute on time, leading to heavy losses. Pathetic performance." — review baba26480501938e
+2. Withdrawals, deposits & payments — 162 reviews, avg 2.5★, recurring (2026-04-12 → 2026-07-04)
+   > "very bad withdrawal system. once paid to Groww, we will suffer badly to withdraw our own money forget the profit settlement. Horrible." — review 452083e910fb449e
+3. App stability & performance — 140 reviews, avg 2.2★, recurring (2026-04-12 → 2026-07-04)
+   > "when I lock my phone and unlock again app not working all thing freeze" — review 4b4f9a2d897000e4
+
+## Fee confusion
+136 reviews (2026-04-12 → 2026-07-04), recurring. Most cited: charges, brokerage, fees, hidden, deducted.
+Scheme-level charges (exit load, stamp duty, expense ratio) → see fee explainer; brokerage is outside the scheme corpus.
+
+## Repeat questions from support (tickets, 2026-11-18 → 2026-11-25)
+- "Why was I charged an exit load on HDFC Large Cap Fund?" — 6× (2026-11-18 → 2026-11-25) [possible duplicate burst]
+
+## Action ideas
+1. Create a self‑service FAQ on exit loads and fee structures specific to each fund
+2. Implement a real‑time status dashboard for app stability and transaction processing
+3. Add guided walkthroughs for deposit, withdrawal, and transfer procedures
+
+
+<!-- action:a_071-65e-917-332-4a3-698-30d-bd1-6e7-fea-53 -->
+## Fee explainer
+
+Fee explainer — HDFC Large Cap Fund Direct Growth and HDFC Gold ETF Fund of Fund Direct Plan Growth. Scheme-level charges from the official scheme pages. Brokerage and trading charges are not covered here.
+
+- If you redeem within one year, returns are taxed at 20%. (snapshot B, last checked 01-Sep-2026)
+- Expense ratio: 1.02%. (snapshot B, last checked 01-Sep-2026)
+- Expense ratio: 0.20%. (snapshot B, last checked 01-Sep-2026)
+- Exit load of 1% if redeemed within 1 year. (snapshot B, last checked 01-Sep-2026)
+- Exit load of 1%, if redeemed within 15 days. (snapshot B, last checked 01-Sep-2026)
+- Stamp duty on investment: 0.005% (from July 1st, 2020). (snapshot B, last checked 01-Sep-2026)
+
+Sources: https://groww.in/mutual-funds/hdfc-large-cap-fund-direct-growth, https://groww.in/mutual-funds/hdfc-gold-etf-fund-of-fund-direct-plan-growth · Last checked: 01-Sep-2026

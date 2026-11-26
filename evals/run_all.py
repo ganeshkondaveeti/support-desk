@@ -89,19 +89,21 @@ def _suite_to_dict(suite: SuiteResult) -> dict[str, Any]:
 
 
 def _gating_pass(suites: dict[str, Any]) -> bool:
-    for name in GATING_SUITES:
-        suite = suites.get(name) or {}
+    """
+    Every gating suite that ran passed (``skip`` allowed, e.g. remote edit suite).
+
+    Suites that didn't run (``--suite``/``--case``) aren't judged; a run with no
+    gating suite at all doesn't pass. ``evals.combine`` merges split runs.
+    """
+    ran = [name for name in GATING_SUITES if name in suites]
+    if not ran:
+        return False
+    for name in ran:
+        suite = suites[name] or {}
         if suite.get("status") not in {"pass", "skip"}:
-            # skip only for remote edit suite; otherwise require pass
-            if name == "edit" and suite.get("status") == "skip":
-                continue
-            if suite.get("status") != "pass":
-                return False
-        for case in suite.get("cases") or []:
-            if case.get("status") in {"fail"}:
-                return False
-            if case.get("status") in {"info", "skip"}:
-                continue
+            return False
+        if any(case.get("status") == "fail" for case in suite.get("cases") or []):
+            return False
     return True
 
 
@@ -197,12 +199,32 @@ def _base_env(
         }
     )
     if provider == "groq":
-        key = os.environ.get("GROQ_API_KEY") or os.environ.get("LLM_API_KEY") or ""
+        key = (
+            os.environ.get("GROQ_API_KEY")
+            or os.environ.get("LLM_API_KEY")
+            or _dotenv("GROQ_API_KEY")
+        )
         if not key:
-            raise SystemExit("GROQ_API_KEY required for --backend groq")
+            raise SystemExit("GROQ_API_KEY required for --backend groq (env or .env)")
         env["GROQ_API_KEY"] = key
         env["LLM_API_KEY"] = key
+        # The harness submits tickets faster than the free tier's 8K tokens/min. With the
+        # app's default 20 s wait, most calls would fall back to the rules and FEAS-03
+        # would measure our own pacing, not provider availability. Wait for capacity.
+        env.setdefault("LLM_MAX_WAIT_S", "150")
     return env
+
+
+def _dotenv(name: str) -> str:
+    """One value from the repo's .env (the app reads it, but this harness's env doesn't)."""
+    path = ROOT / ".env"
+    if not path.is_file():
+        return ""
+    for line in path.read_text(encoding="utf-8").splitlines():
+        key, sep, value = line.partition("=")
+        if sep and key.strip() == name:
+            return value.strip().strip("\"'")
+    return ""
 
 
 def _assert_production_ignores_faults() -> CaseResult:
@@ -328,6 +350,14 @@ def _run_feas_13_isolated(backend: str) -> CaseResult:
                     id=case_id,
                     status="fail",
                     message=f"weekly status {weekly.get('status')}",
+                    actual=weekly,
+                )
+            # eval §4: with the model down the pulse uses templated ideas → degraded.
+            if not weekly.get("degraded"):
+                return CaseResult(
+                    id=case_id,
+                    status="fail",
+                    message="weekly run not degraded under llm_down",
                     actual=weekly,
                 )
             return CaseResult(

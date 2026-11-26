@@ -1,0 +1,224 @@
+{
+  "run": {
+    "started_at": "2026-11-25T12:06:29.506544+05:30",
+    "duration_s": 728.006291,
+    "mode": "graded",
+    "backend": "groq",
+    "model": "openai/gpt-oss-120b",
+    "seed": 42,
+    "git_sha": "cc66044",
+    "corpus_hash": "sha256:8b6cedfd9ad3968af038b1381474e9302257f9632d167125121f3f2ff2639a75",
+    "reviews_hash": "sha256:a2a34fb52f25a059",
+    "app_env": "test",
+    "prod_hook": {
+      "status": "pass",
+      "cases": [
+        {
+          "id": "HOOK-PROD",
+          "status": "pass",
+          "metric": {
+            "status": "awaiting_human",
+            "row": 4
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        }
+      ]
+    }
+  },
+  "suites": {
+    "edit": {
+      "status": "pass",
+      "cases": [
+        {
+          "id": "EDIT-01",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-02",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-03",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-04",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-05",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-06",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true,
+            "canonical_row_3": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-07",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-08",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-09",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-10",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-11",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-12",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-13",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-14",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-15",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-16",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-17",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-18",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        }
+      ]
+    }
+  },
+  "pii_sweep": {
+    "hits": 0,
+    "locations_scanned": 6,
+    "details": []
+  },
+  "gating_pass": false
+}

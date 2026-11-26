@@ -74,6 +74,19 @@ _ADVICE_CUES: tuple[re.Pattern[str], ...] = (
         rf"\b{_SUBJECT}\s+(?:should|ought\s+to|must)\s+(?:\w+\s+){{0,2}}?{_ACTION}\b",
         re.I,
     ),
+    # Moving money between schemes: "Should I move my money from Mid Cap to Small Cap?"
+    # Only after "should/shall/ought to", so "How do I transfer units?" isn't advice.
+    re.compile(
+        rf"\b(?:should|shall|ought\s+to)\s+{_SUBJECT}\s+(?:\w+\s+){{0,3}}?"
+        r"(?:move|shift|transfer|put|park|allocate|reallocate|rebalance)\b",
+        re.I,
+    ),
+    # Chasing returns is asking for a pick: "… for better returns this year?"
+    re.compile(
+        r"\bfor\s+(?:better|higher|more|maximum|max|the\s+best)\s+"
+        r"(?:returns?|gains?|profits?|growth)\b",
+        re.I,
+    ),
     re.compile(
         r"\b(?:recommend|advi[cs]e|suggest)\w*\b[^.?!]{0,40}?"
         rf"\b(?:{_ACTION}|which\s+{_SCHEME_WORD}|what\s+(?:should|to)\s+{_SUBJECT}\s+do)\b"

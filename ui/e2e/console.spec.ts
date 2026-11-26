@@ -128,11 +128,22 @@ test("9. screenshots for side-by-side review with the Stitch designs", async ({ 
     ["sources", "/sources"],
     ["sources-drift", "/sources/drift"],
     ["approvals", "/approvals"],
-    ["explainers", "/explainers"],
   ];
   for (const [name, route] of shots) {
     await page.goto(route);
     await settle(page);
     await page.screenshot({ path: `tests/__screenshots__/${name}.png` });
   }
+  // Show the explainers view with an active canonical explainer and one reuse, not the
+  // empty state: approve the fee explainer's doc append, then ask a covered fee question.
+  const pending = await (await request.get("/api/actions?status=pending&limit=500")).json();
+  const explainer = pending.items.find(
+    (a: { kind: string; subject_type: string }) => a.kind === "doc_append" && a.subject_type === "fee_explainer",
+  );
+  expect(explainer).toBeTruthy();
+  expect((await request.post(`/api/actions/${explainer.id}/approve`)).ok()).toBe(true);
+  await createOpenTicket(request, "How much exit load is charged on HDFC Mid Cap Fund if I redeem early?");
+  await page.goto("/explainers");
+  await settle(page);
+  await page.screenshot({ path: "tests/__screenshots__/explainers.png" });
 });

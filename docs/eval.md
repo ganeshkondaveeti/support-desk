@@ -97,6 +97,7 @@ evals/
 | `make evals` | CI mode: CuesOnly backend, all suites, seed 42 |
 | `python -m evals.run_all --backend groq --seed 42` | Graded run (needs `GROQ_API_KEY`) |
 | `python -m evals.run_all --suite edit` | Run one suite (`feasibility`, `edit`, `grounding`, `quality`) |
+| `python -m evals.combine A.json B.json … [--note TEXT]` | Merge split runs (one `--suite` each) into `combined-{timestamp}.json` + `latest.md` (the inputs are left as they are). Gating only if all three gating suites are present and pass. `--note` (repeatable) adds a line to both, e.g. a case re-checked after its suite ran. |
 | `python -m evals.run_all --case GC-05` | Run one case and its prerequisites |
 | `python -m evals.run_all --base-url https://… --allow-remote` | Against a hosted instance in an eval namespace. State-diff cases (Suite 2) are skipped because the DB isn't local. |
 | `--keep-tmp` | Keep the temp dir even on success, for debugging |
@@ -109,7 +110,7 @@ Exit code: `0` when all gating suites pass, `1` otherwise.
 | --- | --- | --- |
 | `EVAL_FAULTS=uncited_once` | GC-11 | The orchestrator emits an uncited numeric sentence on its first pass only |
 | `EVAL_FAULTS=advice_always` | GC-11 | The orchestrator appends *"You may want to consider staying invested."* on every pass |
-| `EVAL_FAULTS=llm_down` | FEAS-13 | Every `llm.choose` call returns `ERROR` |
+| `EVAL_FAULTS=llm_down` | FEAS-13 | Every `llm.choose` call returns `ERROR`, and the pulse's action-ideas call is skipped (templated ideas, `degraded=true`) |
 | `EVAL_FAULTS=advice_ideas` | GC-07 | The pulse action-idea call returns ideas containing advice |
 | Request header `X-Eval-Ticket` | GC-11 | Applies the named fault to that ticket only, so other tickets stay clean |
 | Request header `X-Eval-Now: <ISO>` | FEAS-10, EDIT boundary cases | Overrides the ticket clock for this request (EC-BR-02) |
