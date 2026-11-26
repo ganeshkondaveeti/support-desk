@@ -100,3 +100,23 @@ def test_notes_reach_the_json_and_latest_md(tmp_path: Path) -> None:
     md = render_latest_md(payload)
     assert "**Notes**\n\n- FEAS-13 re-checked after the fix.\n" in md
     assert "**Notes**" not in render_latest_md(combine([a]))
+
+
+def test_the_cli_never_overwrites_an_input(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> None:
+    import evals.combine as combine_mod
+
+    monkeypatch.setattr(combine_mod, "RESULTS_DIR", tmp_path)
+    a = _write(tmp_path, "20261125-120000.json", {"edit": _suite()})
+    b = _write(
+        tmp_path,
+        "20261126-090000.json",
+        {"feasibility": _suite()},
+        started="2026-11-26T09:00:00+05:30",
+    )
+    before = {p: p.read_text() for p in (a, b)}
+    combine_mod.main([str(a), str(b), "--note", "interim"])
+    assert {p: p.read_text() for p in (a, b)} == before
+    combined = list(tmp_path.glob("combined-*.json"))
+    assert len(combined) == 1
+    assert set(json.loads(combined[0].read_text())["suites"]) == {"edit", "feasibility"}
+    assert (tmp_path / "latest.md").exists()

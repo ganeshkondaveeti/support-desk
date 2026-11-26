@@ -18,8 +18,10 @@ SUITE_LABELS = {
 }
 
 
-def write_results(results_dir: Path, payload: dict[str, Any]) -> tuple[Path, Path]:
-    """Write ``{timestamp}.json`` and ``latest.md`` under ``results_dir``."""
+def write_results(
+    results_dir: Path, payload: dict[str, Any], *, stem: str | None = None
+) -> tuple[Path, Path]:
+    """Write ``{timestamp}.json`` (or ``{stem}.json``) and ``latest.md`` under ``results_dir``."""
     results_dir.mkdir(parents=True, exist_ok=True)
     started = (payload.get("run") or {}).get("started_at")
     if isinstance(started, str):
@@ -30,7 +32,7 @@ def write_results(results_dir: Path, payload: dict[str, Any]) -> tuple[Path, Pat
     else:
         ts = datetime.now(tz=IST)
     stamp = ts.astimezone(IST).strftime("%Y%m%d-%H%M%S")
-    json_path = results_dir / f"{stamp}.json"
+    json_path = results_dir / f"{stem or stamp}.json"
     md_path = results_dir / "latest.md"
     json_path.write_text(json.dumps(payload, indent=2, default=str), encoding="utf-8")
     md_path.write_text(render_latest_md(payload), encoding="utf-8")

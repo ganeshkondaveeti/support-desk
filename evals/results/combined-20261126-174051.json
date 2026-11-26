@@ -1,0 +1,387 @@
+{
+  "run": {
+    "started_at": "2026-11-25T12:06:29.506544+05:30",
+    "duration_s": 2008.033253,
+    "mode": "graded",
+    "backend": "groq",
+    "model": "openai/gpt-oss-120b",
+    "seed": 42,
+    "git_sha": "cc66044,91480fe",
+    "corpus_hash": "sha256:8b6cedfd9ad3968af038b1381474e9302257f9632d167125121f3f2ff2639a75",
+    "reviews_hash": "sha256:a2a34fb52f25a059",
+    "app_env": "test",
+    "prod_hook": {
+      "status": "pass",
+      "cases": [
+        {
+          "id": "HOOK-PROD",
+          "status": "pass",
+          "metric": {
+            "status": "awaiting_human",
+            "row": 4
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        }
+      ]
+    },
+    "combined_from": {
+      "edit": "20261125-120629.json",
+      "feasibility": "20261126-084841.json"
+    },
+    "notes": [
+      "Interim report: edit and feasibility only. The graded run is split one suite per day to fit Groq's free tier; grounding and quality follow, and this report is then replaced by the four-suite merge.",
+      "FEAS-13 in the feasibility run (20261126-084841) ran before the llm_down fix (ed67cb3) and passed without checking degraded; re-checked alone in graded mode after the fix, it passed with degraded=true."
+    ]
+  },
+  "suites": {
+    "edit": {
+      "status": "pass",
+      "cases": [
+        {
+          "id": "EDIT-01",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-02",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-03",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-04",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-05",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-06",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true,
+            "canonical_row_3": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-07",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-08",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-09",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-10",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-11",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-12",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-13",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-14",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-15",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-16",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-17",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "EDIT-18",
+          "status": "pass",
+          "metric": {
+            "diff_ok": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        }
+      ]
+    },
+    "feasibility": {
+      "status": "pass",
+      "cases": [
+        {
+          "id": "FEAS-01",
+          "status": "pass",
+          "metric": {
+            "tickets": 93,
+            "ok": 93
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-02",
+          "status": "pass",
+          "metric": {
+            "tickets": 93
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-03",
+          "status": "pass",
+          "metric": {
+            "errors": 3,
+            "total": 279,
+            "rate": 0.0108
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-04",
+          "status": "pass",
+          "metric": {
+            "themes": 5,
+            "reviews": 1650
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-05",
+          "status": "pass",
+          "metric": {
+            "drifts": [],
+            "used_baseline_fallback": true
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-06",
+          "status": "pass",
+          "metric": {
+            "checked": 12,
+            "max_words": 244
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-07",
+          "status": "pass",
+          "metric": {
+            "bullets": 6,
+            "urls": 2
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-08",
+          "status": "pass",
+          "metric": {
+            "run_id": "wr_3a1-c7b-0d9-e25-422-ea3-ed6-aa9-646-705-60",
+            "pending_weekly": 4
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-09",
+          "status": "pass",
+          "metric": {
+            "concurrent_409": 5,
+            "cron_noop": true,
+            "manual_run": "wr_e7b-bfd-b5a-f4b-4e8-f9a-767-b62-e66-35f-2b",
+            "superseded": 4
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-10",
+          "status": "pass",
+          "metric": {
+            "exit_load_count": 8,
+            "clusters": 1
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-11",
+          "status": "pass",
+          "metric": {
+            "run_id": "wr_217-e99-3e9-fb3-4bb-096-2ec-3ae-1cd-1e6-b8",
+            "rows": [
+              4,
+              4,
+              3
+            ],
+            "elss_row": 4
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-12",
+          "status": "pass",
+          "metric": {
+            "tickets": 93
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        },
+        {
+          "id": "FEAS-13",
+          "status": "pass",
+          "metric": {
+            "degraded": false,
+            "tickets": 5,
+            "run_id": "wr_3d2-8f1-92a-f11-481-e9e-2de-347-b00-75e-18"
+          },
+          "message": "",
+          "expected": null,
+          "actual": null
+        }
+      ]
+    }
+  },
+  "pii_sweep": {
+    "hits": 0,
+    "locations_scanned": 12,
+    "details": []
+  },
+  "gating_pass": false
+}

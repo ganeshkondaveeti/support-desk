@@ -2,7 +2,7 @@
 
 Groq's free tier can't fit a full graded run in one day, so the graded run is
 split by suite across days. This merges those results JSONs into one combined
-``{timestamp}.json`` + ``latest.md``:
+``combined-{timestamp}.json`` + ``latest.md``:
 
     python -m evals.combine evals/results/A.json evals/results/B.json ...
 
@@ -17,10 +17,11 @@ from __future__ import annotations
 import argparse
 import json
 import sys
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from .report import write_results
+from .report import IST, write_results
 from .run_all import GATING_SUITES, RESULTS_DIR, _gating_pass
 
 
@@ -84,7 +85,13 @@ def main(argv: list[str] | None = None) -> int:
     )
     args = parser.parse_args(argv)
     payload = combine(args.results, notes=args.note)
-    json_path, md_path = write_results(RESULTS_DIR, payload)
+    # Named for when the merge ran, not the earliest input's start time: that name is
+    # the earliest input's own file, which the merge would otherwise overwrite.
+    stem = "combined-" + datetime.now(tz=IST).strftime("%Y%m%d-%H%M%S")
+    target = (RESULTS_DIR / f"{stem}.json").resolve()
+    if target in {p.resolve() for p in args.results}:
+        raise SystemExit(f"refusing to overwrite input {target.name}")
+    json_path, md_path = write_results(RESULTS_DIR, payload, stem=stem)
     print(f"wrote {json_path} and {md_path} (gating_pass={payload['gating_pass']})")
     return 0 if payload["gating_pass"] else 1
 
