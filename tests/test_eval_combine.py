@@ -68,3 +68,24 @@ def test_combine_fails_on_pii_hits_duplicates_and_mismatched_runs(tmp_path: Path
     b.write_text(json.dumps(other))
     with pytest.raises(ValueError, match="seed"):
         combine([a, b])
+
+
+def test_llm_down_also_skips_the_pulse_action_ideas_call(monkeypatch: pytest.MonkeyPatch) -> None:
+    """FEAS-13 passed in graded mode with real Groq ideas: llm_down didn't cover the pulse."""
+    from app.config import clear_settings_cache
+    from app.weekly import pulse
+
+    monkeypatch.setenv("APP_ENV", "test")
+    monkeypatch.setenv("EVAL_FAULTS", "llm_down")
+    monkeypatch.setenv("LLM_PROVIDER", "groq")
+    monkeypatch.setenv("GROQ_API_KEY", "not-a-real-key")
+    clear_settings_cache()
+
+    def no_groq(*_args: object, **_kwargs: object) -> None:
+        raise AssertionError("llm_down must not reach Groq")
+
+    monkeypatch.setattr("groq.Groq", no_groq)
+    try:
+        assert pulse.default_llm_action_ideas([], [], []) is None
+    finally:
+        clear_settings_cache()

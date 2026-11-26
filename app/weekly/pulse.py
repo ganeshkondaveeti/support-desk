@@ -446,6 +446,10 @@ def default_llm_action_ideas(
                 "This fund is a good investment for everyone.",
                 "Consider staying invested for higher returns.",
             ]
+        # llm_down covers every model call, not only the agents' llm.choose (FEAS-13):
+        # the pulse must fall back to templated ideas and mark the run degraded.
+        if fault_applies("llm_down"):
+            return None
     except Exception:  # noqa: BLE001
         pass
     if settings.llm_provider == "cues_only" or not (settings.groq_api_key or settings.llm_api_key):

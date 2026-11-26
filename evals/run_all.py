@@ -352,6 +352,14 @@ def _run_feas_13_isolated(backend: str) -> CaseResult:
                     message=f"weekly status {weekly.get('status')}",
                     actual=weekly,
                 )
+            # eval §4: with the model down the pulse uses templated ideas → degraded.
+            if not weekly.get("degraded"):
+                return CaseResult(
+                    id=case_id,
+                    status="fail",
+                    message="weekly run not degraded under llm_down",
+                    actual=weekly,
+                )
             return CaseResult(
                 id=case_id,
                 status="pass",

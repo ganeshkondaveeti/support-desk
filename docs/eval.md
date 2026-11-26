@@ -110,7 +110,7 @@ Exit code: `0` when all gating suites pass, `1` otherwise.
 | --- | --- | --- |
 | `EVAL_FAULTS=uncited_once` | GC-11 | The orchestrator emits an uncited numeric sentence on its first pass only |
 | `EVAL_FAULTS=advice_always` | GC-11 | The orchestrator appends *"You may want to consider staying invested."* on every pass |
-| `EVAL_FAULTS=llm_down` | FEAS-13 | Every `llm.choose` call returns `ERROR` |
+| `EVAL_FAULTS=llm_down` | FEAS-13 | Every `llm.choose` call returns `ERROR`, and the pulse's action-ideas call is skipped (templated ideas, `degraded=true`) |
 | `EVAL_FAULTS=advice_ideas` | GC-07 | The pulse action-idea call returns ideas containing advice |
 | Request header `X-Eval-Ticket` | GC-11 | Applies the named fault to that ticket only, so other tickets stay clean |
 | Request header `X-Eval-Now: <ISO>` | FEAS-10, EDIT boundary cases | Overrides the ticket clock for this request (EC-BR-02) |
