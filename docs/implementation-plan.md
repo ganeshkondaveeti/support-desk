@@ -687,18 +687,18 @@ These apply to every phase and are checked in code review and CI:
   2. `python:3.11-slim` runs the app, with the Node 22 runtime, `mcp-server/dist` and the production `node_modules` copied in for the MCP stdio server.
   3. Entrypoint: `uvicorn app.main:app --workers 1`.
 - [x] **P11.2** `render.yaml`: a web service, a persistent disk mounted at `/data/state` (SQLite, logs, `samples/` output), env vars and a health check on `/api/health`.
-- [ ] **P11.3** Secrets go in the Render dashboard: `GROQ_API_KEY`, `ADMIN_TOKEN` and the optional Google OAuth values. `MCP_BACKEND=local` by default.
+- [x] **P11.3** Secrets go in the Render dashboard: `GROQ_API_KEY`, `ADMIN_TOKEN` and the optional Google OAuth values. `MCP_BACKEND=local` by default.
 - [x] **P11.4** Startup checks: corpus validation, the PII self-test and the MCP handshake. If the MCP handshake fails, the app starts in "gate read-only" mode with a banner.
 - [ ] **P11.5** Point the `weekly.yml` backup cron at the hosted URL. A repository secret holds the token.
-- [ ] **P11.6** Smoke test against the hosted URL: health, one weekly run, one ticket and one approval.
+- [x] **P11.6** Smoke test against the hosted URL: health, one weekly run, one ticket and one approval.
 
 **Status (2026-11-25).** Everything that lives in the repo is done; the steps that need the Render account are in [deploy.md](deploy.md).
 
 - Done: `Dockerfile`, `docker/entrypoint.sh` (prepares the disk, drops root), `.dockerignore`, `render.yaml`, startup checks (`app/startup.py`: PII self-test refuses to start; MCP handshake sets `gate_mode`, and doc/email approvals return `409 GATE_READ_ONLY` while replies still work), `scripts/smoke.py`, and a CI `docker` job that builds the image, smoke-tests it and checks state survives a restart without re-seeding.
 - Fixed on the way: the MCP client closed its stdio session from a different task than the one that opened it, which logged two ERROR tracebacks on every shutdown. One task now owns the session for its whole life.
 - Hosting choice (2026-11-25): Render's **free** plan, so no persistent disk. State resets on restart or spin-down and first-boot seeding refills the demo (arch §17.2 #17). This is the plan's stated fallback for risk R9.
-- Live (2026-11-26): <https://support-desk-0gfk.onrender.com>, free plan. Read-only checks pass: `/api/health` is ok, seeded, `gate_mode=full`, with a weekly run that day; the five views and `/api/sources` load. Its secrets (P11.3) can't be checked from outside, so P11.3 stays open until the smoke test.
-- Open (need the account): confirm the Render secrets (P11.3), set the `SUPPORT_DESK_URL` and `ADMIN_TOKEN` repo secrets for the backup cron (P11.5), and run the smoke test against the hosted URL (P11.6).
+- Live (2026-11-26): <https://support-desk-0gfk.onrender.com>, free plan. `scripts/smoke.py` passed all six checks: health ok (`gate_mode=full`), seeding done, the UI at `/` and `/approvals`, a manual weekly run reaching `awaiting_approval`, a ticket drafted (`awaiting_human`), and its reply approved and written to the outbox. The ticket's three agents returned model picks, so the Groq key is set (P11.3).
+- Open (need the account): set the `SUPPORT_DESK_URL` and `ADMIN_TOKEN` repo secrets for the backup cron (P11.5).
 
 **Exit criteria (CP4)**
 
